@@ -34,6 +34,9 @@ img {
 .ListItem {
   margin-bottom: 10px;
 }
+.ListItem--loading {
+  min-height: 34px;
+}
 
 .Item {
   margin-bottom: 1em;
