@@ -282,6 +282,7 @@ var ListItem = React.createClass({
   render: function() {
     var item = this.state.item
     if (!item.id) { return <li className="ListItem ListItem--loading"></li> }
+    if (item.deleted) { return null }
     return <li className={cx({'ListItem': true, 'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
       {renderItemMeta(item, true)}
