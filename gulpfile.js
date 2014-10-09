@@ -93,14 +93,6 @@ gulp.task('copy-app', ['build-app'], function() {
     .pipe(gulp.dest('./dist'))
 })
 
-/**
- * The default watch workflow is that you're editing in /src while running
- * against everything else which is already in /dist
- */
-gulp.task('watch', ['copy-app'], function() {
-  gulp.watch([jsSrcFiles, jsxSrcFiles], ['copy-app'])
-})
-
 /** Delete everything from /dist */
 gulp.task('clean-dist', function(cb) {
   del('./dist/**', cb)
@@ -112,6 +104,12 @@ gulp.task('dist-copy', ['clean-dist', 'build-app', 'build-deps'], function() {
     .pipe(gulp.dest('./dist'))
 })
 
+/** Copy CSS to /dist */
+gulp.task('dist-css', function() {
+  return gulp.src('./public/**/*.css')
+    .pipe(gulp.dest('./dist'))
+})
+
 /** Regenerate /dist from scratch and template index.html */
 gulp.task('dist', ['dist-copy'], function() {
   return gulp.src('./dist/index.html')
@@ -119,4 +117,13 @@ gulp.task('dist', ['dist-copy'], function() {
       jsExt: jsExt
     }))
     .pipe(gulp.dest('./dist'))
+})
+
+/**
+ * The default watch workflow is that you're editing in /src while running
+ * against everything else which is already in /dist
+ */
+gulp.task('watch', ['copy-app'], function() {
+  gulp.watch([jsSrcFiles, jsxSrcFiles], ['copy-app'])
+  gulp.watch('./public/**/*.css', ['dist-css'])
 })
