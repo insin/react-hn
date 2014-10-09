@@ -45,6 +45,23 @@ function setTitle(title) {
   document.title = (title ? title + ' | ' + SITE_TITLE : SITE_TITLE)
 }
 
+// TODO Implement gif-based fallback for IE9 and another non-animating browsers
+//      See https://github.com/tobiasahlin/SpinKit for how-to
+var Spinner = React.createClass({
+  getDefaultProps: function() {
+    return {size: 6, spacing: 2}
+  },
+  render: function() {
+    var bounceSize = this.props.size + 'px'
+    var bounceStyle = {height: bounceSize, width: bounceSize, marginRight: this.props.spacing + 'px'}
+    return <div className="Spinner" style={{width: ((this.props.size + this.props.spacing) * 3) + 'px'}}>
+      <div className="bounce1" style={bounceStyle}/>
+      <div className="bounce2" style={bounceStyle}/>
+      <div className="bounce3" style={bounceStyle}/>
+    </div>
+  }
+})
+
 var NotFound = React.createClass({
   render: function() {
     return <h2>Not found</h2>
@@ -281,7 +298,7 @@ var ListItem = React.createClass({
   },
   render: function() {
     var item = this.state.item
-    if (!item.id) { return <li className="ListItem ListItem--loading"></li> }
+    if (!item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
     if (item.deleted) { return null }
     return <li className={cx({'ListItem': true, 'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
@@ -305,11 +322,18 @@ var Items = React.createClass({
             : 1)
   },
   render: function() {
-    if (this.state.items.length === 0) {
-      return <div className="Items Items--loading"></div>
-    }
     var page = this.getPage()
     var startIndex = (page - 1) * ITEMS_PER_PAGE
+    if (this.state.items.length === 0) {
+      var dummyItems = []
+      for (var i = 0; i < ITEMS_PER_PAGE; i++) {
+        dummyItems.push(<li className="ListItem ListItem--loading"><Spinner/></li>)
+      }
+      return <div className="Items Items--loading">
+        <ol className="Items__list" start={startIndex + 1}>{dummyItems}</ol>
+      </div>
+    }
+
     var endIndex = startIndex + ITEMS_PER_PAGE
     var items = this.state.items.slice(startIndex, endIndex)
     var hasNext = endIndex < this.state.items.length - 1
