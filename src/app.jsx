@@ -257,7 +257,9 @@ function renderItemMeta(item, commentsLink) {
     </span>}{' '}
     <span className="Item__time">{timeMoment.fromNow()}</span>
     {isNotJob && commentsLink && ' | '}
-    {isNotJob && commentsLink && <Link to={item.type} params={{id: item.id}}>comments</Link>}
+    {isNotJob && commentsLink && <Link to={item.type} params={{id: item.id}}>
+      {item.kids && item.kids.length > 0 ? 'comment' : 'discuss'}
+    </Link>}
   </div>
 }
 
