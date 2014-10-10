@@ -89,7 +89,12 @@ var User = React.createClass({
   },
   render: function() {
     var user = this.state.user
-    if (!user.id) { return <div className="User User--loading"></div> }
+    if (!user.id) {
+      return <div className="User User--loading">
+        <h4>{this.props.params.id}</h4>
+        <Spinner size="20"/>
+      </div>
+    }
     var createdMoment = moment(user.created * 1000)
     return <div className="User">
       <h4>{user.id}</h4>
