@@ -167,6 +167,7 @@ var Comment = React.createClass({
     if (!comment.id) {
       return <div className="Comment Comment--loading">
         {(isTopLevel || showSpinnerDeep) && <Spinner size="20"/>}
+        {comment.error && <p>Error loading comment - this may be because the author has a delay set.</p>}
       </div>
     }
     // Don't render anything if we're replacing the route after loading a non-comment
