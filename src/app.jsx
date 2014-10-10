@@ -45,7 +45,7 @@ function setTitle(title) {
   document.title = (title ? title + ' | ' + SITE_TITLE : SITE_TITLE)
 }
 
-// TODO Implement gif-based fallback for IE9 and another non-animating browsers
+// TODO Implement GIF-based fallback for IE9 and another non-animating browsers
 //      See https://github.com/tobiasahlin/SpinKit for how-to
 var Spinner = React.createClass({
   getDefaultProps: function() {
@@ -112,6 +112,10 @@ var User = React.createClass({
   }
 })
 
+// TODO User submissions
+
+// TODO User comments
+
 var Comment = React.createClass({
   mixins: [ReactFireMixin, Navigation],
   getDefaultProps: function() {
@@ -126,9 +130,11 @@ var Comment = React.createClass({
     }
   },
   componentWillMount: function() {
-    // TODO Look into manual binding as a solution for components which need to
-    //      redirect after loading an object, without setting it on state. This
-    //      requires checks in both componentWillUpdate() and render().
+    // TODO Look into manual Firebase binding as a solution for components which
+    //      need to redirect after loading an object, without setting it on state.
+    //      This currently causes checks to be required both componentWillUpdate()
+    //      (to actually do the redirect) and render() (to avoid trying to render
+    //      with an unexpected item type).
     this.bindAsObject(new Firebase(ITEM_URL + (this.props.id || this.props.params.id)), 'comment')
   },
   componentWillUpdate: function(nextProps, nextState) {
