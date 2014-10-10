@@ -7,7 +7,6 @@ img {
 
 /* From https://github.com/tobiasahlin/SpinKit */
 .Spinner {
-  text-align: center;
 }
 .Spinner > div {
   background-color: #666;

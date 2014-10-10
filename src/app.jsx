@@ -109,6 +109,11 @@ var User = React.createClass({
 
 var Comment = React.createClass({
   mixins: [ReactFireMixin, Navigation],
+  getDefaultProps: function() {
+    return {
+      showSpinnerDeep: false
+    }
+  },
   getInitialState: function() {
     return {
       comment: {}
@@ -146,7 +151,13 @@ var Comment = React.createClass({
   },
   render: function() {
     var comment = this.state.comment
-    if (!comment.id) { return <div className="Comment Comment--loading"></div> }
+    var isTopLevel = this.isTopLevel()
+    var showSpinnerDeep = this.props.showSpinnerDeep
+    if (!comment.id) {
+      return <div className="Comment Comment--loading">
+        {(isTopLevel || showSpinnerDeep) && <Spinner size="20"/>}
+      </div>
+    }
     // Don't render anything if we're replacing the route after loading a non-comment
     if (comment.type != 'comment') { return null }
     // Don't render anything for deleted comments with no kids
@@ -158,7 +169,6 @@ var Comment = React.createClass({
     , 'Comment--collapsed': this.state.collapsed
     })
     var timeMoment = moment(comment.time * 1000)
-    var isTopLevel = this.isTopLevel()
     return <div className={className}>
       {comment.deleted && <div className="Comment__meta">
         {this.renderCollapseControl()}{' '}
@@ -178,8 +188,8 @@ var Comment = React.createClass({
         <div dangerouslySetInnerHTML={{__html: comment.text}}/>
       </div>}
       {comment.kids && <div className="Comment__kids">
-        {comment.kids.map(function(id) {
-          return <Comment key={id} id={id}/>
+        {comment.kids.map(function(id, index) {
+          return <Comment key={id} id={id} showSpinnerDeep={showSpinnerDeep || (isTopLevel && index === 0)}/>
         })}
       </div>}
     </div>
@@ -267,7 +277,7 @@ var Item = React.createClass({
   },
   render: function() {
     var item = this.state.item
-    if (!item.id) { return <div className="Item Item--loading"></div> }
+    if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx({'Item': true, 'Item--dead': item.dead})}>
       {renderItemTitle(item)}
       {renderItemMeta(item)}
@@ -280,8 +290,8 @@ var Item = React.createClass({
         })}
       </div>}
       {item.kids && <div className="Item__kids">
-        {item.kids.map(function(id) {
-          return <Comment key={id} id={id}/>
+        {item.kids.map(function(id, index) {
+          return <Comment key={id} id={id} showSpinnerDeep={index === 0}/>
         })}
       </div>}
     </div>
