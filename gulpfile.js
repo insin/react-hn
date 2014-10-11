@@ -83,6 +83,11 @@ gulp.task('build-app', ['lint'], function() {
   b.external('moment')
 
   var stream = b.bundle()
+    .on('error', function(err) {
+      gutil.log(err.message)
+      gutil.beep()
+      this.emit('end')
+    })
     .pipe(source('app.js'))
     .pipe(gulp.dest('./build'))
 
