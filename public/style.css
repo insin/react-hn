@@ -72,6 +72,9 @@ img {
 .ListItem--loading {
   min-height: 34px;
 }
+.ListItem .Item__newcomments {
+  font-weight: bold;
+}
 
 .Item {
   margin-bottom: 1em;
@@ -105,6 +108,9 @@ img {
 .Item__by a {
   font-weight: bold;
 }
+.Item .Item__newcomments {
+  margin: 1.5em;
+}
 .Item__poll {
   margin-top: 2em;
   margin-bottom: 2em;
@@ -124,6 +130,9 @@ img {
 .Comment--deleted {
   font-style: italic;
 }
+.Comment--new {
+  background-color: #ffffde;
+}
 .Comment__meta {
   color: #666;
   margin-bottom: .5em
@@ -135,7 +144,7 @@ img {
 .Comment__meta a:hover {
   text-decoration: underline;
 }
-.Comment__meta__user {
+.Comment__user {
   font-weight: bold;
 }
 .Comment__kids {

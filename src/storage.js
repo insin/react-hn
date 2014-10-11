@@ -5,7 +5,6 @@ module.exports = {
     var value = localStorage[key]
     return (typeof value != 'undefined' ? value : defaultValue)
   },
-
   set: function(key, value) {
     localStorage[key] = value
   }

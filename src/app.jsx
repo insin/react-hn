@@ -8,6 +8,8 @@ var React = require('react/addons')
 var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
+var CommentThreadStore = require('./CommentThreadStore')
+
 // Expose React globally for React Developer Tools
 window.React = React
 
@@ -24,6 +26,18 @@ var ITEMS_PER_PAGE = 30
 var SITE_TITLE = 'React Hacker News'
 var TOP_ITEMS_URL = 'https://hacker-news.firebaseio.com/v0/topstories'
 var USER_URL = 'https://hacker-news.firebaseio.com/v0/user/'
+
+function max(array) {
+  return Math.max.apply(Math, array)
+}
+
+/**
+ * Describe the time from now until the given time in terms of units without any
+ * "a" or "an" prefixes.
+ */
+function timeUnitsAgo(_moment) {
+  return _moment.fromNow(true).replace(/^an? /, '')
+}
 
 function pluralise(n) {
   return (n == 1 ? '' : 's')
@@ -121,12 +135,14 @@ var Comment = React.createClass({
   getDefaultProps: function() {
     return {
       showSpinnerDeep: false
+    , isPermalinkThread: false
     }
   },
   getInitialState: function() {
     return {
       comment: {}
     , collapsed: false
+    , isNew: false
     }
   },
   componentWillMount: function() {
@@ -136,6 +152,10 @@ var Comment = React.createClass({
     //      (to actually do the redirect) and render() (to avoid trying to render
     //      with an unexpected item type).
     this.bindAsObject(new Firebase(ITEM_URL + (this.props.id || this.props.params.id)), 'comment')
+    // Set our isNew state from the comment store
+    if (!(this.props.isPermalinkThread || this.isTopLevel())) {
+      this.setState(CommentThreadStore.addComment(this.props.id))
+    }
   },
   componentWillUpdate: function(nextProps, nextState) {
     if (this.isTopLevel() && this.state.comment.id != nextState.comment.id) {
@@ -154,6 +174,9 @@ var Comment = React.createClass({
       this.bindAsObject(new Firebase(ITEM_URL + nextProps.params.id), 'comment')
     }
   },
+  /**
+   * Determine if this comment is being viewed via its permalink.
+   */
   isTopLevel: function() {
     return !!this.props.params
   },
@@ -164,52 +187,53 @@ var Comment = React.createClass({
     var comment = this.state.comment
     var isTopLevel = this.isTopLevel()
     var showSpinnerDeep = this.props.showSpinnerDeep
+    var isPermalinkThread = this.props.isPermalinkThread
     if (!comment.id) {
-      return <div className="Comment Comment--loading">
+      return <div className={cx({'Comment Comment--loading': true, 'Comment--new': this.state.isNew})}>
         {(isTopLevel || showSpinnerDeep) && <Spinner size="20"/>}
-        {comment.error && <p>Error loading comment - this may be because the author has a delay set.</p>}
+        {comment.error && <p>Error loading comment - this may be because the author has configured a delay.</p>}
       </div>
     }
-    // Don't render anything if we're replacing the route after loading a non-comment
+    // XXX Don't render anything if we're replacing the route after loading a non-comment
     if (comment.type != 'comment') { return null }
     // Don't render anything for deleted comments with no kids
     if (comment.deleted && !comment.kids) { return null }
     var className = cx({
       'Comment': true
-    , 'Comment--deleted': comment.deleted
-    , 'Comment--dead': comment.dead
     , 'Comment--collapsed': this.state.collapsed
+    , 'Comment--dead': comment.dead
+    , 'Comment--deleted': comment.deleted
+    , 'Comment--new': this.state.isNew
     })
     var timeMoment = moment(comment.time * 1000)
+
     return <div className={className}>
       {comment.deleted && <div className="Comment__meta">
         {this.renderCollapseControl()}{' '}
         [deleted]
       </div>}
       {!comment.deleted && <div className="Comment__meta">
-        {this.renderCollapseControl()}{' '}
-        <Link to="user" params={{id: comment.by}} className="Comment__meta__user">{comment.by}</Link>{' '}
-        {timeMoment.fromNow()}
-        {!isTopLevel && ' | '}
+        <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
+          [{this.state.collapsed ? '+' : '–'}]
+        </span>{' '}
+        <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
+        {timeMoment.fromNow()}{' | '}
         {!isTopLevel && <Link to="comment" params={{id: comment.id}}>link</Link>}
-        {isTopLevel && ' | '}
         {isTopLevel && <Link to="comment" params={{id: comment.parent}}>parent</Link>}
-        {comment.dead && <span> | [dead]</span>}
+        {comment.dead &&  ' | [dead]'}
       </div>}
       {!comment.deleted && <div className="Comment__text">
         <div dangerouslySetInnerHTML={{__html: comment.text}}/>
       </div>}
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
-          return <Comment key={id} id={id} showSpinnerDeep={showSpinnerDeep || (isTopLevel && index === 0)}/>
+          return <Comment key={id} id={id}
+                   showSpinnerDeep={showSpinnerDeep || (isTopLevel && index === 0)}
+                   isPermalinkThread={isPermalinkThread  || isTopLevel}
+                  />
         })}
       </div>}
     </div>
-  },
-  renderCollapseControl: function() {
-    return <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
-      [{this.state.collapsed ? '+' : '–'}]
-    </span>
   }
 })
 
@@ -235,6 +259,9 @@ var PollOption = React.createClass({
   }
 })
 
+/**
+ * Reusable display logic for rendering an item's title bar.
+ */
 function renderItemTitle(item) {
   var hasURL = !!item.url
   var title
@@ -252,9 +279,25 @@ function renderItemTitle(item) {
   </div>
 }
 
-function renderItemMeta(item, commentsLink) {
+/**
+ * Reusable display logic for rendering an item's metadata bar.
+ */
+function renderItemMeta(item, state, linkToComments /* Pardon my boolean trap */) {
   var timeMoment = moment(item.time * 1000)
   var isNotJob = (item.type != 'job')
+  var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
+  if (state.lastVisit !== null) {
+    comments = state.commentCount + ' comment' + pluralise(state.commentCount)
+  }
+  if (linkToComments) {
+    comments = <Link to={item.type} params={{id: item.id}}>{comments}</Link>
+  }
+  // We can determine if a list item has new comments if there are new immediate
+  // child comments.
+  var hasNewComments = (linkToComments &&
+                        state.lastVisit !== null &&
+                        max(item.kids) > state.prevMaxCommentId)
+
   return <div className="Item__meta">
     {isNotJob && <span className="Item__score">
       {item.score} point{pluralise(item.score)}
@@ -263,9 +306,14 @@ function renderItemMeta(item, commentsLink) {
       by <Link to="user" params={{id: item.by}}>{item.by}</Link>
     </span>}{' '}
     <span className="Item__time">{timeMoment.fromNow()}</span>
-    {isNotJob && commentsLink && ' | '}
-    {isNotJob && commentsLink && <Link to={item.type} params={{id: item.id}}>
-      {item.kids && item.kids.length > 0 ? 'comment' : 'discuss'}
+    {isNotJob && ' | '}
+    {isNotJob && comments}
+    {linkToComments && state.lastVisit !== null && (
+      ' (' + state.lastVisit.fromNow() + ')'
+    )}
+    {hasNewComments && ' | '}
+    {hasNewComments && <Link className="Item__newcomments" to="item" params={{id: item.id}} query={{showNew: true}}>
+      new comments
     </Link>}
   </div>
 }
@@ -273,28 +321,62 @@ function renderItemMeta(item, commentsLink) {
 var Item = React.createClass({
   mixins: [ReactFireMixin],
   getInitialState: function() {
-    return {item: {}}
+    return {
+      item: {}
+    , lastVisit: null
+    , comentCount: null
+    , newCommentCount: null
+    }
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(ITEM_URL + (this.props.id || this.props.params.id)), 'item')
+    this.bindAsObject(new Firebase(ITEM_URL + this.props.params.id), 'item')
+    this.setState(CommentThreadStore.init(this.props.params.id, this.handleCommentsAdded))
+    window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
+  componentWillUnmount: function() {
+    CommentThreadStore.dispose()
+    window.removeEventListener('beforeunload', this.handleBeforeUnload)
+  },
+  /**
+   * Update the title whenever an item has loaded.
+   */
   componentWillUpdate: function(nextProps, nextState) {
     if (this.state.item.id != nextState.item.id) {
       setTitle(nextState.item.title)
     }
   },
+  /**
+   * Handle changing the displayed item without unmounting the component, e.g.
+   * when a link to another item is posted, or the user edits the URL.
+   */
   componentWillReceiveProps: function(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('item')
       this.bindAsObject(new Firebase(ITEM_URL + nextProps.params.id), 'item')
+      CommentThreadStore.dispose()
+      this.setState(CommentThreadStore.init(nextProps.params.id, this.handleCommentsAdded))
     }
+  },
+  /**
+   * Ensure the last visit time and comment details get stored for this item if
+   * the user refreshes or otherwise navigates off the page.
+   */
+  handleBeforeUnload: function() {
+    CommentThreadStore.dispose()
+  },
+  handleCommentsAdded: function(commentData) {
+    this.setState(commentData)
   },
   render: function() {
     var item = this.state.item
+    var newComments = this.state.newCommentCount
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx({'Item': true, 'Item--dead': item.dead})}>
       {renderItemTitle(item)}
-      {renderItemMeta(item)}
+      {renderItemMeta(item, this.state)}
+      {newComments > 0 && <div className="Item__newcomments">
+        {newComments} new comment{pluralise(newComments)} in the last {timeUnitsAgo(this.state.lastVisit)}
+      </div>}
       {item.text && <div className="Item__text">
         <div dangerouslySetInnerHTML={{__html: item.text}}/>
       </div>}
@@ -315,10 +397,16 @@ var Item = React.createClass({
 var ListItem = React.createClass({
   mixins: [ReactFireMixin],
   getInitialState: function() {
-    return {item: {}}
+    return {
+      item: {}
+    , lastVisit: null
+    , commentCount: null
+    , prevMaxCommentId: null
+    }
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(ITEM_URL + this.props.id || this.props.params.id), 'item')
+    this.bindAsObject(new Firebase(ITEM_URL + this.props.id), 'item')
+    this.setState(CommentThreadStore.getCommentStats(this.props.id))
   },
   render: function() {
     var item = this.state.item
@@ -326,7 +414,7 @@ var ListItem = React.createClass({
     if (item.deleted) { return null }
     return <li className={cx({'ListItem': true, 'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
-      {renderItemMeta(item, true)}
+      {renderItemMeta(item, this.state, true)}
     </li>
   }
 })
