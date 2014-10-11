@@ -12,7 +12,9 @@
     "test": "jest"
   },
   "jest": {
-    "testPathDirs": ["src"]
+    "testPathDirs": [
+      "src"
+    ]
   },
   "dependencies": {
     "firebase": "^1.1.0",
