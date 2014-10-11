@@ -1,6 +1,7 @@
 var gulp = require('gulp')
 var gutil = require('gulp-util')
 
+var beep = require('beepbeep')
 var browserify = require('browserify')
 var del = require('del')
 var jshint = require('gulp-jshint')
@@ -73,6 +74,9 @@ gulp.task('lint-tests', function() {
     .pipe(jshint.reporter('jshint-stylish'))
 })
 
+var broken = false
+var needsFixed = false
+
 /** Build app.js */
 gulp.task('build-app', ['lint'], function() {
   var b = browserify('./build/modules/app.js', {debug: !gutil.env.production})
@@ -85,8 +89,19 @@ gulp.task('build-app', ['lint'], function() {
   var stream = b.bundle()
     .on('error', function(err) {
       gutil.log(err.message)
-      gutil.beep()
+      beep(2, 0)
+      broken = true
       this.emit('end')
+    })
+    .on('end', function() {
+      if (broken) {
+        needsFixed = true
+      }
+      else if (needsFixed) {
+        beep()
+        needsFixed = false
+      }
+      broken = false
     })
     .pipe(source('app.js'))
     .pipe(gulp.dest('./build'))
