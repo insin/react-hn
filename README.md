@@ -17,6 +17,11 @@ Live version: http://insin.github.io/react-hn
 * Basic [user profiles](http://insin.github.io/react-hn/#/user/patio11)
 * Collapsible comments
 * "Realtime" updates (free via Firebase!)
+* Comment counts and last-read times are cached in localStorage and displayed on
+  list pages
+* New comments are highlighted:
+  * Comments since your last visit to an item
+  * New comments which load while you're reading an item
 
 [Feature requests are welcome!](https://github.com/insin/react-hn/issues/new)
 
