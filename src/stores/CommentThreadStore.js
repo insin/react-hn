@@ -2,8 +2,8 @@
 
 var moment = require('moment')
 
-var debounce = require('./cancellableDebounce')
-var storage = require('./storage')
+var debounce = require('../utils/cancellableDebounce')
+var storage = require('../utils/storage')
 
 var COMMENT_COUNT_KEY = ':cc'
 var LAST_VISIT_KEY = ':lv'
