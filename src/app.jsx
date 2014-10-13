@@ -7,13 +7,13 @@ var React = require('react/addons')
 var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
+var cx = require('./buildClassName')
 var CommentThreadStore = require('./CommentThreadStore')
 var ItemStore =  require('./ItemStore')
 
 // Expose React globally for React Developer Tools
 window.React = React
 
-var cx = React.addons.classSet
 var DefaultRoute = Router.DefaultRoute
 var Link = Router.Link
 var Navigation = Router.Navigation
@@ -133,6 +133,7 @@ var Comment = React.createClass({
     return {
       showSpinnerDeep: false
     , isPermalinkThread: false
+    , level: 0
     }
   },
   getInitialState: function() {
@@ -186,7 +187,7 @@ var Comment = React.createClass({
     var showSpinnerDeep = this.props.showSpinnerDeep
     var isPermalinkThread = this.props.isPermalinkThread
     if (!comment.id) {
-      return <div className={cx({'Comment Comment--loading': true, 'Comment--new': this.state.isNew})}>
+      return <div className={cx('Comment Comment--loading', {'Comment--new': this.state.isNew})}>
         {(isTopLevel || showSpinnerDeep) && <Spinner size="20"/>}
         {comment.error && <p>Error loading comment - this may be because the author has configured a delay.</p>}
       </div>
@@ -195,9 +196,8 @@ var Comment = React.createClass({
     if (comment.type != 'comment') { return null }
     // Don't render anything for deleted comments with no kids
     if (comment.deleted && !comment.kids) { return null }
-    var className = cx({
-      'Comment': true
-    , 'Comment--collapsed': this.state.collapsed
+    var className = cx('Comment Comment--level' + this.props.level, {
+      'Comment--collapsed': this.state.collapsed
     , 'Comment--dead': comment.dead
     , 'Comment--deleted': comment.deleted
     , 'Comment--new': this.state.isNew
@@ -224,11 +224,11 @@ var Comment = React.createClass({
       </div>}
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
-          return <Comment key={id} id={id}
+          return <Comment key={id} id={id} level={this.props.level + 1}
                    showSpinnerDeep={showSpinnerDeep || (isTopLevel && index === 0)}
                    isPermalinkThread={isPermalinkThread  || isTopLevel}
                   />
-        })}
+        }.bind(this))}
       </div>}
     </div>
   }
@@ -368,7 +368,7 @@ var Item = React.createClass({
     var item = this.state.item
     var newComments = this.state.newCommentCount
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
-    return <div className={cx({'Item': true, 'Item--dead': item.dead})}>
+    return <div className={cx('Item', {'Item--dead': item.dead})}>
       {renderItemTitle(item)}
       {renderItemMeta(item, this.state)}
       {newComments > 0 && <div className="Item__newcomments">
@@ -384,7 +384,7 @@ var Item = React.createClass({
       </div>}
       {item.kids && <div className="Item__kids">
         {item.kids.map(function(id, index) {
-          return <Comment key={id} id={id} showSpinnerDeep={index === 0}/>
+          return <Comment key={id} id={id} showSpinnerDeep={index === 0} level={0}/>
         })}
       </div>}
     </div>
@@ -409,7 +409,7 @@ var ListItem = React.createClass({
     var item = this.state.item
     if (!item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
     if (item.deleted) { return null }
-    return <li className={cx({'ListItem': true, 'ListItem--dead': item.dead})}>
+    return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
       {renderItemMeta(item, this.state, true)}
     </li>
