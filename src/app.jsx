@@ -79,7 +79,7 @@ var NotFound = React.createClass({
   }
 })
 
-var User = React.createClass({
+var UserProfile = React.createClass({
   mixins: [ReactFireMixin],
   getInitialState: function() {
     return {user: {}}
@@ -101,13 +101,13 @@ var User = React.createClass({
   render: function() {
     var user = this.state.user
     if (!user.id) {
-      return <div className="User User--loading">
+      return <div className="UserProfile UserProfile--loading">
         <h4>{this.props.params.id}</h4>
         <Spinner size="20"/>
       </div>
     }
     var createdMoment = moment(user.created * 1000)
-    return <div className="User">
+    return <div className="UserProfile">
       <h4>{user.id}</h4>
       <dl>
         <dt>Created</dt>
@@ -117,7 +117,7 @@ var User = React.createClass({
         <dt>Delay</dt>
         <dd>{user.delay}</dd>
         {user.about && <dt>About</dt>}
-        {user.about && <dd><div className="User__about" dangerouslySetInnerHTML={{__html: user.about}}/></dd>}
+        {user.about && <dd><div className="UserProfile__about" dangerouslySetInnerHTML={{__html: user.about}}/></dd>}
       </dl>
     </div>
   }
@@ -125,7 +125,7 @@ var User = React.createClass({
 
 // TODO User submissions
 
-// TODO User comments
+// TODO User  comments
 
 var Comment = React.createClass({
   mixins: [ReactFireMixin, Navigation],
@@ -187,7 +187,11 @@ var Comment = React.createClass({
     var showSpinnerDeep = this.props.showSpinnerDeep
     var isPermalinkThread = this.props.isPermalinkThread
     if (!comment.id) {
-      return <div className={cx('Comment Comment--loading', {'Comment--new': this.state.isNew})}>
+      var loadingClassName = cx(
+        'Comment Comment--loading Comment--level' + this.props.level,
+        {'Comment--new': this.state.isNew
+      })
+      return <div className={loadingClassName}>
         {(isTopLevel || showSpinnerDeep) && <Spinner size="20"/>}
         {comment.error && <p>Error loading comment - this may be because the author has configured a delay.</p>}
       </div>
@@ -205,23 +209,25 @@ var Comment = React.createClass({
     var timeMoment = moment(comment.time * 1000)
 
     return <div className={className}>
-      {comment.deleted && <div className="Comment__meta">
-        {this.renderCollapseControl()}{' '}
-        [deleted]
-      </div>}
-      {!comment.deleted && <div className="Comment__meta">
-        <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
-          [{this.state.collapsed ? '+' : '–'}]
-        </span>{' '}
-        <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
-        {timeMoment.fromNow()}{' | '}
-        {!isTopLevel && <Link to="comment" params={{id: comment.id}}>link</Link>}
-        {isTopLevel && <Link to="comment" params={{id: comment.parent}}>parent</Link>}
-        {comment.dead &&  ' | [dead]'}
-      </div>}
-      {!comment.deleted && <div className="Comment__text">
-        <div dangerouslySetInnerHTML={{__html: comment.text}}/>
-      </div>}
+      <div className="Comment__content">
+        {comment.deleted && <div className="Comment__meta">
+          {this.renderCollapseControl()}{' '}
+          [deleted]
+        </div>}
+        {!comment.deleted && <div className="Comment__meta">
+          <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
+            [{this.state.collapsed ? '+' : '–'}]
+          </span>{' '}
+          <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
+          {timeMoment.fromNow()}{' | '}
+          {!isTopLevel && <Link to="comment" params={{id: comment.id}}>link</Link>}
+          {isTopLevel && <Link to="comment" params={{id: comment.parent}}>parent</Link>}
+          {comment.dead &&  ' | [dead]'}
+        </div>}
+        {!comment.deleted && <div className="Comment__text">
+          <div dangerouslySetInnerHTML={{__html: comment.text}}/>
+        </div>}
+      </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
           return <Comment key={id} id={id} level={this.props.level + 1}
@@ -369,19 +375,21 @@ var Item = React.createClass({
     var newComments = this.state.newCommentCount
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
-      {renderItemTitle(item)}
-      {renderItemMeta(item, this.state)}
-      {newComments > 0 && <div className="Item__newcomments">
-        {newComments} new comment{pluralise(newComments)} in the last {timeUnitsAgo(this.state.lastVisit)}
-      </div>}
-      {item.text && <div className="Item__text">
-        <div dangerouslySetInnerHTML={{__html: item.text}}/>
-      </div>}
-      {item.type == 'poll' && <div className="Item__poll">
-        {item.parts.map(function(id) {
-          return <PollOption key={id} id={id}/>
-        })}
-      </div>}
+      <div className="Item__content">
+        {renderItemTitle(item)}
+        {renderItemMeta(item, this.state)}
+        {newComments > 0 && <div className="Item__newcomments">
+          {newComments} new comment{pluralise(newComments)} in the last {timeUnitsAgo(this.state.lastVisit)}
+        </div>}
+        {item.text && <div className="Item__text">
+          <div dangerouslySetInnerHTML={{__html: item.text}}/>
+        </div>}
+        {item.type == 'poll' && <div className="Item__poll">
+          {item.parts.map(function(id) {
+            return <PollOption key={id} id={id}/>
+          })}
+        </div>}
+      </div>
       {item.kids && <div className="Item__kids">
         {item.kids.map(function(id, index) {
           return <Comment key={id} id={id} showSpinnerDeep={index === 0} level={0}/>
@@ -433,6 +441,9 @@ var Items = React.createClass({
   render: function() {
     var page = this.getPage()
     var startIndex = (page - 1) * ITEMS_PER_PAGE
+    var endIndex = startIndex + ITEMS_PER_PAGE
+    var hasNext = endIndex < this.state.items.length - 1
+
     if (this.state.items.length === 0) {
       var dummyItems = []
       for (var i = 0; i < ITEMS_PER_PAGE; i++) {
@@ -440,14 +451,13 @@ var Items = React.createClass({
       }
       return <div className="Items Items--loading">
         <ol className="Items__list" start={startIndex + 1}>{dummyItems}</ol>
+        <Paginator route="news" page={page} hasNext={hasNext}/>
       </div>
     }
 
-    var endIndex = startIndex + ITEMS_PER_PAGE
     var items = this.state.items.slice(startIndex, endIndex)
-    var hasNext = endIndex < this.state.items.length - 1
+
     return <div className="Items">
-      {page > 1 && <Paginator route="news" page={page} hasNext={hasNext}/>}
       <ol className="Items__list" start={startIndex + 1}>
         {items.map(function(id, index) {
           return <ListItem key={id} id={id}/>
@@ -499,7 +509,7 @@ var routes = <Routes location="hash">
     <Route name="poll" path="poll/:id" handler={Item}/>
     <Route name="story" path="story/:id" handler={Item}/>
     <Route name="comment" path="comment/:id" handler={Comment}/>
-    <Route name="user" path="user/:id" handler={User}/>
+    <Route name="user" path="user/:id" handler={UserProfile}/>
   </Route>
 </Routes>
 
