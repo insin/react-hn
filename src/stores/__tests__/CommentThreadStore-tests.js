@@ -8,8 +8,8 @@ describe('getCommentStats()', function() {
     var commentStats = CommentThreadStore.getCommentStats(123)
     expect(commentStats).toEqual({
       lastVisit: null
-    , commentCount: -1
-    , prevMaxCommentId: -1
+    , commentCount: 0
+    , prevMaxCommentId: 0
     })
   })
 })
