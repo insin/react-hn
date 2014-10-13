@@ -140,7 +140,8 @@ span.control:hover {
 }
 .Item__meta em {
   font-style: normal;
-  font-weight: bold;
+  background-color: #ffffde;
+  color: #000;
 }
 .Item__by a {
   font-weight: bold;
