@@ -60,7 +60,20 @@ img {
   color: inherit;
 }
 .App__content {
+}
   padding: 8px 16px;
+.App__footer {
+  margin-top: 1em;
+  border-top: 1px solid #222;
+  text-align: center;
+  color: #00d8ff;
+  background-color: #222;
+  padding: 4px;
+}
+.App__footer a {
+  color: inherit;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .Items__list {

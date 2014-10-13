@@ -482,6 +482,9 @@ var App = React.createClass({
       <div className="App__content">
         <this.props.activeRouteHandler/>
       </div>
+      <div className="App__footer">
+        <a href="https://github.com/insin/react-hn">Fork me on GitHub</a>
+      </div>
     </div>
   }
 })
