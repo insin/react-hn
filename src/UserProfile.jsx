@@ -3,7 +3,7 @@
 'use strict';
 
 var moment = require('moment')
-var React = require('react/addons')
+var React = require('react')
 var ReactFireMixin = require('reactfire')
 
 var ItemStore =  require('./stores/ItemStore')
