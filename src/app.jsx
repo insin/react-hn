@@ -164,12 +164,16 @@ var Comment = React.createClass({
         this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
         return
       }
-      // Fetch the comment's parent so we can link to the appropriate route
-      ItemStore.fetchItem(nextState.comment.id, function(parent) {
-        this.setState({parent: parent})
-      }.bind(this))
       // Set/update the title from comment content
       setTitle('Comment by ' + nextState.comment.by)
+    }
+  },
+  componentDidUpdate: function(prevProps, prevState) {
+    if (this.props.permalinked && this.state.comment.parent != prevState.comment.parent) {
+      // Fetch the comment's parent so we can link to the appropriate route
+      ItemStore.fetchItem(this.state.comment.parent, function(parent) {
+        this.setState({parent: parent})
+      }.bind(this))
     }
   },
   componentWillReceiveProps: function(nextProps) {
