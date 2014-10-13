@@ -93,9 +93,6 @@ span.control:hover {
 .ListItem--loading {
   min-height: 34px;
 }
-.ListItem .Item__newcomments {
-  font-weight: bold;
-}
 
 .Paginator {
   margin-left: 3em;
@@ -141,11 +138,12 @@ span.control:hover {
 .Item__meta a:hover {
   text-decoration: underline;
 }
-.Item__by a {
+.Item__meta em {
+  font-style: normal;
   font-weight: bold;
 }
-.Item .Item__newcomments {
-  margin-top: 1em;
+.Item__by a {
+  font-weight: bold;
 }
 .Item__text {
   margin-top: 1em;

@@ -300,21 +300,16 @@ function renderItemTitle(item) {
 /**
  * Reusable display logic for rendering an item's metadata bar.
  */
-function renderItemMeta(item, state, linkToComments /* Pardon my boolean trap */) {
+function renderItemMeta(item, state, context, extraContent) {
   var timeMoment = moment(item.time * 1000)
   var isNotJob = (item.type != 'job')
   var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
   if (state.lastVisit !== null) {
     comments = state.commentCount + ' comment' + pluralise(state.commentCount)
   }
-  if (linkToComments) {
+  if (context == 'list') {
     comments = <Link to={item.type} params={{id: item.id}}>{comments}</Link>
   }
-  // We can determine if a list item has new comments if there are new immediate
-  // child comments.
-  var hasNewComments = (linkToComments &&
-                        state.lastVisit !== null &&
-                        max(item.kids) > state.prevMaxCommentId)
 
   return <div className="Item__meta">
     {isNotJob && <span className="Item__score">
@@ -326,13 +321,7 @@ function renderItemMeta(item, state, linkToComments /* Pardon my boolean trap */
     <span className="Item__time">{timeMoment.fromNow()}</span>
     {isNotJob && ' | '}
     {isNotJob && comments}
-    {linkToComments && state.lastVisit !== null && (
-      ' (' + state.lastVisit.fromNow() + ')'
-    )}
-    {hasNewComments && ' | '}
-    {hasNewComments && <Link className="Item__newcomments" to="item" params={{id: item.id}} query={{showNew: true}}>
-      new comments
-    </Link>}
+    {extraContent}
   </div>
 }
 
@@ -406,11 +395,10 @@ var Item = React.createClass({
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {renderItemTitle(item)}
-        {renderItemMeta(item, state)}
-        {newComments > 0 && <div className="Item__newcomments">
-          {newComments} new comment{pluralise(newComments)} in the last {timeUnitsAgo(state.lastVisit)}{' '}
-          | <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
-        </div>}
+        {renderItemMeta(item, state, 'detail', (newComments > 0 && <span>{' '}
+          (<em>{newComments} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
+          <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
+        </span>))}
         {item.text && <div className="Item__text">
           <div dangerouslySetInnerHTML={{__html: item.text}}/>
         </div>}
@@ -450,9 +438,15 @@ var ListItem = React.createClass({
     var item = this.state.item
     if (!item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
     if (item.deleted) { return null }
+    var hasNewComments = (this.state.lastVisit !== null &&
+                          max(item.kids) > this.state.prevMaxCommentId)
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
-      {renderItemMeta(item, this.state, true)}
+      {renderItemMeta(item, this.state, 'list', (this.state.lastVisit !== null && <span>{' '}
+        ({this.state.lastVisit.fromNow()})
+        {hasNewComments && ' | '}
+        {hasNewComments && <Link to="item" params={{id: item.id}}><em>new threads</em></Link>}
+      </span>))}
     </li>
   }
 })
