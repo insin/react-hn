@@ -123,9 +123,7 @@ var Comment = React.createClass({
           [deleted]
         </div>}
         {!comment.deleted && <div className="Comment__meta">
-          <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
-            [{this.state.collapsed ? '+' : '–'}]
-          </span>{' '}
+          {this.renderCollapseControl()}{' '}
           <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
           {moment(comment.time * 1000).fromNow()}{' | '}
           {!props.permalinked && <Link to="comment" params={{id: comment.id}}>link</Link>}
@@ -147,6 +145,11 @@ var Comment = React.createClass({
         })}
       </div>}
     </div>
+  },
+  renderCollapseControl: function() {
+    return <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
+      [{this.state.collapsed ? '+' : '–'}]
+    </span>
   }
 })
 
