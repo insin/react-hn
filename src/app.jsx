@@ -2,13 +2,13 @@
 
 'use strict';
 
-var Firebase = require('firebase')
 var moment = require('moment')
 var React = require('react/addons')
 var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
 var CommentThreadStore = require('./CommentThreadStore')
+var ItemStore =  require('./ItemStore')
 
 // Expose React globally for React Developer Tools
 window.React = React
@@ -21,11 +21,8 @@ var NotFoundRoute = Router.NotFoundRoute
 var Route = Router.Route
 var Routes = Router.Routes
 
-var ITEM_URL = 'https://hacker-news.firebaseio.com/v0/item/'
 var ITEMS_PER_PAGE = 30
 var SITE_TITLE = 'React Hacker News'
-var TOP_ITEMS_URL = 'https://hacker-news.firebaseio.com/v0/topstories'
-var USER_URL = 'https://hacker-news.firebaseio.com/v0/user/'
 
 function max(array) {
   return Math.max.apply(Math, array)
@@ -88,7 +85,7 @@ var User = React.createClass({
     return {user: {}}
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(USER_URL + this.props.params.id), 'user')
+    this.bindAsObject(ItemStore.userRef(this.props.params.id), 'user')
   },
   componentWillUpdate: function(nextProps, nextState) {
     if (this.state.user.id != nextState.user.id) {
@@ -98,7 +95,7 @@ var User = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('user')
-      this.bindAsObject(new Firebase(USER_URL + nextProps.params.id), 'user')
+      this.bindAsObject(ItemStore.userRef(nextProps.params.id), 'user')
     }
   },
   render: function() {
@@ -151,7 +148,7 @@ var Comment = React.createClass({
     //      This currently causes checks to be required both componentWillUpdate()
     //      (to actually do the redirect) and render() (to avoid trying to render
     //      with an unexpected item type).
-    this.bindAsObject(new Firebase(ITEM_URL + (this.props.id || this.props.params.id)), 'comment')
+    this.bindAsObject(ItemStore.itemRef(this.props.id || this.props.params.id), 'comment')
     // Set our isNew state from the comment store
     if (!(this.props.isPermalinkThread || this.isTopLevel())) {
       this.setState(CommentThreadStore.addComment(this.props.id))
@@ -171,7 +168,7 @@ var Comment = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (this.isTopLevel() && this.props.params.id != nextProps.params.id) {
       this.unbind('comment')
-      this.bindAsObject(new Firebase(ITEM_URL + nextProps.params.id), 'comment')
+      this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'comment')
     }
   },
   /**
@@ -243,7 +240,7 @@ var PollOption = React.createClass({
     return {pollopt: {}}
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(ITEM_URL + this.props.id), 'pollopt')
+    this.bindAsObject(ItemStore.itemRef(this.props.id), 'pollopt')
   },
   render: function() {
     var pollopt = this.state.pollopt
@@ -329,7 +326,7 @@ var Item = React.createClass({
     }
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(ITEM_URL + this.props.params.id), 'item')
+    this.bindAsObject(ItemStore.itemRef(this.props.params.id), 'item')
     this.setState(CommentThreadStore.init(this.props.params.id, this.handleCommentsAdded))
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
@@ -352,7 +349,7 @@ var Item = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('item')
-      this.bindAsObject(new Firebase(ITEM_URL + nextProps.params.id), 'item')
+      this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'item')
       CommentThreadStore.dispose()
       this.setState(CommentThreadStore.init(nextProps.params.id, this.handleCommentsAdded))
     }
@@ -405,7 +402,7 @@ var ListItem = React.createClass({
     }
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(ITEM_URL + this.props.id), 'item')
+    this.bindAsObject(ItemStore.itemRef(this.props.id), 'item')
     this.setState(CommentThreadStore.getCommentStats(this.props.id))
   },
   render: function() {
@@ -425,7 +422,7 @@ var Items = React.createClass({
     return {items: []}
   },
   componentWillMount: function() {
-    this.bindAsObject(new Firebase(TOP_ITEMS_URL), 'items')
+    this.bindAsObject(ItemStore.topStoriesRef(), 'items')
     setTitle()
   },
   getPage: function() {
