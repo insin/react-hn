@@ -83,7 +83,8 @@ var Item = React.createClass({
     }
     this.setState(stateChange)
   },
-  markAsRead: function() {
+  markAsRead: function(e) {
+    e.preventDefault()
     this.setState(CommentThreadStore.markAsRead())
   },
   render: function() {

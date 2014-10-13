@@ -86,7 +86,8 @@ var Comment = React.createClass({
     return (this.props.maxCommentId > 0 &&
             this.props.id > this.props.maxCommentId)
   },
-  toggleCollapsed: function() {
+  toggleCollapsed: function(e) {
+    e.preventDefault()
     this.setState({collapsed: !this.state.collapsed})
   },
   render: function() {
