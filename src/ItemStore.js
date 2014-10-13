@@ -15,5 +15,11 @@ module.exports = {
 
   userRef: function(id) {
     return api.child('user/' + id)
+  },
+
+  fetchItem: function(id, cb) {
+    this.itemRef(id).once('value', function(snapshot) {
+      cb(snapshot.val())
+    })
   }
 }

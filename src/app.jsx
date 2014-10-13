@@ -131,16 +131,18 @@ var Comment = React.createClass({
   mixins: [ReactFireMixin, Navigation],
   getDefaultProps: function() {
     return {
-      showSpinnerDeep: false
-    , isPermalinkThread: false
+      showSpinner: false
+    , permalink: false
+    , permalinkThread: false
     , level: 0
+    , maxCommentId: 0
     }
   },
   getInitialState: function() {
     return {
       comment: {}
+    , parent: {type: 'comment'}
     , collapsed: false
-    , isNew: false
     }
   },
   componentWillMount: function() {
@@ -150,65 +152,76 @@ var Comment = React.createClass({
     //      (to actually do the redirect) and render() (to avoid trying to render
     //      with an unexpected item type).
     this.bindAsObject(ItemStore.itemRef(this.props.id || this.props.params.id), 'comment')
-    // Set our isNew state from the comment store
-    if (!(this.props.isPermalinkThread || this.isTopLevel())) {
-      this.setState(CommentThreadStore.addComment(this.props.id))
+    if (!this.isInPermalinkThread()) {
+      CommentThreadStore.addComment(this.props.id)
     }
   },
   componentWillUpdate: function(nextProps, nextState) {
-    if (this.isTopLevel() && this.state.comment.id != nextState.comment.id) {
-      // Comment parent links point to the comment route - we need to redirect
-      // to the appropriate route if the parent link led to a non-comment item.
+    if (this.props.permalinked && this.state.comment.id != nextState.comment.id) {
+      // Redirect to the appropriate route if a Comment "parent" link had a
+      // non-comment item id.
       if (nextState.comment.type != 'comment') {
         this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
         return
       }
+      // Fetch the comment's parent so we can link to the appropriate route
+      ItemStore.fetchItem(nextState.comment.id, function(parent) {
+        this.setState({parent: parent})
+      }.bind(this))
+      // Set/update the title from comment content
       setTitle('Comment by ' + nextState.comment.by)
     }
   },
   componentWillReceiveProps: function(nextProps) {
-    if (this.isTopLevel() && this.props.params.id != nextProps.params.id) {
+    if (this.props.permalinked && this.props.params.id != nextProps.params.id) {
       this.unbind('comment')
       this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'comment')
     }
   },
   /**
-   * Determine if this comment is being viewed via its permalink.
+   * Determine if this comment is permalinked or is being displayed under a
+   * permalinked comment.
    */
-  isTopLevel: function() {
-    return !!this.props.params
+  isInPermalinkThread: function() {
+    return (this.props.permalinked || this.props.permalinkThread)
+  },
+  /**
+   * Determine if this is a new comment.
+   */
+  isNew: function() {
+    return (this.props.maxCommentId > 0 &&
+            this.props.id > this.props.maxCommentId)
   },
   toggleCollapsed: function() {
     this.setState({collapsed: !this.state.collapsed})
   },
   render: function() {
+    var props = this.props
     var comment = this.state.comment
-    var isTopLevel = this.isTopLevel()
-    var showSpinnerDeep = this.props.showSpinnerDeep
-    var isPermalinkThread = this.props.isPermalinkThread
+
+    // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) {
-      var loadingClassName = cx(
-        'Comment Comment--loading Comment--level' + this.props.level,
-        {'Comment--new': this.state.isNew
-      })
-      return <div className={loadingClassName}>
-        {(isTopLevel || showSpinnerDeep) && <Spinner size="20"/>}
+      return <div className={cx(
+        'Comment Comment--loading Comment--level' + props.level,
+        {'Comment--new': this.isNew()
+      })}>
+        {(props.permalinked || props.showSpinner ) && <Spinner size="20"/>}
         {comment.error && <p>Error loading comment - this may be because the author has configured a delay.</p>}
       </div>
     }
+
     // XXX Don't render anything if we're replacing the route after loading a non-comment
     if (comment.type != 'comment') { return null }
+
     // Don't render anything for deleted comments with no kids
     if (comment.deleted && !comment.kids) { return null }
-    var className = cx('Comment Comment--level' + this.props.level, {
+
+    return <div className={cx('Comment Comment--level' + props.level, {
       'Comment--collapsed': this.state.collapsed
     , 'Comment--dead': comment.dead
     , 'Comment--deleted': comment.deleted
-    , 'Comment--new': this.state.isNew
-    })
-    var timeMoment = moment(comment.time * 1000)
-
-    return <div className={className}>
+    , 'Comment--new': this.isNew()
+    })}>
       <div className="Comment__content">
         {comment.deleted && <div className="Comment__meta">
           {this.renderCollapseControl()}{' '}
@@ -219,9 +232,9 @@ var Comment = React.createClass({
             [{this.state.collapsed ? '+' : '–'}]
           </span>{' '}
           <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
-          {timeMoment.fromNow()}{' | '}
-          {!isTopLevel && <Link to="comment" params={{id: comment.id}}>link</Link>}
-          {isTopLevel && <Link to="comment" params={{id: comment.parent}}>parent</Link>}
+          {moment(comment.time * 1000).fromNow()}{' | '}
+          {!props.permalinked && <Link to="comment" params={{id: comment.id}}>link</Link>}
+          {props.permalinked && <Link to={this.state.parent.type} params={{id: comment.parent}}>parent</Link>}
           {comment.dead &&  ' | [dead]'}
         </div>}
         {!comment.deleted && <div className="Comment__text">
@@ -230,11 +243,13 @@ var Comment = React.createClass({
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
-          return <Comment key={id} id={id} level={this.props.level + 1}
-                   showSpinnerDeep={showSpinnerDeep || (isTopLevel && index === 0)}
-                   isPermalinkThread={isPermalinkThread  || isTopLevel}
-                  />
-        }.bind(this))}
+          return <Comment key={id} id={id}
+            level={props.level + 1}
+            showSpinner={props.showSpinner || (props.permalinked && index === 0)}
+            permalinkThread={props.permalinkThread || props.permalinked}
+            maxCommentId={props.maxCommentId}
+          />
+        })}
       </div>}
     </div>
   }
@@ -324,11 +339,13 @@ function renderItemMeta(item, state, linkToComments /* Pardon my boolean trap */
 var Item = React.createClass({
   mixins: [ReactFireMixin],
   getInitialState: function() {
+    var commentStats = CommentThreadStore.getCommentStats(this.props.params.id)
     return {
       item: {}
-    , lastVisit: null
-    , comentCount: null
-    , newCommentCount: null
+    , lastVisit: commentStats.lastVisit
+    , commentCount: commentStats.commentCount
+    , prevMaxCommentId: commentStats.prevMaxCommentId
+    , newCommentCount: 0
     }
   },
   componentWillMount: function() {
@@ -367,19 +384,32 @@ var Item = React.createClass({
   handleBeforeUnload: function() {
     CommentThreadStore.dispose()
   },
+  isInitialLoad: function() {
+    return this.state.lastVisit === null
+  },
   handleCommentsAdded: function(commentData) {
-    this.setState(commentData)
+    var stateChange = {newCommentCount: commentData.newCommentCount}
+    // Only update the actual comment count once it exceeds what we already had
+    if (commentData.commentCount > this.state.commentCount) {
+      stateChange.commentCount = commentData.commentCount
+    }
+    this.setState(stateChange)
+  },
+  markAsRead: function() {
+    this.setState(CommentThreadStore.markAsRead())
   },
   render: function() {
-    var item = this.state.item
-    var newComments = this.state.newCommentCount
+    var state = this.state
+    var item = state.item
+    var newComments = state.newCommentCount
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {renderItemTitle(item)}
-        {renderItemMeta(item, this.state)}
+        {renderItemMeta(item, state)}
         {newComments > 0 && <div className="Item__newcomments">
-          {newComments} new comment{pluralise(newComments)} in the last {timeUnitsAgo(this.state.lastVisit)}
+          {newComments} new comment{pluralise(newComments)} in the last {timeUnitsAgo(state.lastVisit)}{' '}
+          | <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
         </div>}
         {item.text && <div className="Item__text">
           <div dangerouslySetInnerHTML={{__html: item.text}}/>
@@ -392,7 +422,10 @@ var Item = React.createClass({
       </div>
       {item.kids && <div className="Item__kids">
         {item.kids.map(function(id, index) {
-          return <Comment key={id} id={id} showSpinnerDeep={index === 0} level={0}/>
+          return <Comment key={id} id={id} level={0}
+            showSpinner={index === 0}
+            maxCommentId={state.prevMaxCommentId}
+          />
         })}
       </div>}
     </div>
@@ -493,7 +526,7 @@ var App = React.createClass({
         <this.props.activeRouteHandler/>
       </div>
       <div className="App__footer">
-        <a href="https://github.com/insin/react-hn">Fork me on GitHub</a>
+        <a href="https://github.com/insin/react-hn">Source on GitHub</a>
       </div>
     </div>
   }
@@ -508,7 +541,7 @@ var routes = <Routes location="hash">
     <Route name="job" path="job/:id" handler={Item}/>
     <Route name="poll" path="poll/:id" handler={Item}/>
     <Route name="story" path="story/:id" handler={Item}/>
-    <Route name="comment" path="comment/:id" handler={Comment}/>
+    <Route name="comment" path="comment/:id" handler={Comment} permalinked={true}/>
     <Route name="user" path="user/:id" handler={UserProfile}/>
   </Route>
 </Routes>

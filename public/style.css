@@ -4,6 +4,12 @@ body {
 img {
   vertical-align: text-bottom;
 }
+span.control {
+  cursor: pointer;
+}
+span.control:hover {
+  text-decoration: underline;
+}
 
 /* From https://github.com/tobiasahlin/SpinKit */
 .Spinner {
@@ -139,7 +145,7 @@ img {
   font-weight: bold;
 }
 .Item .Item__newcomments {
-  padding-top: 1em;
+  margin-top: 1em;
 }
 .Item__text {
   margin-top: 1em;

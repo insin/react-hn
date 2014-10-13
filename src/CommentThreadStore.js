@@ -40,6 +40,12 @@ var onFirstLoadComplete = debounce(function() {
   isFirstVisit = false
 }, 5000)
 
+function storeCurrentState() {
+  storage.set(itemId + COMMENT_COUNT_KEY, commentCount)
+  storage.set(itemId + LAST_VISIT_KEY, Date.now())
+  storage.set(itemId + MAX_COMMENT_KEY, maxCommentId)
+}
+
 module.exports = {
   /**
    * Initialise the store for a new item which has comments. The given callback
@@ -73,18 +79,32 @@ module.exports = {
     if (itemId !== null) {
       // Cancel the item component callback in case there's one pending
       onCommentsAdded.cancel()
-      storage.set(itemId + COMMENT_COUNT_KEY, commentCount)
-      storage.set(itemId + LAST_VISIT_KEY, Date.now())
-      storage.set(itemId + MAX_COMMENT_KEY, maxCommentId)
+      storeCurrentState()
       itemId = null
       handleCommentsAdded = null
     }
   },
 
   /**
+   * Use the current max comment id as the id to compare new comments with and
+   * reset the new comment count to zero.
+   * @return .lastVisit {moment}
+   * @return .prevMaxCommentId {number}
+   * @return .newCommentCount {number}
+   */
+  markAsRead: function() {
+    newCommentCount = 0
+    prevMaxCommentId = maxCommentId
+    storeCurrentState()
+    return {
+      lastVisit: moment()
+    , prevMaxCommentId: prevMaxCommentId
+    , newCommentCount: newCommentCount
+    }
+  },
+
+  /**
    * Register a comment with the store as it pops into the page.
-   * @return .isNew {boolean} true if this is a new comment since the user last
-   *   visited this thrad.
    */
   addComment: function(commentId) {
     commentCount++
@@ -99,7 +119,6 @@ module.exports = {
     if (isFirstVisit) {
       onFirstLoadComplete()
     }
-    return {isNew: isNew}
   },
 
   /**
@@ -111,8 +130,8 @@ module.exports = {
     var lastVisitTime = storage.get(_itemId + LAST_VISIT_KEY, null)
     return {
       lastVisit: (lastVisitTime !== null ? moment(Number(lastVisitTime)) : null)
-    , commentCount: Number(storage.get(_itemId + COMMENT_COUNT_KEY, '-1'))
-    , prevMaxCommentId: Number(storage.get(_itemId + MAX_COMMENT_KEY, '-1'))
+    , commentCount: Number(storage.get(_itemId + COMMENT_COUNT_KEY, '0'))
+    , prevMaxCommentId: Number(storage.get(_itemId + MAX_COMMENT_KEY, '0'))
     }
   }
 }
