@@ -37,7 +37,7 @@ var Item = React.createClass({
   },
   componentWillMount: function() {
     this.bindAsObject(ItemStore.itemRef(this.props.params.id), 'item')
-    this.setState(CommentThreadStore.init(this.props.params.id, this.handleCommentsAdded))
+    this.setState(CommentThreadStore.init(this.props.params.id, this.handleCommentsChanged))
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
   componentWillUnmount: function() {
@@ -61,7 +61,7 @@ var Item = React.createClass({
       this.unbind('item')
       this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'item')
       CommentThreadStore.dispose()
-      this.setState(CommentThreadStore.init(nextProps.params.id, this.handleCommentsAdded))
+      this.setState(CommentThreadStore.init(nextProps.params.id, this.handleCommentsChanged))
     }
   },
   /**
@@ -71,7 +71,7 @@ var Item = React.createClass({
   handleBeforeUnload: function() {
     CommentThreadStore.dispose()
   },
-  handleCommentsAdded: function(commentData) {
+  handleCommentsChanged: function(commentData) {
     this.setState(commentData)
   },
   markAsRead: function(e) {

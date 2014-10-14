@@ -10,7 +10,7 @@ var LAST_VISIT_KEY = ':lv'
 var MAX_COMMENT_KEY = ':mc'
 
 var itemId = null
-var handleCommentsAdded = null
+var handleCommentsChanged = null
 
 var commentCount = null
 var newCommentCount = null
@@ -24,7 +24,7 @@ var isFirstVisit = null
  * will be loading in bulk on initial mount of the item.
  */
 var onCommentsChanged = debounce(function() {
-  handleCommentsAdded({
+  handleCommentsChanged({
     commentCount: commentCount
   , newCommentCount: newCommentCount
   })
@@ -39,6 +39,10 @@ var onCommentsChanged = debounce(function() {
 var onFirstLoadComplete = debounce(function() {
   prevMaxCommentId = maxCommentId
   isFirstVisit = false
+  handleCommentsChanged({
+    lastVisit: moment()
+  , maxCommentId: prevMaxCommentId
+  })
 }, 5000)
 
 function storeCurrentState() {
@@ -54,9 +58,9 @@ module.exports = {
    * with the store.
    * @return the result of calling getCommentData() with the given item id.
    */
-  init: function(_itemId, _handleCommentsAdded) {
+  init: function(_itemId, _handleCommentsChanged) {
     itemId = _itemId
-    handleCommentsAdded = _handleCommentsAdded
+    handleCommentsChanged = _handleCommentsChanged
     // Always count total comments from scratch to catch deletions
     commentCount = 0
     newCommentCount = 0
@@ -78,7 +82,7 @@ module.exports = {
       onCommentsChanged.cancel()
       storeCurrentState()
       itemId = null
-      handleCommentsAdded = null
+      handleCommentsChanged = null
       newCommentIds = null
     }
   },
