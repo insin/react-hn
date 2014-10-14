@@ -56,13 +56,13 @@ var Updates = React.createClass({
       return <div className="Updates Updates--loading"><Spinner size="20"/></div>
     }
 
-    var notice = (page == 1 && <p className="Update__notice">
+    var notice = (page == 1 && <p className="Updates__notice">
       This view will currently only update while you have it open - this will be configurable sometime&hellip;
     </p>)
 
     if (this.props.type == 'comments') {
       var comments = this.state.comments.slice(startIndex, endIndex)
-      return <div className="Comments">
+      return <div className="Updates Comments">
         {notice}
         {comments.map(function(comment) {
           return <Comment key={comment.id} id={comment.id} comment={comment}/>
@@ -72,7 +72,7 @@ var Updates = React.createClass({
     }
     else {
       var stories = this.state.stories.slice(startIndex, endIndex)
-      return <div className="Items">
+      return <div className="Updates Items">
         {notice}
         <ol className="Items__list" start={startIndex + 1}>
           {stories.map(function(item) {

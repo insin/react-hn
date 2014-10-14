@@ -106,8 +106,11 @@ span.control:hover {
   padding: 1em 1.25em 0 1.25em;
   margin-bottom: 1em;
 }
-.Update__notice {
+.Updates__notice {
   padding: 0 1.25em;
+}
+.Updates .Comment {
+  margin-bottom: .75em;
 }
 
 .Paginator {
