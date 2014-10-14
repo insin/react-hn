@@ -274,7 +274,7 @@ span.control:hover {
 .Comment__text p:last-child {
   margin-bottom: 0;
 }
-.Comment--dead .Comment__text {
+.Comment--dead > .Comment__content > .Comment__text {
   color: #ddd !important;
 }
 
