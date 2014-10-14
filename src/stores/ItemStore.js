@@ -39,12 +39,6 @@ ItemStore.fetchItems =function(ids, cb) {
   }
 }
 
-var UPDATE_CACHE_SIZE = 200
-
-var updatesRef = null
-var commentUpdates = {}
-var storyUpdates = {}
-
 ItemStore.startUpdates = function() {
   if (updatesRef === null) {
     updatesRef = api.child('updates/items')
@@ -54,13 +48,47 @@ ItemStore.startUpdates = function() {
   }
 }
 
+ItemStore.getUpdates = function() {
+  return {
+    comments: sortedCommentUpdates
+  , stories: sortedStoryUpdates
+  }
+}
+
+ItemStore.emitUpdates = function() {
+  this.emit('updates', this.getUpdates())
+}
+
 ItemStore.stopUpdates = function() {
   updatesRef.off()
   updatesRef = null
 }
 
+var UPDATE_CACHE_SIZE = 200
+
+var updatesRef = null
+var commentUpdates = {}
+var storyUpdates = {}
+var sortedCommentUpdates = []
+var sortedStoryUpdates = []
+
 function sortByTimeDesc(a, b) {
   return b.time - a.time
+}
+
+function objToSortedArray(obj, sortBy) {
+  var arr = Object.keys(obj).map(function(id) { return obj[id] })
+  arr.sort(sortBy)
+  return arr
+}
+
+function updateCache(cacheObj) {
+  var arr = objToSortedArray(cacheObj, sortByTimeDesc)
+  arr.splice(UPDATE_CACHE_SIZE, Math.max(0, arr.length - UPDATE_CACHE_SIZE))
+     .forEach(function(item) {
+       delete cacheObj[item.id]
+     })
+  return arr
 }
 
 function handleUpdateItems(items) {
@@ -76,24 +104,10 @@ function handleUpdateItems(items) {
     }
   })
 
-  var comments = Object.keys(commentUpdates).map(function(id) { return commentUpdates[id] })
-  comments.sort(sortByTimeDesc)
-  comments.splice(UPDATE_CACHE_SIZE, Math.max(0, comments.length - UPDATE_CACHE_SIZE))
-          .forEach(function(item) {
-             delete commentUpdates[item.id]
-           })
+  sortedCommentUpdates = updateCache(commentUpdates)
+  sortedStoryUpdates = updateCache(storyUpdates)
 
-  var stories = Object.keys(storyUpdates).map(function(id) { return storyUpdates[id] })
-  stories.sort(sortByTimeDesc)
-  stories.splice(UPDATE_CACHE_SIZE, Math.max(0, stories.length - UPDATE_CACHE_SIZE))
-         .forEach(function(item) {
-            delete storyUpdates[item.id]
-          })
-
-  ItemStore.emit('updates', {
-    comments: comments
-  , stories: stories
-  })
+  ItemStore.emitUpdates()
 }
 
 module.exports = ItemStore

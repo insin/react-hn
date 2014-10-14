@@ -16,19 +16,16 @@ var ITEMS_PER_PAGE = 30
 
 var Updates = React.createClass({
   getInitialState: function() {
-    return {
-      comments: []
-    , stories: []
-    }
+    return ItemStore.getUpdates()
   },
   componentWillMount: function() {
     this.setTitle(this.props.type)
-    ItemStore.on('updates', this.handleUpdates)
     ItemStore.startUpdates()
+    ItemStore.on('updates', this.handleUpdates)
   },
   componentWillUnmount: function() {
-    ItemStore.stopUpdates()
     ItemStore.off('updates', this.handleUpdates)
+    ItemStore.stopUpdates()
   },
   componentWillReceiveProps: function(nextProps) {
     if (this.props.type != nextProps.type) {
@@ -39,6 +36,9 @@ var Updates = React.createClass({
     setTitle('New ' + (type == 'comments' ? 'Comments' : 'Links'))
   },
   handleUpdates: function(updates) {
+    if (!this.isMounted()) {
+      return console.warn('Skipping update of ' + this.props.type + ' as the Updates component is not mounted')
+    }
     this.setState(updates)
   },
   getPage: function() {
@@ -57,7 +57,7 @@ var Updates = React.createClass({
     }
 
     var notice = (page == 1 && <p className="Update__notice">
-      This view will currently only update while it's active - this will be configurable sometime&hellip;
+      This view will currently only update while you have it open - this will be configurable sometime&hellip;
     </p>)
 
     if (this.props.type == 'comments') {
