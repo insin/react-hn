@@ -32,4 +32,4 @@ var PollOption = React.createClass({
   }
 })
 
-module.expors = PollOption
+module.exports = PollOption
