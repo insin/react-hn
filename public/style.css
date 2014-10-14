@@ -182,9 +182,6 @@ span.control:hover {
 
 .Comment {
 }
-.Comment--deleted {
-  font-style: italic;
-}
 .Comment--new > .Comment__content {
   background-color: #ffffde;
 }
