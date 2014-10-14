@@ -45,6 +45,7 @@ gulp.task('transpile-jsx', ['clean-modules'], function() {
 /** Build an external bundle containing all dependencies of app.js */
 gulp.task('build-deps', function() {
   var b = browserify({detectGlobals: false})
+  b.require('events')
   b.require('react/addons')
   b.require('react/addons', {expose: 'react'})
   b.require('react-router')
@@ -81,6 +82,7 @@ var needsFixed = false
 /** Build app.js */
 gulp.task('build-app', ['lint'], function() {
   var b = browserify('./build/modules/app.js', {debug: !gutil.env.production})
+  b.external('events')
   b.external('react/addons')
   b.external('react')
   b.external('react-router')

@@ -23,6 +23,7 @@ Live version: http://insin.github.io/react-hn
   * New comments which load while you're reading an item
 * Stories with new threads (top-level replies) are marked on list pages
 * Stories can be marked as read to remove highighting from new comments
+* "new" and "comments" sections driven by the Changed Items API.
 
 [Feature requests are welcome!](https://github.com/insin/react-hn/issues/new)
 

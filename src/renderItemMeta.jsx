@@ -17,7 +17,7 @@ function renderItemMeta(item, state, context, extraContent) {
   var timeMoment = moment(item.time * 1000)
   var isNotJob = (item.type != 'job')
   var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
-  if (state.lastVisit !== null) {
+  if (state.commentCount > 0) {
     comments = state.commentCount + ' comment' + pluralise(state.commentCount)
   }
   if (context == 'list') {

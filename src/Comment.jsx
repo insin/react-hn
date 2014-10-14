@@ -21,22 +21,28 @@ var Comment = React.createClass({
   mixins: [ReactFireMixin, Navigation],
   getDefaultProps: function() {
     return {
-      showSpinner: false
-    , permalink: false
-    , permalinkThread: false
+      comment: null
     , level: 0
     , maxCommentId: 0
+    , permalink: false
+    , permalinkThread: false
+    , showSpinner: false
     }
   },
   getInitialState: function() {
     return {
-      comment: {}
+      comment: this.props.comment || {}
     , parent: {type: 'comment'}
     , collapsed: false
     }
   },
   componentWillMount: function() {
-    this.bindAsObject(ItemStore.itemRef(this.props.id || this.props.params.id), 'comment')
+    if (this.props.comment === null) {
+      this.bindAsObject(ItemStore.itemRef(this.props.id || this.props.params.id), 'comment')
+    }
+    else {
+      this.fetchParent()
+    }
   },
   componentWillUpdate: function(nextProps, nextState) {
     if (this.props.permalinked && this.state.comment.id != nextState.comment.id) {
@@ -51,7 +57,7 @@ var Comment = React.createClass({
     }
   },
   componentDidUpdate: function(prevProps, prevState) {
-    if (!this.isInPermalinkThread()) {
+    if (this.shouldUseCommentStore()) {
       // Register a newly-loaded, non-deleted comment with the thread store
       if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
         CommentThreadStore.addComment(this.props.id)
@@ -65,9 +71,7 @@ var Comment = React.createClass({
     // its parent to determine the appropriate route for the "parent" link.
     else if (this.props.permalinked && this.state.comment.parent != prevState.comment.parent) {
       // Fetch the comment's parent so we can link to the appropriate route
-      ItemStore.fetchItem(this.state.comment.parent, function(parent) {
-        this.setState({parent: parent})
-      }.bind(this))
+      this.fetchParent()
     }
   },
   componentWillReceiveProps: function(nextProps) {
@@ -78,6 +82,17 @@ var Comment = React.createClass({
       this.unbind('comment')
       this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'comment')
     }
+  },
+  shouldUseCommentStore: function() {
+    return (!this.isInPermalinkThread() && this.props.comment === null)
+  },
+  shouldLinkToParent: function() {
+    return (this.props.permalinked || this.props.comment !== null)
+  },
+  fetchParent: function() {
+    ItemStore.fetchItem(this.state.comment.parent, function(parent) {
+      this.setState({parent: parent})
+    }.bind(this))
   },
   /**
    * Determine if this comment is permalinked or is being displayed under a
@@ -118,6 +133,11 @@ var Comment = React.createClass({
     // Don't render anything for deleted comments with no kids
     if (comment.deleted && !comment.kids) { return null }
 
+    var showParentLink = this.shouldLinkToParent()
+    // TODO Fetch the anccestor item so we can always show the title on the live
+    //      update screens.
+    var showParentTitle = (this.props.comment !== null && this.state.parent.type != 'comment')
+
     return <div className={cx('Comment Comment--level' + props.level, {
       'Comment--collapsed': this.state.collapsed
     , 'Comment--dead': comment.dead
@@ -132,16 +152,22 @@ var Comment = React.createClass({
         {!comment.deleted && <div className="Comment__meta">
           {this.renderCollapseControl()}{' '}
           <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
-          {moment(comment.time * 1000).fromNow()}{' | '}
+          {moment(comment.time * 1000).fromNow()}
+          {!props.permalinked && ' | '}
           {!props.permalinked && <Link to="comment" params={{id: comment.id}}>link</Link>}
-          {props.permalinked && <Link to={this.state.parent.type} params={{id: comment.parent}}>parent</Link>}
+          {showParentLink && ' | '}
+          {showParentLink && <Link to={this.state.parent.type} params={{id: comment.parent}}>parent</Link>}
+          {showParentTitle && ' | on: '}
+          {showParentTitle && <Link to={this.state.parent.type} params={{id: comment.parent}}>
+            {this.state.parent.title}
+          </Link>}
           {comment.dead &&  ' | [dead]'}
         </div>}
         {!comment.deleted && <div className="Comment__text">
           <div dangerouslySetInnerHTML={{__html: comment.text}}/>
         </div>}
       </div>
-      {comment.kids && <div className="Comment__kids">
+      {this.props.comment === null && comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
           return <Comment key={id} id={id}
             level={props.level + 1}

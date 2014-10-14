@@ -107,7 +107,7 @@ module.exports = {
    */
   addComment: function(commentId) {
     commentCount++
-    if (prevMaxCommentId !== null && commentId > prevMaxCommentId) {
+    if (prevMaxCommentId > 0 && commentId > prevMaxCommentId) {
       newCommentCount++
       newCommentIds[commentId] = true
     }

@@ -60,10 +60,18 @@ span.control:hover {
   background-color: #222;
   padding: 4px;
 }
+.App__header a {
+  color: inherit;
+  text-decoration: none;
+}
+.App__header a.active {
+  color: #fff;
+}
 .App__homelink {
   text-decoration: none;
   font-weight: bold;
-  color: inherit;
+  color: #00d8ff !important;
+  margin-right: 1.25em;
 }
 .App__content {
 }
@@ -92,6 +100,14 @@ span.control:hover {
 }
 .ListItem--loading {
   min-height: 34px;
+}
+
+.Updates--loading {
+  padding: 1em 1.25em 0 1.25em;
+  margin-bottom: 1em;
+}
+.Update__notice {
+  padding: 0 1.25em;
 }
 
 .Paginator {
