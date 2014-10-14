@@ -27,19 +27,19 @@ var ListItem = React.createClass({
       item: {}
     , lastVisit: null
     , commentCount: null
-    , prevMaxCommentId: null
+    , maxCommentId: null
     }
   },
   componentWillMount: function() {
     this.bindAsObject(ItemStore.itemRef(this.props.id), 'item')
-    this.setState(CommentThreadStore.getCommentStats(this.props.id))
+    this.setState(CommentThreadStore.getCommentData(this.props.id))
   },
   render: function() {
     var item = this.state.item
     if (!item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
     if (item.deleted) { return null }
     var hasNewComments = (this.state.lastVisit !== null &&
-                          max(item.kids) > this.state.prevMaxCommentId)
+                          max(item.kids) > this.state.maxCommentId)
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
       {renderItemMeta(item, this.state, 'list', (this.state.lastVisit !== null && <span>{' '}

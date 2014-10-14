@@ -14,6 +14,7 @@ var handleCommentsAdded = null
 
 var commentCount = null
 var newCommentCount = null
+var newCommentIds = null
 var maxCommentId = null
 var prevMaxCommentId = null
 var isFirstVisit = null
@@ -22,7 +23,7 @@ var isFirstVisit = null
  * Callbacks to the item component with comment stats are debounced as comments
  * will be loading in bulk on initial mount of the item.
  */
-var onCommentsAdded = debounce(function() {
+var onCommentsChanged = debounce(function() {
   handleCommentsAdded({
     commentCount: commentCount
   , newCommentCount: newCommentCount
@@ -51,24 +52,20 @@ module.exports = {
    * Initialise the store for a new item which has comments. The given callback
    * will be invoked with comment count details when new comments are registered
    * with the store.
-   * @return .lastVisit {moment} the last time the user visited this item's
-   *   comment thread. Will be the current time if this is their first visit.
+   * @return the result of calling getCommentData() with the given item id.
    */
   init: function(_itemId, _handleCommentsAdded) {
     itemId = _itemId
     handleCommentsAdded = _handleCommentsAdded
+    // Always count total comments from scratch to catch deletions
     commentCount = 0
     newCommentCount = 0
+    newCommentIds = {}
     maxCommentId = 0
-    prevMaxCommentId = storage.get(itemId + MAX_COMMENT_KEY, null)
-    isFirstVisit = (prevMaxCommentId === null)
-    if (prevMaxCommentId !== null) {
-      prevMaxCommentId = Number(prevMaxCommentId)
-    }
-    var lastVisitTime = storage.get(itemId + LAST_VISIT_KEY, null)
-    return {
-      lastVisit: (lastVisitTime !== null ? moment(Number(lastVisitTime)) : moment())
-    }
+    var storedData = this.getCommentData(itemId)
+    prevMaxCommentId = storedData.maxCommentId
+    isFirstVisit = (storedData.lastVisit === null)
+    return storedData
   },
 
   /**
@@ -78,27 +75,29 @@ module.exports = {
   dispose: function() {
     if (itemId !== null) {
       // Cancel the item component callback in case there's one pending
-      onCommentsAdded.cancel()
+      onCommentsChanged.cancel()
       storeCurrentState()
       itemId = null
       handleCommentsAdded = null
+      newCommentIds = null
     }
   },
 
   /**
-   * Use the current max comment id as the id to compare new comments with and
-   * reset the new comment count to zero.
+   * Use the current max comment id as the next id to compare new comments with
+   * and reset the new comment count to zero.
    * @return .lastVisit {moment}
-   * @return .prevMaxCommentId {number}
-   * @return .newCommentCount {number}
+   * @return .maxCommentId {Number}
+   * @return .newCommentCount {Number}
    */
   markAsRead: function() {
     newCommentCount = 0
     prevMaxCommentId = maxCommentId
+    newCommentIds = {}
     storeCurrentState()
     return {
       lastVisit: moment()
-    , prevMaxCommentId: prevMaxCommentId
+    , maxCommentId: maxCommentId
     , newCommentCount: newCommentCount
     }
   },
@@ -108,30 +107,43 @@ module.exports = {
    */
   addComment: function(commentId) {
     commentCount++
-    var isNew = (prevMaxCommentId !== null &&  commentId > prevMaxCommentId)
-    if (isNew) {
+    if (prevMaxCommentId !== null && commentId > prevMaxCommentId) {
       newCommentCount++
+      newCommentIds[commentId] = true
     }
     if (commentId > maxCommentId) {
       maxCommentId = commentId
     }
-    onCommentsAdded()
+    onCommentsChanged()
     if (isFirstVisit) {
       onFirstLoadComplete()
     }
   },
 
   /**
-   * Retrieve last visit and last comment count for an item by id.
-   * @return .lastVisit {moment} null if the item hasn't been visited before.
-   * @return .commentCount {Number} -1 if the item hasn't been visited before.
+   * Register deletion of a comment with the store - we won't know which
+   * comments are deleted until we load them.
    */
-  getCommentStats: function(_itemId) {
+  deleteComment: function(commentId) {
+    commentCount--
+    if (typeof newCommentIds[commentId] != 'undefined') {
+      newCommentCount--
+    }
+    onCommentsChanged()
+  },
+
+  /**
+   * Retrieve last visit and last comment count data for an item by id.
+   * @return .lastVisit {moment} null if the item hasn't been visited before.
+   * @return .commentCount {Number} 0 if the item hasn't been visited before.
+   * @return .maxCommentId {Number} 0 if the item hasn't been visited before.
+   */
+  getCommentData: function(_itemId) {
     var lastVisitTime = storage.get(_itemId + LAST_VISIT_KEY, null)
     return {
       lastVisit: (lastVisitTime !== null ? moment(Number(lastVisitTime)) : null)
     , commentCount: Number(storage.get(_itemId + COMMENT_COUNT_KEY, '0'))
-    , prevMaxCommentId: Number(storage.get(_itemId + MAX_COMMENT_KEY, '0'))
+    , maxCommentId: Number(storage.get(_itemId + MAX_COMMENT_KEY, '0'))
     }
   }
 }

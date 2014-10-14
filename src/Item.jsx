@@ -27,12 +27,11 @@ function timeUnitsAgo(_moment) {
 var Item = React.createClass({
   mixins: [ReactFireMixin],
   getInitialState: function() {
-    var commentStats = CommentThreadStore.getCommentStats(this.props.params.id)
     return {
       item: {}
-    , lastVisit: commentStats.lastVisit
-    , commentCount: commentStats.commentCount
-    , prevMaxCommentId: commentStats.prevMaxCommentId
+    , lastVisit: null
+    , commentCount: 0
+    , maxCommentId: 0
     , newCommentCount: 0
     }
   },
@@ -72,16 +71,8 @@ var Item = React.createClass({
   handleBeforeUnload: function() {
     CommentThreadStore.dispose()
   },
-  isInitialLoad: function() {
-    return this.state.lastVisit === null
-  },
   handleCommentsAdded: function(commentData) {
-    var stateChange = {newCommentCount: commentData.newCommentCount}
-    // Only update the actual comment count once it exceeds what we already had
-    if (commentData.commentCount > this.state.commentCount) {
-      stateChange.commentCount = commentData.commentCount
-    }
-    this.setState(stateChange)
+    this.setState(commentData)
   },
   markAsRead: function(e) {
     e.preventDefault()
@@ -90,13 +81,12 @@ var Item = React.createClass({
   render: function() {
     var state = this.state
     var item = state.item
-    var newComments = state.newCommentCount
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {renderItemTitle(item)}
-        {renderItemMeta(item, state, 'detail', (newComments > 0 && <span>{' '}
-          (<em>{newComments} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
+        {renderItemMeta(item, state, 'detail', (state.newCommentCount > 0 && <span>{' '}
+          (<em>{state.newCommentCount} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
           <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
         </span>))}
         {item.text && <div className="Item__text">
@@ -112,7 +102,7 @@ var Item = React.createClass({
         {item.kids.map(function(id, index) {
           return <Comment key={id} id={id} level={0}
             showSpinner={index === 0}
-            maxCommentId={state.prevMaxCommentId}
+            maxCommentId={state.maxCommentId}
           />
         })}
       </div>}

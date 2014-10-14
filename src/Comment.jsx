@@ -36,15 +36,7 @@ var Comment = React.createClass({
     }
   },
   componentWillMount: function() {
-    // TODO Look into manual Firebase binding as a solution for components which
-    //      need to redirect after loading an object, without setting it on state.
-    //      This currently causes checks to be required both componentWillUpdate()
-    //      (to actually do the redirect) and render() (to avoid trying to render
-    //      with an unexpected item type).
     this.bindAsObject(ItemStore.itemRef(this.props.id || this.props.params.id), 'comment')
-    if (!this.isInPermalinkThread()) {
-      CommentThreadStore.addComment(this.props.id)
-    }
   },
   componentWillUpdate: function(nextProps, nextState) {
     if (this.props.permalinked && this.state.comment.id != nextState.comment.id) {
@@ -59,7 +51,19 @@ var Comment = React.createClass({
     }
   },
   componentDidUpdate: function(prevProps, prevState) {
-    if (this.props.permalinked && this.state.comment.parent != prevState.comment.parent) {
+    if (!this.isInPermalinkThread()) {
+      // Register a newly-loaded, non-deleted comment with the thread store
+      if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
+        CommentThreadStore.addComment(this.props.id)
+      }
+      // Let the store know if the comment got deleted
+      else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
+        CommentThreadStore.deleteComment(this.props.id)
+      }
+    }
+    // If the top-level permalinked comment was initialised or changed, fetch
+    // its parent to determine the appropriate route for the "parent" link.
+    else if (this.props.permalinked && this.state.comment.parent != prevState.comment.parent) {
       // Fetch the comment's parent so we can link to the appropriate route
       ItemStore.fetchItem(this.state.comment.parent, function(parent) {
         this.setState({parent: parent})
@@ -67,6 +71,9 @@ var Comment = React.createClass({
     }
   },
   componentWillReceiveProps: function(nextProps) {
+    // If the top-level comment id changes (i.e. a "parent" or "link" link is
+    // used on a permalinked comment page, or the URL is edited), we need to
+    // start listening for updates to the new item id.
     if (this.props.permalinked && this.props.params.id != nextProps.params.id) {
       this.unbind('comment')
       this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'comment')
