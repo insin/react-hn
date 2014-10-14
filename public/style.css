@@ -185,7 +185,7 @@ span.control:hover {
 .Comment--deleted {
   font-style: italic;
 }
-.Comment--new {
+.Comment--new > .Comment__content {
   background-color: #ffffde;
 }
 /* Highlights a comment and its descendants on hover -- too distracting?
