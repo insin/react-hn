@@ -11,14 +11,11 @@ var ItemStore =  require('./stores/ItemStore')
 var Spinner = require('./Spinner')
 
 var cx = require('./utils/buildClassName')
+var pluralise = require('./utils/pluralise')
 var renderItemTitle = require('./renderItemTitle')
 var renderItemMeta = require('./renderItemMeta')
 
 var Link = Router.Link
-
-function max(array) {
-  return Math.max.apply(Math, array)
-}
 
 var ListItem = React.createClass({
   mixins: [ReactFireMixin],
@@ -35,17 +32,22 @@ var ListItem = React.createClass({
     this.setState(CommentThreadStore.getCommentData(this.props.id))
   },
   render: function() {
-    var item = this.state.item
+    var state = this.state
+    var item = state.item
     if (!item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
     if (item.deleted) { return null }
-    var hasNewComments = (this.state.lastVisit !== null &&
-                          max(item.kids) > this.state.maxCommentId)
+    var newThreads = (state.lastVisit === null ? 0 : item.kids.filter(function(itemId) {
+                       return itemId > state.maxCommentId
+                     }).length)
+    var hasNewThreads = (newThreads > 0)
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {renderItemTitle(item)}
-      {renderItemMeta(item, this.state, 'list', (this.state.lastVisit !== null && <span>{' '}
-        ({this.state.lastVisit.fromNow()})
-        {hasNewComments && ' | '}
-        {hasNewComments && <Link to="item" params={{id: item.id}}><em>new threads</em></Link>}
+      {renderItemMeta(item, state, 'list', (state.lastVisit !== null && <span>{' '}
+        ({state.lastVisit.fromNow()})
+        {hasNewThreads && ' | '}
+        {hasNewThreads && <Link to="item" params={{id: item.id}}>
+          <em>{newThreads} new thread{pluralise(newThreads)}</em>
+        </Link>}
       </span>))}
     </li>
   }
