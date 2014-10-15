@@ -37,6 +37,8 @@ Settings
 Use username to implement "threads" section
 * Like Updates but not cached and include kids
 
+[newcomments] Fetch link titles for comments which aren't top-level
+
 ## Future: Server - topstories use case as POC
 
 Use Firebase client to listen to and cache topstories and their items

@@ -67,7 +67,7 @@ var Updates = React.createClass({
         {comments.map(function(comment) {
           return <Comment key={comment.id} id={comment.id} comment={comment}/>
         })}
-        <Paginator route="comments" page={page} hasNext={hasNext}/>
+        <Paginator route="newcomments" page={page} hasNext={hasNext}/>
       </div>
     }
     else {
@@ -79,7 +79,7 @@ var Updates = React.createClass({
             return <ListItem key={item.id} id={item.id} item={item}/>
           })}
         </ol>
-        <Paginator route="new" page={page} hasNext={hasNext}/>
+        <Paginator route="newest" page={page} hasNext={hasNext}/>
       </div>
     }
   }

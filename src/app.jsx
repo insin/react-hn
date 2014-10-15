@@ -22,10 +22,9 @@ var App = React.createClass({
     return <div className="App">
       <div className="App__header">
         <img src="logo.png" width="16" height="16" alt="" />{' '}
-        <Link to="app" className="App__homelink">React Hacker News</Link>{' '}
-        <Link to="top">top</Link>{' | '}
-        <Link to="new">new</Link>{' | '}
-        <Link to="comments">comments</Link>
+        <Link to="news" className="App__homelink">React Hacker News</Link>{' '}
+        <Link to="newest">new</Link>{' | '}
+        <Link to="newcomments">comments</Link>
       </div>
       <div className="App__content">
         <this.props.activeRouteHandler/>
@@ -47,14 +46,14 @@ var routes = <Routes location="hash">
   <Route name="app" path="/" handler={App}>
     <DefaultRoute handler={Items}/>
     <NotFoundRoute handler={NotFound}/>
-    <Route name="top" path="top" handler={Items}/>
+    <Route name="news" path="news" handler={Items}/>
     <Route name="item" path="item/:id" handler={Item}/>
     <Route name="job" path="job/:id" handler={Item}/>
     <Route name="poll" path="poll/:id" handler={Item}/>
     <Route name="story" path="story/:id" handler={Item}/>
     <Route name="comment" path="comment/:id" handler={Comment} permalinked={true}/>
-    <Route name="comments" path="comments" handler={Updates} type="comments"/>
-    <Route name="new" path="new" handler={Updates} type="links"/>
+    <Route name="newest" path="newest" handler={Updates} type="links"/>
+    <Route name="newcomments" path="newcomments" handler={Updates} type="comments"/>
     <Route name="user" path="user/:id" handler={UserProfile}/>
   </Route>
 </Routes>

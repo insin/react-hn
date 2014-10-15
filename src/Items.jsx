@@ -21,7 +21,7 @@ var Items = React.createClass({
   },
   componentWillMount: function() {
     this.bindAsObject(ItemStore.topStoriesRef(), 'items')
-    setTitle('Top 100')
+    setTitle()
   },
   getPage: function() {
     return (this.props.query.page && /^\d+$/.test(this.props.query.page)
@@ -41,7 +41,7 @@ var Items = React.createClass({
       }
       return <div className="Items Items--loading">
         <ol className="Items__list" start={startIndex + 1}>{dummyItems}</ol>
-        <Paginator route="top" page={page} hasNext={hasNext}/>
+        <Paginator route="news" page={page} hasNext={hasNext}/>
       </div>
     }
 
@@ -53,7 +53,7 @@ var Items = React.createClass({
           return <ListItem key={id} id={id}/>
         })}
       </ol>
-      <Paginator route="top" page={page} hasNext={hasNext}/>
+      <Paginator route="news" page={page} hasNext={hasNext}/>
     </div>
   }
 })
