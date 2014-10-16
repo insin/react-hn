@@ -3,11 +3,6 @@
 Cache topstories pages in sessionStorage in beforeunload
 * Only use cache if it's within a certain freshness threshold
 
-Make CommentThreadStore a constructor
-* Create a store instance for each item and pass it down as props
-  * (Or use context? Seems like a decent use case for it)
-* Add tests
-
 Collapse threads without new comments
 * Construct tree of ids in CommentThreadStore
 * Use newCommentIds and tree to determine which should collapse

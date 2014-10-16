@@ -7,7 +7,6 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
-var CommentThreadStore = require('./stores/CommentThreadStore')
 var ItemStore =  require('./stores/ItemStore')
 var Spinner = require('./Spinner')
 
@@ -27,6 +26,7 @@ var Comment = React.createClass({
     , permalink: false
     , permalinkThread: false
     , showSpinner: false
+    , threadStore: null
     }
   },
   getInitialState: function() {
@@ -60,11 +60,11 @@ var Comment = React.createClass({
     if (this.shouldUseCommentStore()) {
       // Register a newly-loaded, non-deleted comment with the thread store
       if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
-        CommentThreadStore.addComment(this.props.id)
+        this.props.threadStore.commentAdded(this.props.id)
       }
       // Let the store know if the comment got deleted
       else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
-        CommentThreadStore.deleteComment(this.props.id)
+        this.props.threadStore.commentDeleted(this.props.id)
       }
     }
     // If the top-level permalinked comment was initialised or changed, fetch
@@ -174,6 +174,7 @@ var Comment = React.createClass({
             showSpinner={props.showSpinner || (props.permalinked && index === 0)}
             permalinkThread={props.permalinkThread || props.permalinked}
             maxCommentId={props.maxCommentId}
+            threadStore={props.threadStore}
           />
         })}
       </div>}

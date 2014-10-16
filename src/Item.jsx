@@ -37,11 +37,11 @@ var Item = React.createClass({
   },
   componentWillMount: function() {
     this.bindAsObject(ItemStore.itemRef(this.props.params.id), 'item')
-    this.setState(CommentThreadStore.init(this.props.params.id, this.handleCommentsChanged))
+    this.initThreadStore()
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
   componentWillUnmount: function() {
-    CommentThreadStore.dispose()
+    this.threadStore.dispose()
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
   /**
@@ -60,23 +60,33 @@ var Item = React.createClass({
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('item')
       this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'item')
-      CommentThreadStore.dispose()
-      this.setState(CommentThreadStore.init(nextProps.params.id, this.handleCommentsChanged))
+      this.initThreadStore()
     }
+  },
+  /**
+   * Creates a new thread store and set its initial state. If there's already
+   * an existing thread store, dispose with it first.
+   */
+  initThreadStore: function() {
+    if (this.threadStore) {
+      this.threadStore.dispose()
+    }
+    this.threadStore = new CommentThreadStore(this.props.params.id, this.handleCommentsChanged)
+    this.setState(this.threadStore.getInitialState())
   },
   /**
    * Ensure the last visit time and comment details get stored for this item if
    * the user refreshes or otherwise navigates off the page.
    */
   handleBeforeUnload: function() {
-    CommentThreadStore.dispose()
+    this.threadStore.dispose()
   },
   handleCommentsChanged: function(commentData) {
     this.setState(commentData)
   },
   markAsRead: function(e) {
     e.preventDefault()
-    this.setState(CommentThreadStore.markAsRead())
+    this.setState(this.threadStore.markAsRead())
   },
   render: function() {
     var state = this.state
@@ -103,8 +113,9 @@ var Item = React.createClass({
           return <Comment key={id} id={id} level={0}
             showSpinner={index === 0}
             maxCommentId={state.maxCommentId}
+            threadStore={this.threadStore}
           />
-        })}
+        }.bind(this))}
       </div>}
     </div>
   }

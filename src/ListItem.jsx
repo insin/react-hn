@@ -41,7 +41,7 @@ var ListItem = React.createClass({
     if (this.props.item === null) {
       this.bindAsObject(ItemStore.itemRef(this.props.id), 'item')
     }
-    this.setState(CommentThreadStore.getCommentData(this.props.id))
+    this.setState(CommentThreadStore.loadState(this.props.id))
   },
   render: function() {
     var state = this.state
