@@ -6,7 +6,7 @@ var moment = require('moment')
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var ItemStore =  require('./stores/ItemStore')
+var HNService = require('./services/HNService')
 var Spinner = require('./Spinner')
 
 var setTitle = require('./utils/setTitle')
@@ -21,7 +21,7 @@ var UserProfile = React.createClass({
     return {user: {}}
   },
   componentWillMount: function() {
-    this.bindAsObject(ItemStore.userRef(this.props.params.id), 'user')
+    this.bindAsObject(HNService.userRef(this.props.params.id), 'user')
   },
   componentWillUpdate: function(nextProps, nextState) {
     if (this.state.user.id != nextState.user.id) {
@@ -31,7 +31,7 @@ var UserProfile = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('user')
-      this.bindAsObject(ItemStore.userRef(nextProps.params.id), 'user')
+      this.bindAsObject(HNService.userRef(nextProps.params.id), 'user')
     }
   },
   render: function() {

@@ -5,7 +5,7 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var ItemStore =  require('./stores/ItemStore')
+var HNService = require('./services/HNService')
 var Spinner = require('./Spinner')
 
 var pluralise = require('./utils/pluralise')
@@ -16,7 +16,7 @@ var PollOption = React.createClass({
     return {pollopt: {}}
   },
   componentWillMount: function() {
-    this.bindAsObject(ItemStore.itemRef(this.props.id), 'pollopt')
+    this.bindAsObject(HNService.itemRef(this.props.id), 'pollopt')
   },
   render: function() {
     var pollopt = this.state.pollopt

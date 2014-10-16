@@ -7,7 +7,7 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
-var ItemStore =  require('./stores/ItemStore')
+var HNService = require('./services/HNService')
 var Spinner = require('./Spinner')
 
 var cx = require('./utils/buildClassName')
@@ -38,7 +38,7 @@ var Comment = React.createClass({
   },
   componentWillMount: function() {
     if (this.props.comment === null) {
-      this.bindAsObject(ItemStore.itemRef(this.props.id || this.props.params.id), 'comment')
+      this.bindAsObject(HNService.itemRef(this.props.id || this.props.params.id), 'comment')
     }
     else {
       this.fetchParent()
@@ -80,7 +80,7 @@ var Comment = React.createClass({
     // start listening for updates to the new item id.
     if (this.props.permalinked && this.props.params.id != nextProps.params.id) {
       this.unbind('comment')
-      this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'comment')
+      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'comment')
     }
   },
   shouldUseCommentStore: function() {
@@ -90,7 +90,7 @@ var Comment = React.createClass({
     return (this.props.permalinked || this.props.comment !== null)
   },
   fetchParent: function() {
-    ItemStore.fetchItem(this.state.comment.parent, function(parent) {
+    HNService.fetchItem(this.state.comment.parent, function(parent) {
       this.setState({parent: parent})
     }.bind(this))
   },

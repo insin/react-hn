@@ -11,9 +11,6 @@ Collapse threads without new comments
 Child counts for collapsed threads
 * New comment counts in collapsed threads
 
-Extract UpdatesStore from ItemStore
-* Still needs to be a singleton acting as only cache for live updates
-
 User submissions (reuse Items?)
 User comments (reuse Updates?)
 * Items and Updates should be combined

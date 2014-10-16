@@ -5,7 +5,7 @@
 var React = require('react')
 
 var Comment = require('./Comment')
-var ItemStore =  require('./stores/ItemStore')
+var UpdatesStore =  require('./stores/UpdatesStore')
 var ListItem = require('./ListItem')
 var Paginator = require('./Paginator')
 var Spinner = require('./Spinner')
@@ -16,16 +16,16 @@ var ITEMS_PER_PAGE = 30
 
 var Updates = React.createClass({
   getInitialState: function() {
-    return ItemStore.getUpdates()
+    return UpdatesStore.getCache()
   },
   componentWillMount: function() {
     this.setTitle(this.props.type)
-    ItemStore.startUpdates()
-    ItemStore.on('updates', this.handleUpdates)
+    UpdatesStore.start()
+    UpdatesStore.on('updates', this.handleUpdates)
   },
   componentWillUnmount: function() {
-    ItemStore.off('updates', this.handleUpdates)
-    ItemStore.stopUpdates()
+    UpdatesStore.off('updates', this.handleUpdates)
+    UpdatesStore.stop()
   },
   componentWillReceiveProps: function(nextProps) {
     if (this.props.type != nextProps.type) {

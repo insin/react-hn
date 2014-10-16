@@ -7,7 +7,7 @@ var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
-var ItemStore =  require('./stores/ItemStore')
+var HNService = require('./services/HNService')
 var Spinner = require('./Spinner')
 
 var cx = require('./utils/buildClassName')
@@ -39,7 +39,7 @@ var ListItem = React.createClass({
   },
   componentWillMount: function() {
     if (this.props.item === null) {
-      this.bindAsObject(ItemStore.itemRef(this.props.id), 'item')
+      this.bindAsObject(HNService.itemRef(this.props.id), 'item')
     }
     this.setState(CommentThreadStore.loadState(this.props.id))
   },

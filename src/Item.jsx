@@ -7,7 +7,7 @@ var ReactFireMixin = require('reactfire')
 
 var Comment = require('./Comment')
 var CommentThreadStore = require('./stores/CommentThreadStore')
-var ItemStore =  require('./stores/ItemStore')
+var HNService = require('./services/HNService')
 var PollOption = require('./PollOption')
 var Spinner = require('./Spinner')
 
@@ -36,7 +36,7 @@ var Item = React.createClass({
     }
   },
   componentWillMount: function() {
-    this.bindAsObject(ItemStore.itemRef(this.props.params.id), 'item')
+    this.bindAsObject(HNService.itemRef(this.props.params.id), 'item')
     this.initThreadStore()
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
@@ -59,7 +59,7 @@ var Item = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('item')
-      this.bindAsObject(ItemStore.itemRef(nextProps.params.id), 'item')
+      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'item')
       this.initThreadStore()
     }
   },

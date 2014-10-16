@@ -5,7 +5,7 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var ItemStore =  require('./stores/ItemStore')
+var HNService = require('./services/HNService')
 var ListItem = require('./ListItem')
 var Paginator = require('./Paginator')
 var Spinner = require('./Spinner')
@@ -20,7 +20,7 @@ var Items = React.createClass({
     return {items: []}
   },
   componentWillMount: function() {
-    this.bindAsObject(ItemStore.topStoriesRef(), 'items')
+    this.bindAsObject(HNService.topStoriesRef(), 'items')
     setTitle()
   },
   getPage: function() {
