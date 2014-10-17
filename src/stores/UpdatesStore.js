@@ -4,9 +4,10 @@ var EventEmitter = require('events').EventEmitter
 
 var HNService = require('../services/HNService')
 
+var constants = require('../utils/constants')
 var extend = require('../utils/extend')
 
-var UPDATE_CACHE_SIZE = 200
+var UPDATE_CACHE_SIZE = constants.UPDATE_CACHE_SIZE
 
 var updatesRef = null
 var commentUpdates = {}

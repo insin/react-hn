@@ -4,82 +4,84 @@
 
 var React = require('react')
 
-var Comment = require('./Comment')
 var UpdatesStore =  require('./stores/UpdatesStore')
-var ListItem = require('./ListItem')
+
+var DisplayListItem = require('./DisplayListItem')
+var Comment = require('./Comment')
 var Paginator = require('./Paginator')
 var Spinner = require('./Spinner')
 
+var PageNumberMixin = require('./mixins/PageNumberMixin')
+
+var pageCalc = require('./utils/pageCalc')
 var setTitle = require('./utils/setTitle')
 
 var ITEMS_PER_PAGE = 30
 
 var Updates = React.createClass({
+  mixins: [PageNumberMixin],
+
   getInitialState: function() {
     return UpdatesStore.getCache()
   },
+
   componentWillMount: function() {
     this.setTitle(this.props.type)
     UpdatesStore.start()
     UpdatesStore.on('updates', this.handleUpdates)
   },
+
   componentWillUnmount: function() {
     UpdatesStore.off('updates', this.handleUpdates)
     UpdatesStore.stop()
   },
+
   componentWillReceiveProps: function(nextProps) {
     if (this.props.type != nextProps.type) {
       this.setTitle(nextProps.type)
     }
   },
+
   setTitle: function(type) {
     setTitle('New ' + (type == 'comments' ? 'Comments' : 'Links'))
   },
+
   handleUpdates: function(updates) {
     if (!this.isMounted()) {
       return console.warn('Skipping update of ' + this.props.type + ' as the Updates component is not mounted')
     }
     this.setState(updates)
   },
-  getPage: function() {
-    return (this.props.query.page && /^\d+$/.test(this.props.query.page)
-            ? Math.max(1, Number(this.props.query.page))
-            : 1)
-  },
-  render: function() {
-    var page = this.getPage()
-    var startIndex = (page - 1) * ITEMS_PER_PAGE
-    var endIndex = startIndex + ITEMS_PER_PAGE
-    var hasNext = endIndex < this.state.comments.length - 1
 
-    if (this.state.comments.length === 0) {
+  render: function() {
+    var items= (this.props.type == 'comments' ? this.state.comments: this.state.stories)
+    if (items.length === 0) {
       return <div className="Updates Updates--loading"><Spinner size="20"/></div>
     }
 
-    var notice = (page == 1 && <p className="Updates__notice">
+    var page = pageCalc(this.getPageNumber(), ITEMS_PER_PAGE, items.length)
+    var notice = (page.pageNum == 1 && <p className="Updates__notice">
       This view will currently only update while you have it open - this will be configurable sometime&hellip;
     </p>)
 
     if (this.props.type == 'comments') {
-      var comments = this.state.comments.slice(startIndex, endIndex)
       return <div className="Updates Comments">
         {notice}
-        {comments.map(function(comment) {
+        {items.slice(page.startIndex, page.endIndex).map(function(comment) {
           return <Comment key={comment.id} id={comment.id} comment={comment}/>
         })}
-        <Paginator route="newcomments" page={page} hasNext={hasNext}/>
+        <Paginator route="newcomments" page={page.pageNum} hasNext={page.hasNext}/>
       </div>
     }
     else {
-      var stories = this.state.stories.slice(startIndex, endIndex)
       return <div className="Updates Items">
         {notice}
-        <ol className="Items__list" start={startIndex + 1}>
-          {stories.map(function(item) {
-            return <ListItem key={item.id} id={item.id} item={item}/>
+        <ol className="Items__list" start={page.startIndex + 1}>
+          {items.slice(page.startIndex, page.endIndex).map(function(item) {
+            return <DisplayListItem key={item.id} item={item}/>
           })}
         </ol>
-        <Paginator route="newest" page={page} hasNext={hasNext}/>
+        <Paginator route="newest" page={page.pageNum} hasNext={page.hasNext}/>
       </div>
     }
   }

@@ -7,7 +7,7 @@ var Router = require('react-router')
 
 var Comment = require('./Comment')
 var Item = require('./Item')
-var Items = require('./Items')
+var TopStories = require('./TopStories')
 var Updates = require('./Updates')
 var UserProfile = require('./UserProfile')
 
@@ -44,9 +44,9 @@ var NotFound = React.createClass({
 
 var routes = <Routes location="hash">
   <Route name="app" path="/" handler={App}>
-    <DefaultRoute handler={Items}/>
+    <DefaultRoute handler={TopStories}/>
     <NotFoundRoute handler={NotFound}/>
-    <Route name="news" path="news" handler={Items}/>
+    <Route name="news" path="news" handler={TopStories}/>
     <Route name="item" path="item/:id" handler={Item}/>
     <Route name="job" path="job/:id" handler={Item}/>
     <Route name="poll" path="poll/:id" handler={Item}/>

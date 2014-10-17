@@ -10,10 +10,9 @@ var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
 var PollOption = require('./PollOption')
 var Spinner = require('./Spinner')
+var ItemMixin = require('./mixins/ItemMixin')
 
 var cx = require('./utils/buildClassName')
-var renderItemTitle = require('./renderItemTitle')
-var renderItemMeta = require('./renderItemMeta')
 var setTitle = require('./utils/setTitle')
 
 /**
@@ -25,7 +24,7 @@ function timeUnitsAgo(_moment) {
 }
 
 var Item = React.createClass({
-  mixins: [ReactFireMixin],
+  mixins: [ItemMixin, ReactFireMixin],
   getInitialState: function() {
     return {
       item: {}
@@ -94,8 +93,8 @@ var Item = React.createClass({
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
-        {renderItemTitle(item)}
-        {renderItemMeta(item, state, 'detail', (state.lastVisit !== null && state.newCommentCount > 0 && <span>{' '}
+        {this.renderItemTitle(item)}
+        {this.renderItemMeta(item, state, 'detail', (state.lastVisit !== null && state.newCommentCount > 0 && <span>{' '}
           (<em>{state.newCommentCount} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
           <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
         </span>))}

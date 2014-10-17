@@ -1,7 +1,6 @@
 ## Client
 
-Cache topstories pages in sessionStorage in beforeunload
-* Only use cache if it's within a certain freshness threshold
+Only use topstories cache if it's within a certain freshness threshold?
 
 Collapse threads without new comments
 * Construct tree of ids in CommentThreadStore
