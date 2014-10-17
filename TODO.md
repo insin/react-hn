@@ -1,6 +1,10 @@
 ## Client
 
-Only use topstories cache if it's within a certain freshness threshold?
+Update comments in updates cache with their story id/title to be cached
+
+Use the contents of the updates cache when checking for new comment parent details
+
+Marking as read based on time rather than comment id would allow it to be done from list pages
 
 Collapse threads without new comments
 * Construct tree of ids in CommentThreadStore
@@ -10,6 +14,7 @@ Collapse threads without new comments
 Child counts for collapsed threads
 * New comment counts in collapsed threads
 
+Saved stories
 User submissions (reuse Items?)
 User comments (reuse Updates?)
 * Items and Updates should be combined
@@ -27,6 +32,8 @@ Settings
 * themes (alt CSS, user CSS)
 * max number of cached updates (stories / comments)
 * always poll updates?
+
+
 
 Use username to implement "threads" section
 * Like Updates but not cached and include kids
