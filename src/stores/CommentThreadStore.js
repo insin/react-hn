@@ -36,7 +36,7 @@ function CommentThreadStore(itemId, onCommentsChanged) {
 
   /**
    * Callback to the item component with updated thread state is debounced as
-   & comments will be loading in bulk on initial mount of the item.
+   * comments will be loading in bulk on initial mount of the item.
    */
   var _commentsChanged = debounce(function() {
     onCommentsChanged({
