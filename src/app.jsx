@@ -50,7 +50,7 @@ var App = React.createClass({
         <this.props.activeRouteHandler/>
       </div>
       <div className="App__footer">
-        <a href="https://github.com/insin/react-hn">Source on GitHub</a>
+        react-hn v{process.env.VERSION} | <a href="https://github.com/insin/react-hn">insin/react-hn</a>
       </div>
     </div>
   }

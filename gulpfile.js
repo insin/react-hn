@@ -22,6 +22,7 @@ var jsExt = (gutil.env.production ? 'min.js' : 'js')
 
 // Set up NODE_ENV appropriately for envify
 process.env.NODE_ENV = (gutil.env.production ? 'production' : 'development')
+process.env.VERSION = require('./package.json').version
 
 /** Delete everything from /build/modules */
 gulp.task('clean-modules', function(cb) {
