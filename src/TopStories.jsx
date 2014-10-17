@@ -41,6 +41,12 @@ var TopStories = React.createClass({
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
 
+  componentWillReceiveProps: function(nextProps) {
+    if (this.props.query.page != nextProps.query.page) {
+      this.setState({items: TopStore.getPageCache(this.getPageNumber(nextProps.query.page))})
+    }
+  },
+
   handleBeforeUnload: function() {
     TopStore.saveSession()
   },
