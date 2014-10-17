@@ -81,7 +81,10 @@ var needsFixed = false
 
 /** Build app.js */
 gulp.task('build-app', ['lint'], function() {
-  var b = browserify('./build/modules/app.js', {debug: !gutil.env.production})
+  var b = browserify('./build/modules/app.js', {
+    debug: !gutil.env.production
+  , detectGlobals: false
+  })
   b.external('events')
   b.external('react/addons')
   b.external('react')
@@ -89,6 +92,7 @@ gulp.task('build-app', ['lint'], function() {
   b.external('firebase')
   b.external('reactfire')
   b.external('moment')
+  b.transform('envify')
 
   var stream = b.bundle()
     .on('error', function(err) {

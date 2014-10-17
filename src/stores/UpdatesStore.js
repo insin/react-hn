@@ -34,18 +34,50 @@ function updateCache(cacheObj) {
   return arr
 }
 
+/**
+ * Lookup to filter out any items which appear in the updates feed which can't
+ * be displayed by the Updates component.
+ */
+var updateItemTypes = {
+  comment: true
+, job: true
+, poll: true
+, story: true
+}
+
 function handleUpdateItems(items) {
-  items.forEach(function(item) {
-    if (item.deleted || item.error) {
-      return
+  for (var i = 0, l = items.length; i < l; i++) {
+    var item = items[i]
+    // Silently ignore deleted items (because irony)
+    if (item.deleted) { continue }
+
+    if (typeof item.error != 'undefined') {
+      if ("production" !== process.env.NODE_ENV) {
+        console.warn(
+          "An item with an 'error' property was received in the updates " +
+          'stream: ' + JSON.stringify(item)
+        )
+      }
+      continue
     }
+
+    if (typeof updateItemTypes[item.type] == 'undefined') {
+      if ("production" !== process.env.NODE_ENV) {
+        console.warn(
+          "An item which can't be displayed by the Updates component was " +
+          'received in the updates stream: ' + JSON.stringify(item)
+        )
+      }
+      continue
+    }
+
     if (item.type == 'comment') {
       commentUpdates[item.id] = item
     }
     else {
       storyUpdates[item.id] = item
     }
-  })
+  }
 
   sortedCommentUpdates = updateCache(commentUpdates)
   sortedStoryUpdates = updateCache(storyUpdates)
