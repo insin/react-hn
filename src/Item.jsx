@@ -94,7 +94,7 @@ var Item = React.createClass({
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {this.renderItemTitle(item)}
-        {this.renderItemMeta(item, state, 'detail', (state.lastVisit !== null && state.newCommentCount > 0 && <span>{' '}
+        {this.renderItemMeta(item, (state.lastVisit !== null && state.newCommentCount > 0 && <span>{' '}
           (<em>{state.newCommentCount} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
           <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
         </span>))}

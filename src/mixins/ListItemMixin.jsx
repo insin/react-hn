@@ -36,7 +36,7 @@ var ListItemMixin = {
     var hasNewThreads = (newThreads > 0)
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {this.renderItemTitle(item)}
-      {this.renderItemMeta(item, state, 'list', (state.lastVisit !== null && <span>{' '}
+      {this.renderItemMeta(item, (state.lastVisit !== null && <span>{' '}
         ({state.lastVisit.fromNow()})
         {hasNewThreads && ' | '}
         {hasNewThreads && <Link to="item" params={{id: item.id}}>

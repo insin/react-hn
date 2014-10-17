@@ -27,29 +27,36 @@ var parseHost = (function() {
  */
 var ItemMixin = {
   /**
-   * Rendering an item's metadata bar.
+   * Render an item's metadata bar.
    */
-  renderItemMeta: function (item, state, context, extraContent) {
+  renderItemMeta: function (item, extraContent) {
     var timeMoment = moment(item.time * 1000)
-    var isNotJob = (item.type != 'job')
     var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
-    if (state.commentCount > 0) {
-      comments = state.commentCount + ' comment' + pluralise(state.commentCount)
+    if (this.state.commentCount > 0) {
+      comments = this.state.commentCount + ' comment' + pluralise(this.state.commentCount)
     }
-    if (context == 'list') {
+    // Item comment/permalink should only be displayed when in a list
+    if (this.constructor.displayName.indexOf('ListItem') != -1) {
       comments = <Link to={item.type} params={{id: item.id}}>{comments}</Link>
     }
 
+    if (item.type == 'job') {
+      return <div className="Item__meta">
+        <span className="Item__time">{timeMoment.fromNow()}</span>
+      </div>
+    }
     return <div className="Item__meta">
-      {isNotJob && <span className="Item__score">
+      <span className="Item__score">
         {item.score} point{pluralise(item.score)}
-      </span>}{' '}
-      {isNotJob && <span className="Item__by">
+      </span>{' '}
+      <span className="Item__by">
         by <Link to="user" params={{id: item.by}}>{item.by}</Link>
-      </span>}{' '}
-      <span className="Item__time">{timeMoment.fromNow()}</span>
-      {isNotJob && ' | '}
-      {isNotJob && comments}
+      </span>{' '}
+      <span className="Item__time">
+        {timeMoment.fromNow()}
+      </span>
+      {' | '}
+      {comments}
       {extraContent}
     </div>
   },
