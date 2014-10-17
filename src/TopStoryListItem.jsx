@@ -65,7 +65,6 @@ var TopStoryListItem = React.createClass({
    * with its current index and latest data.
    */
   componentWillUpdate: function(nextProps, nextState) {
-
     if (this.state.item !== nextState.item) {
       TopStore.setItem(this.props.topIndex, nextState.item)
     }
@@ -85,7 +84,6 @@ var TopStoryListItem = React.createClass({
     var item = this.state.item
     // Display the loading spinner if we have nothing to show initially
     if (!item.id) {  return <li className="ListItem ListItem--loading"><Spinner/></li>}
-    if (item.deleted) { return null }
     return this.renderListItem(item)
   }
 })

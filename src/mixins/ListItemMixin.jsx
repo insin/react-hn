@@ -30,6 +30,7 @@ var ListItemMixin = {
   },
 
   renderListItem: function(item) {
+    if (item.deleted) { return null }
     var state = this.state
     var newThreads = this.getNewThreadCount(item)
     var hasNewThreads = (newThreads > 0)

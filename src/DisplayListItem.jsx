@@ -21,9 +21,7 @@ var DisplayListItem = React.createClass({
   },
 
   render: function() {
-    var item = this.props.item
-    if (item.deleted) { return null }
-    return this.renderListItem(item)
+    return this.renderListItem(this.props.item)
   }
 })
 
