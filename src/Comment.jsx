@@ -23,12 +23,13 @@ var Comment = React.createClass({
       comment: null
     , level: 0
     , maxCommentId: 0
-    , permalink: false
+    , permalinked: false
     , permalinkThread: false
     , showSpinner: false
     , threadStore: null
     }
   },
+
   getInitialState: function() {
     return {
       comment: this.props.comment || {}
@@ -36,6 +37,7 @@ var Comment = React.createClass({
     , collapsed: false
     }
   },
+
   componentWillMount: function() {
     if (this.props.comment === null) {
       this.bindAsObject(HNService.itemRef(this.props.id || this.props.params.id), 'comment')
@@ -44,6 +46,7 @@ var Comment = React.createClass({
       this.fetchParent()
     }
   },
+
   componentWillUpdate: function(nextProps, nextState) {
     if (this.props.permalinked && this.state.comment.id != nextState.comment.id) {
       // Redirect to the appropriate route if a Comment "parent" link had a
@@ -56,6 +59,7 @@ var Comment = React.createClass({
       setTitle('Comment by ' + nextState.comment.by)
     }
   },
+
   componentDidUpdate: function(prevProps, prevState) {
     if (this.shouldUseCommentStore()) {
       // Register a newly-loaded, non-deleted comment with the thread store
@@ -74,6 +78,7 @@ var Comment = React.createClass({
       this.fetchParent()
     }
   },
+
   componentWillReceiveProps: function(nextProps) {
     // If the top-level comment id changes (i.e. a "parent" or "link" link is
     // used on a permalinked comment page, or the URL is edited), we need to
@@ -83,17 +88,21 @@ var Comment = React.createClass({
       this.bindAsObject(HNService.itemRef(nextProps.params.id), 'comment')
     }
   },
+
   shouldUseCommentStore: function() {
     return (!this.isInPermalinkThread() && this.props.comment === null)
   },
+
   shouldLinkToParent: function() {
     return (this.props.permalinked || this.props.comment !== null)
   },
+
   fetchParent: function() {
     HNService.fetchItem(this.state.comment.parent, function(parent) {
       this.setState({parent: parent})
     }.bind(this))
   },
+
   /**
    * Determine if this comment is permalinked or is being displayed under a
    * permalinked comment.
@@ -101,6 +110,7 @@ var Comment = React.createClass({
   isInPermalinkThread: function() {
     return (this.props.permalinked || this.props.permalinkThread)
   },
+
   /**
    * Determine if this is a new comment.
    */
@@ -108,10 +118,12 @@ var Comment = React.createClass({
     return (this.props.maxCommentId > 0 &&
             this.props.id > this.props.maxCommentId)
   },
+
   toggleCollapsed: function(e) {
     e.preventDefault()
     this.setState({collapsed: !this.state.collapsed})
   },
+
   render: function() {
     var props = this.props
     var comment = this.state.comment
@@ -180,6 +192,7 @@ var Comment = React.createClass({
       </div>}
     </div>
   },
+
   renderCollapseControl: function() {
     return <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
       [{this.state.collapsed ? '+' : '–'}]
