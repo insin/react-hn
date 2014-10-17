@@ -5,6 +5,9 @@
 var React = require('react')
 var Router = require('react-router')
 
+var TopStore = require('./stores/TopStore')
+var UpdatesStore = require('./stores/UpdatesStore')
+
 var Comment = require('./Comment')
 var Item = require('./Item')
 var TopStories = require('./TopStories')
@@ -18,6 +21,23 @@ var Route = Router.Route
 var Routes = Router.Routes
 
 var App = React.createClass({
+  componentWillMount: function() {
+    window.addEventListener('beforeunload', this.handleBeforeUnload)
+  },
+
+  componentWillUnmount: function() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload)
+  },
+
+  /**
+   * Give stores a chance to persist data to sessionStorage in case this is a
+   * refresh or an external link in the same tab.
+   */
+  handleBeforeUnload: function() {
+    TopStore.saveSession()
+    UpdatesStore.saveSession()
+  },
+
   render: function() {
     return <div className="App">
       <div className="App__header">

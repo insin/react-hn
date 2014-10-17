@@ -19,13 +19,15 @@ Live version: http://insin.github.io/react-hn
 * Basic [user profiles](http://insin.github.io/react-hn/#/user/patio11)
 * Collapsible comments
 * "Realtime" updates (free via Firebase!)
-* Comment counts and last visit times for stories are cached in localStorage
+* Comment counts and last visit times for stories are cached in `localStorage`
 * New comments are highlighted:
   * Comments since your last visit to an item
   * New comments which load while you're reading an item
 * Stories with new threads (top-level replies) are marked on list pages
 * Stories can be marked as read to remove highighting from new comments
-* "new" and "comments" sections driven by the Changed Items API.
+* "new" and "comments" sections driven by the Changed Items API
+* Item listing pages are cached in `sessionStorage` for quick back button usage
+  and pagination in the same session
 
 [Feature requests are welcome!](https://github.com/insin/react-hn/issues/new)
 

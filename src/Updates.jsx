@@ -22,7 +22,7 @@ var Updates = React.createClass({
   mixins: [PageNumberMixin],
 
   getInitialState: function() {
-    return UpdatesStore.getCache()
+    return UpdatesStore.getUpdates()
   },
 
   componentWillMount: function() {
