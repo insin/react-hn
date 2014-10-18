@@ -33,12 +33,10 @@ Settings
 * max number of cached updates (stories / comments)
 * always poll updates?
 
-
-
 Use username to implement "threads" section
 * Like Updates but not cached and include kids
 
-[newcomments] Fetch link titles for comments which aren't top-level
+Animation when stories change position as updates are received
 
 Highlighted minimap/scroll highlighter to show where new comments are
 

@@ -7,10 +7,12 @@ var ITEMS_PER_PAGE = constants.ITEMS_PER_PAGE
 var TOP_STORIES = constants.TOP_STORIES
 
 var topstories = null
+var topstoryIds = null
 
 function loadSession() {
   var json = sessionStorage.topstories
   topstories = (json ? JSON.parse(json) : [])
+  topstoryIds = topstories.map(function(item) { return item.id })
 }
 
 var TopStore = {
@@ -19,6 +21,15 @@ var TopStore = {
       loadSession()
     }
     topstories[index] = item
+    topstoryIds[index] = item.id
+  },
+
+  getItem: function(id) {
+    if (topstories === null) {
+      loadSession()
+    }
+    var index = topstoryIds.indexOf(id)
+    return (index != -1 ? topstories[index] : null)
   },
 
   getPageCache: function(pageNum) {

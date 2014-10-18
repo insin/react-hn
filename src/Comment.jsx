@@ -8,9 +8,12 @@ var ReactFireMixin = require('reactfire')
 var Router = require('react-router')
 
 var HNService = require('./services/HNService')
+var ItemStore = require('./stores/ItemStore')
+
 var Spinner = require('./Spinner')
 
 var cx = require('./utils/buildClassName')
+var pluralise = require('./utils/pluralise')
 var setTitle = require('./utils/setTitle')
 
 var Link = Router.Link
@@ -34,6 +37,7 @@ var Comment = React.createClass({
     return {
       comment: this.props.comment || {}
     , parent: {type: 'comment'}
+    , op: {}
     , collapsed: false
     }
   },
@@ -43,7 +47,7 @@ var Comment = React.createClass({
       this.bindAsObject(HNService.itemRef(this.props.id || this.props.params.id), 'comment')
     }
     else {
-      this.fetchParent()
+      this.fetchAncestors()
     }
   },
 
@@ -97,9 +101,28 @@ var Comment = React.createClass({
     return (this.props.permalinked || this.props.comment !== null)
   },
 
-  fetchParent: function() {
-    HNService.fetchItem(this.state.comment.parent, function(parent) {
-      this.setState({parent: parent})
+  fetchAncestors: function() {
+    ItemStore.fetchCommentAncestors(this.state.comment, function(result) {
+      if ("production" !== process.env.NODE_ENV) {
+        console.info(
+          'fetchAncestors(' + this.state.comment.id + ') took ' +
+          result.timeTaken + ' ms for ' +
+          result.itemCount + ' item' + pluralise(result.itemCount) + ' with ' +
+          result.cacheHits + ' cache hit' + pluralise(result.cacheHits) + ' ('  +
+          (result.cacheHits / result.itemCount * 100).toFixed(1) + '%)'
+        )
+      }
+      if (!this.isMounted()) {
+        if ("production" !== process.env.NODE_ENV) {
+          console.info("...but the comment isn't mounted")
+        }
+        // Too late - the comment or the user has moved elsewhere
+        return
+      }
+      this.setState({
+        parent: result.parent
+      , op: result.op
+      })
     }.bind(this))
   },
 
@@ -146,9 +169,11 @@ var Comment = React.createClass({
     if (comment.deleted && !comment.kids) { return null }
 
     var showParentLink = this.shouldLinkToParent()
-    // TODO Fetch the anccestor item so we can always show the title on the live
-    //      update screens.
-    var showParentTitle = (this.props.comment !== null && this.state.parent.type != 'comment')
+    var showOPLink = (this.props.comment !== null && this.state.op.id)
+    // Don't show the parent link if the OP is the parent
+    if (showOPLink && showParentLink && this.state.op.id == comment.parent) {
+      showParentLink = false
+    }
 
     return <div className={cx('Comment Comment--level' + props.level, {
       'Comment--collapsed': this.state.collapsed
@@ -169,9 +194,9 @@ var Comment = React.createClass({
           {!props.permalinked && <Link to="comment" params={{id: comment.id}}>link</Link>}
           {showParentLink && ' | '}
           {showParentLink && <Link to={this.state.parent.type} params={{id: comment.parent}}>parent</Link>}
-          {showParentTitle && ' | on: '}
-          {showParentTitle && <Link to={this.state.parent.type} params={{id: comment.parent}}>
-            {this.state.parent.title}
+          {showOPLink && ' | on: '}
+          {showOPLink && <Link to={this.state.op.type} params={{id: this.state.op.id}}>
+            {this.state.op.title}
           </Link>}
           {comment.dead &&  ' | [dead]'}
         </div>}

@@ -141,6 +141,10 @@ var UpdatesStore = extend(new EventEmitter(), {
     return updates
   },
 
+  getItem: function(id) {
+    return (updatesCache.comments[id] || updatesCache.stories[id] || null)
+  },
+
   stop: function() {
     updatesRef.off()
     updatesRef = null
