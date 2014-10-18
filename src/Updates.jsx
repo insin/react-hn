@@ -48,7 +48,10 @@ var Updates = React.createClass({
 
   handleUpdates: function(updates) {
     if (!this.isMounted()) {
-      return console.warn('Skipping update of ' + this.props.type + ' as the Updates component is not mounted')
+      if ("production" !== process.env.NODE_ENV) {
+        console.warn('Skipping update of ' + this.props.type + ' as the Updates component is not mounted')
+      }
+      return
     }
     this.setState(updates)
   },
