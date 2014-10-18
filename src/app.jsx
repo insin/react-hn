@@ -2,6 +2,8 @@
 
 'use strict';
 
+require('setimmediate')
+
 var React = require('react')
 var Router = require('react-router')
 

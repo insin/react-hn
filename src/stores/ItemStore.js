@@ -71,7 +71,7 @@ var ItemStore = {
       if (result) {
         result.cacheHits++
       }
-      setTimeout(function() { cb(cachedItem) }, 4)
+      setImmediate(cb, cachedItem)
     }
     else {
       HNService.fetchItem(id, cb)
@@ -83,7 +83,7 @@ var ItemStore = {
     var result = {itemCount: 0, cacheHits: 0}
     fetchCommentParent(comment, function() {
       result.timeTaken = Date.now() - startTime
-      setTimeout(function() { cb(result) }, 4)
+      setImmediate(cb, result)
     }, result)
   }
 }
