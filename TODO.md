@@ -1,18 +1,18 @@
 ## Client
 
-Update comments in updates cache with their story id/title to be cached
-
-Use the contents of the updates cache when checking for new comment parent details
-
-Marking as read based on time rather than comment id would allow it to be done from list pages
+Marking as read based on time rather than comment id would allow it to be done
+from list pages
 
 Collapse threads without new comments
 * Construct tree of ids in CommentThreadStore
 * Use newCommentIds and tree to determine which should collapse
-* Control collapsing from top-level via CommentThreadStore? Could ditch collapsed state
+* Control collapsing from top-level via CommentThreadStore? Could ditch
+  collapsed state
 
 Child counts for collapsed threads
 * New comment counts in collapsed threads
+
+Filter items by type/title/date etc. etc.
 
 Saved stories
 User submissions (reuse Items?)
@@ -24,7 +24,8 @@ User comments (reuse Updates?)
     * Items only handles Stories/Jobs/Polls, Updates also handles Comments
   * Combine into one component and use Route props to configure desired functionality
 
-Add more categories based on updates feed (show / ask / jobs)
+Add more categories based on updates feed (show / ask / jobs) with their own
+persistant caches.
 
 Settings
 * username
