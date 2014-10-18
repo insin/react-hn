@@ -49,10 +49,4 @@ npm install
 
 Pass a `--production` flag to use minified JavaScript.
 
-### Build Note
-
-The version of [reactfire](https://github.com/firebase/reactfire) used in the
-live build has been hand-tweaked to work around
-[an issue when browerifying it](https://github.com/firebase/reactfire/pull/17).
-
 ## MIT Licensed
