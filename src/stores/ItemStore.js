@@ -66,7 +66,7 @@ function processCommentParent(item, cb, result) {
 
 var ItemStore = {
   getItem: function(id, cb, result) {
-    var cachedItem = TopStore.getItem(id) || UpdatesStore.getItem(id)
+    var cachedItem = this.getCachedItem(id)
     if (cachedItem) {
       if (result) {
         result.cacheHits++
@@ -76,6 +76,14 @@ var ItemStore = {
     else {
       HNService.fetchItem(id, cb)
     }
+  },
+
+  getCachedItem: function(id) {
+    return TopStore.getItem(id) || UpdatesStore.getItem(id) || null
+  },
+
+  getCachedStory: function(id) {
+    return TopStore.getItem(id) || UpdatesStore.getStory(id) || null
   },
 
   fetchCommentAncestors: function(comment, cb) {

@@ -142,7 +142,24 @@ var UpdatesStore = extend(new EventEmitter(), {
   },
 
   getItem: function(id) {
+    if (updatesCache === null) {
+      loadSession()
+    }
     return (updatesCache.comments[id] || updatesCache.stories[id] || null)
+  },
+
+  getComment: function(id) {
+    if (updatesCache === null) {
+      loadSession()
+    }
+    return (updatesCache.comments[id] || null)
+  },
+
+  getStory: function(id) {
+    if (updatesCache === null) {
+      loadSession()
+    }
+    return (updatesCache.stories[id] || null)
   },
 
   stop: function() {

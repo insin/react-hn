@@ -5,9 +5,11 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var Comment = require('./Comment')
-var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
+var CommentThreadStore = require('./stores/CommentThreadStore')
+var ItemStore = require('./stores/ItemStore')
+
+var Comment = require('./Comment')
 var PollOption = require('./PollOption')
 var Spinner = require('./Spinner')
 var ItemMixin = require('./mixins/ItemMixin')
@@ -27,7 +29,7 @@ var Item = React.createClass({
   mixins: [ItemMixin, ReactFireMixin],
   getInitialState: function() {
     return {
-      item: {}
+      item: ItemStore.getCachedStory(Number(this.props.params.id)) || {}
     , lastVisit: null
     , commentCount: 0
     , maxCommentId: 0
