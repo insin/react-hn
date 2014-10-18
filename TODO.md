@@ -12,6 +12,13 @@ Collapse threads without new comments
 Child counts for collapsed threads
 * New comment counts in collapsed threads
 
+Always use the ItemStore when loading a story to pick up a cached version first
+when available.
+
+Emit an event when a CommentThreadStore detects the end of loading, is marked
+raed and is disposed, so list pages can update comment counts & last visit times
+when stories are opened in new tabs.
+
 Filter items by type/title/date etc. etc.
 
 Saved stories
