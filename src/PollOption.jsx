@@ -6,18 +6,22 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 
 var HNService = require('./services/HNService')
+
 var Spinner = require('./Spinner')
 
 var pluralise = require('./utils/pluralise')
 
 var PollOption = React.createClass({
   mixins: [ReactFireMixin],
+
   getInitialState: function() {
     return {pollopt: {}}
   },
+
   componentWillMount: function() {
     this.bindAsObject(HNService.itemRef(this.props.id), 'pollopt')
   },
+
   render: function() {
     var pollopt = this.state.pollopt
     if (!pollopt.id) { return <div className="PollOption PollOption--loading"><Spinner size="20"/></div> }

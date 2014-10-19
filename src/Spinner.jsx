@@ -10,6 +10,7 @@ var Spinner = React.createClass({
   getDefaultProps: function() {
     return {size: 6, spacing: 2}
   },
+
   render: function() {
     var bounceSize = this.props.size + 'px'
     var bounceStyle = {height: bounceSize, width: bounceSize, marginRight: this.props.spacing + 'px'}

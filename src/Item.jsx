@@ -27,6 +27,7 @@ function timeUnitsAgo(_moment) {
 
 var Item = React.createClass({
   mixins: [ItemMixin, ReactFireMixin],
+
   getInitialState: function() {
     return {
       item: ItemStore.getCachedStory(Number(this.props.params.id)) || {}
@@ -36,15 +37,18 @@ var Item = React.createClass({
     , newCommentCount: 0
     }
   },
+
   componentWillMount: function() {
     this.bindAsObject(HNService.itemRef(this.props.params.id), 'item')
     this.initThreadStore()
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
+
   componentWillUnmount: function() {
     this.threadStore.dispose()
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
+
   /**
    * Update the title whenever an item has loaded.
    */
@@ -53,6 +57,7 @@ var Item = React.createClass({
       setTitle(nextState.item.title)
     }
   },
+
   /**
    * Handle changing the displayed item without unmounting the component, e.g.
    * when a link to another item is posted, or the user edits the URL.
@@ -64,9 +69,10 @@ var Item = React.createClass({
       this.initThreadStore()
     }
   },
+
   /**
    * Creates a new thread store and set its initial state. If there's already
-   * an existing thread store, dispose with it first.
+   * an existing thread store, dispose of it first.
    */
   initThreadStore: function() {
     if (this.threadStore) {
@@ -75,6 +81,7 @@ var Item = React.createClass({
     this.threadStore = new CommentThreadStore(this.props.params.id, this.handleCommentsChanged)
     this.setState(this.threadStore.getInitialState())
   },
+
   /**
    * Ensure the last visit time and comment details get stored for this item if
    * the user refreshes or otherwise navigates off the page.
@@ -82,13 +89,16 @@ var Item = React.createClass({
   handleBeforeUnload: function() {
     this.threadStore.dispose()
   },
+
   handleCommentsChanged: function(commentData) {
     this.setState(commentData)
   },
+
   markAsRead: function(e) {
     e.preventDefault()
     this.setState(this.threadStore.markAsRead())
   },
+
   render: function() {
     var state = this.state
     var item = state.item

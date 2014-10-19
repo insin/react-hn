@@ -7,6 +7,7 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 
 var HNService = require('./services/HNService')
+
 var Spinner = require('./Spinner')
 
 var setTitle = require('./utils/setTitle')
@@ -20,20 +21,24 @@ var UserProfile = React.createClass({
   getInitialState: function() {
     return {user: {}}
   },
+
   componentWillMount: function() {
     this.bindAsObject(HNService.userRef(this.props.params.id), 'user')
   },
+
   componentWillUpdate: function(nextProps, nextState) {
     if (this.state.user.id != nextState.user.id) {
       setTitle('Profile: ' + nextState.user.id)
     }
   },
+
   componentWillReceiveProps: function(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('user')
       this.bindAsObject(HNService.userRef(nextProps.params.id), 'user')
     }
   },
+
   render: function() {
     var user = this.state.user
     if (!user.id) {

@@ -49,7 +49,7 @@ function CommentThreadStore(itemId, onCommentsChanged) {
    * If we don't have a max comment id stored for an item, it must have been
    * visited for the first time. Allow some time for comments to load by only
    * starting to mark comments as new after a 5 second gap without any new
-   * comments bein added.
+   * comments being added.
    */
   var _firstLoadComplete = null
   if (isFirstVisit) {

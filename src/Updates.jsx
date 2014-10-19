@@ -13,10 +13,11 @@ var Spinner = require('./Spinner')
 
 var PageNumberMixin = require('./mixins/PageNumberMixin')
 
+var constants = require('./utils/constants')
 var pageCalc = require('./utils/pageCalc')
 var setTitle = require('./utils/setTitle')
 
-var ITEMS_PER_PAGE = 30
+var ITEMS_PER_PAGE = constants.ITEMS_PER_PAGE
 
 var Updates = React.createClass({
   mixins: [PageNumberMixin],
