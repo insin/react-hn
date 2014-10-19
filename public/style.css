@@ -206,8 +206,8 @@ span.control:hover {
 }
 .Comment__content, .Comment--loading {
   padding-right: 1.25em;
-  padding-top: .5em;
-  padding-bottom: .5em;
+  padding-top: .65em;
+  padding-bottom: .65em;
 }
 .Comment--level0 .Comment__content, .Comment--level0.Comment--loading { padding-left: 1.25em; }
 .Comment--level1 .Comment__content, .Comment--level1.Comment--loading { padding-left: 3.75em; }
