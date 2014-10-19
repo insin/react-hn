@@ -27,6 +27,7 @@ var App = React.createClass({
     window.addEventListener('beforeunload', this.handleBeforeUnload)
     TopStore.loadSession()
     UpdatesStore.loadSession()
+    TopStore.start()
   },
 
   componentWillUnmount: function() {
@@ -38,6 +39,7 @@ var App = React.createClass({
    * refresh or an external link in the same tab.
    */
   handleBeforeUnload: function() {
+    TopStore.stop()
     TopStore.saveSession()
     UpdatesStore.saveSession()
   },

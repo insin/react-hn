@@ -15,7 +15,7 @@ var UPDATES_CACHE_SIZE = constants.UPDATES_CACHE_SIZE
 var updatesRef = null
 
 /**
- * Contains id -> item cache objects. Persisted to sessionStorage.
+ * Contains item id -> item cache objects. Persisted to sessionStorage.
  * @prop .comments {Object.<id,item>} comments cache.
  * @prop .stories {Object.<id,item>} story cache.
  */
