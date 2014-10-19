@@ -16,8 +16,8 @@ var updatesRef = null
 
 /**
  * Contains id -> item cache objects. Persisted to sessionStorage.
- * @prop .comments {Object.<id, item>} comments cache.
- * @prop .stories {Object.<id, item>} story cache.
+ * @prop .comments {Object.<id,item>} comments cache.
+ * @prop .stories {Object.<id,item>} story cache.
  */
 var updatesCache = null
 
@@ -112,20 +112,18 @@ function handleUpdateItems(items) {
   UpdatesStore.emit('updates', updates)
 }
 
-/**
- * Load the updates caches from session storage or create new, empty caches.
- */
-function loadSession() {
-  var json = sessionStorage.updates
-  updatesCache = (json ? JSON.parse(json) : {comments: {}, stories: {}})
-  populateUpdates()
-}
-
 var UpdatesStore = extend(new EventEmitter(), {
+  loadSession: function() {
+    var json = sessionStorage.updates
+    updatesCache = (json ? JSON.parse(json) : {comments: {}, stories: {}})
+    populateUpdates()
+  },
+
+  saveSession: function() {
+    sessionStorage.updates = JSON.stringify(updatesCache)
+  },
+
   start: function() {
-    if (updatesCache === null) {
-      loadSession()
-    }
     if (updatesRef === null) {
       updatesRef = HNService.updatesRef()
       updatesRef.on('value', function(snapshot) {
@@ -134,43 +132,25 @@ var UpdatesStore = extend(new EventEmitter(), {
     }
   },
 
-  getUpdates: function() {
-    if (updatesCache === null) {
-      loadSession()
-    }
-    return updates
-  },
-
-  getItem: function(id) {
-    if (updatesCache === null) {
-      loadSession()
-    }
-    return (updatesCache.comments[id] || updatesCache.stories[id] || null)
-  },
-
-  getComment: function(id) {
-    if (updatesCache === null) {
-      loadSession()
-    }
-    return (updatesCache.comments[id] || null)
-  },
-
-  getStory: function(id) {
-    if (updatesCache === null) {
-      loadSession()
-    }
-    return (updatesCache.stories[id] || null)
-  },
-
   stop: function() {
     updatesRef.off()
     updatesRef = null
   },
 
-  saveSession: function() {
-    if (updatesCache !== null) {
-      sessionStorage.updates = JSON.stringify(updatesCache)
-    }
+  getUpdates: function() {
+    return updates
+  },
+
+  getItem: function(id) {
+    return (updatesCache.comments[id] || updatesCache.stories[id] || null)
+  },
+
+  getComment: function(id) {
+    return (updatesCache.comments[id] || null)
+  },
+
+  getStory: function(id) {
+    return (updatesCache.stories[id] || null)
   }
 })
 UpdatesStore.off = UpdatesStore.removeListener

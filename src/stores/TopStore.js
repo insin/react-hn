@@ -9,11 +9,7 @@ var TOP_STORIES = constants.TOP_STORIES
 var topstories = null
 var topstoryIds = null
 
-function loadSession() {
-  var json = sessionStorage.topstories
-  topstories = (json ? JSON.parse(json) : [])
-  topstoryIds = topstories.map(function(item) { return item.id })
-}
+
 
 var TopStore = {
   setItem: function(index, item) {
@@ -38,6 +34,12 @@ var TopStore = {
     }
     var page = pageCalc(pageNum, ITEMS_PER_PAGE, TOP_STORIES)
     return topstories.slice(page.startIndex, page.endIndex)
+  },
+
+  loadSession: function() {
+    var json = sessionStorage.topstories
+    topstories = (json ? JSON.parse(json) : [])
+    topstoryIds = topstories.map(function(item) { return item.id })
   },
 
   saveSession: function() {

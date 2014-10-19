@@ -25,6 +25,8 @@ var Routes = Router.Routes
 var App = React.createClass({
   componentWillMount: function() {
     window.addEventListener('beforeunload', this.handleBeforeUnload)
+    TopStore.loadSession()
+    UpdatesStore.loadSession()
   },
 
   componentWillUnmount: function() {
