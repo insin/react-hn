@@ -28,6 +28,7 @@ var Comment = React.createClass({
     , maxCommentId: 0
     , permalinked: false
     , permalinkThread: false
+    , showKids: true
     , showSpinner: false
     , threadStore: null
     }
@@ -182,7 +183,7 @@ var Comment = React.createClass({
     if (comment.deleted && !comment.kids) { return null }
 
     var showParentLink = this.shouldLinkToParent()
-    var showOPLink = ((this.props.permalinked || this.props.comment !== null) && state.op.id)
+    var showOPLink = ((props.permalinked || props.comment !== null) && state.op.id)
     // Don't show the parent link if the OP is the parent
     if (showOPLink && showParentLink && state.op.id == comment.parent) {
       showParentLink = false
@@ -203,7 +204,8 @@ var Comment = React.createClass({
           [deleted]
         </div>}
         {!comment.deleted && <div className="Comment__meta">
-          {this.renderCollapseControl()}{' '}
+          {props.showKids && this.renderCollapseControl()}
+          {props.showKids && ' '}
           <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
           {moment(comment.time * 1000).fromNow()}
           {!props.permalinked && ' | '}
@@ -224,7 +226,7 @@ var Comment = React.createClass({
           <div dangerouslySetInnerHTML={{__html: comment.text}}/>
         </div>}
       </div>
-      {this.props.comment === null && comment.kids && <div className="Comment__kids">
+      {props.showKids && comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
           return <Comment key={id} id={id}
             level={props.level + 1}

@@ -72,7 +72,7 @@ var Updates = React.createClass({
       return <div className="Updates Comments">
         {notice}
         {items.slice(page.startIndex, page.endIndex).map(function(comment) {
-          return <Comment key={comment.id} id={comment.id} comment={comment}/>
+          return <Comment key={comment.id} id={comment.id} comment={comment} showKids={false}/>
         })}
         <Paginator route="newcomments" page={page.pageNum} hasNext={page.hasNext}/>
       </div>
