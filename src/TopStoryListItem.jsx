@@ -13,6 +13,12 @@ var ItemMixin = require('./mixins/ItemMixin')
 var ListItemMixin = require('./mixins/ListItemMixin')
 var Spinner = require('./Spinner')
 
+/**
+ * Display story title and metadataas as a list item.
+ * Cached story data may be given as a prop, but this component is also
+ * responsible for listening to updates to the story and caching the lastest
+ * version in TopStore.
+ */
 var TopStoryListItem = React.createClass({
   mixins: [ItemMixin, ListItemMixin, ReactFireMixin],
 
