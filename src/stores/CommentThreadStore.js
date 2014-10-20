@@ -35,6 +35,11 @@ function CommentThreadStore(itemId, onCommentsChanged) {
   var isFirstVisit = (initialState.lastVisit === null)
 
   /**
+   * @type {Object.<id,Array.<Number>>}
+   */
+  var commentChildren = {}
+
+  /**
    * Callback to the item component with updated thread state is debounced as
    * comments will be loading in bulk on initial mount of the item.
    */
@@ -84,14 +89,22 @@ function CommentThreadStore(itemId, onCommentsChanged) {
   /**
    * Register a comment's appearance in the thread.
    */
-  function commentAdded(commentId) {
+  function commentAdded(comment) {
+    var commentId = comment.id
     commentCount++
+
     if (prevMaxCommentId > 0 && commentId > prevMaxCommentId) {
       newCommentCount++
       newCommentIds[commentId] = true
     }
+
     if (commentId > maxCommentId) {
       maxCommentId = commentId
+    }
+
+    commentChildren[comment.id] = []
+    if (comment.parent != itemId) {
+      commentChildren[comment.parent].push(comment.id)
     }
 
     _commentsChanged()
@@ -100,15 +113,35 @@ function CommentThreadStore(itemId, onCommentsChanged) {
     }
   }
 
+  function getChildCount(comment) {
+    var childCount = 0
+    var nodes = [comment.id]
+    while (nodes.length) {
+      var nextNodes = []
+      for (var i = 0, l = nodes.length; i < l; i++) {
+        var nodeChildren = commentChildren[nodes[i]]
+        if (nodeChildren.length) {
+          nextNodes.push.apply(nextNodes, nodeChildren)
+        }
+      }
+      childCount += nextNodes.length
+      nodes = nextNodes
+    }
+    return childCount
+  }
+
   /**
    * Register a comment's deletion from the thread.
    */
-  function commentDeleted(commentId) {
+  function commentDeleted(comment) {
+    var commentId = comment.id
     commentCount--
-    if (typeof newCommentIds[commentId] != 'undefined') {
+    if (newCommentIds[commentId]) {
       newCommentCount--;
       delete newCommentIds[commentId]
     }
+    var siblings = commentChildren[comment.parent]
+    siblings.splice(siblings.indexOf(comment.id), 1)
 
     _commentsChanged()
   }
@@ -149,7 +182,8 @@ function CommentThreadStore(itemId, onCommentsChanged) {
   }
 
   return {
-    getInitialState: getInitialState
+    getChildCount: getChildCount
+  , getInitialState: getInitialState
   , markAsRead: markAsRead
   , commentAdded: commentAdded
   , commentDeleted: commentDeleted

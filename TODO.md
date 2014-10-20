@@ -20,12 +20,6 @@ Filter items by type/title/date etc. etc.
 Saved stories
 User submissions (reuse Items?)
 User comments (reuse Updates?)
-* Items and Updates should be combined
-  * Common: list of items, kids not displayed
-  * Differences:
-    * Items items manage their own loading, Updates uses ItemStore cache, passes data down
-    * Items only handles Stories/Jobs/Polls, Updates also handles Comments
-  * Combine into one component and use Route props to configure desired functionality
 
 Add more categories based on updates feed (show / ask / jobs) with their own
 persistant caches.

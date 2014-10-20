@@ -68,18 +68,18 @@ var Comment = React.createClass({
     if (this.shouldUseCommentStore()) {
       // Register a newly-loaded, non-deleted comment with the thread store
       if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
-        this.props.threadStore.commentAdded(this.props.id)
+        this.props.threadStore.commentAdded(this.state.comment)
       }
       // Let the store know if the comment got deleted
       else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
-        this.props.threadStore.commentDeleted(this.props.id)
+        this.props.threadStore.commentDeleted(this.state.comment)
       }
     }
     // If the top-level permalinked comment was initialised or changed, fetch
     // its parent to determine the appropriate route for the "parent" link.
     else if (this.props.permalinked && this.state.comment.parent != prevState.comment.parent) {
       // Fetch the comment's parent so we can link to the appropriate route
-      this.fetchParent()
+      this.fetchAncestors()
     }
   },
 
@@ -149,7 +149,8 @@ var Comment = React.createClass({
 
   render: function() {
     var props = this.props
-    var comment = this.state.comment
+    var state = this.state
+    var comment = state.comment
 
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) {
@@ -171,12 +172,14 @@ var Comment = React.createClass({
     var showParentLink = this.shouldLinkToParent()
     var showOPLink = (this.props.comment !== null && this.state.op.id)
     // Don't show the parent link if the OP is the parent
-    if (showOPLink && showParentLink && this.state.op.id == comment.parent) {
+    if (showOPLink && showParentLink && state.op.id == comment.parent) {
       showParentLink = false
     }
+    var showChildCount = (props.threadStore && state.collapsed)
+    var childCount = (showChildCount && props.threadStore.getChildCount(comment))
 
     return <div className={cx('Comment Comment--level' + props.level, {
-      'Comment--collapsed': this.state.collapsed
+      'Comment--collapsed': state.collapsed
     , 'Comment--dead': comment.dead
     , 'Comment--deleted': comment.deleted
     , 'Comment--new': this.isNew()
@@ -193,12 +196,13 @@ var Comment = React.createClass({
           {!props.permalinked && ' | '}
           {!props.permalinked && <Link to="comment" params={{id: comment.id}}>link</Link>}
           {showParentLink && ' | '}
-          {showParentLink && <Link to={this.state.parent.type} params={{id: comment.parent}}>parent</Link>}
+          {showParentLink && <Link to={state.parent.type} params={{id: comment.parent}}>parent</Link>}
           {showOPLink && ' | on: '}
-          {showOPLink && <Link to={this.state.op.type} params={{id: this.state.op.id}}>
-            {this.state.op.title}
+          {showOPLink && <Link to={state.op.type} params={{id: state.op.id}}>
+            {state.op.title}
           </Link>}
           {comment.dead &&  ' | [dead]'}
+          {showChildCount && ' | (' +  childCount + ' child' + pluralise(childCount, ',ren') + ')'}
         </div>}
         {!comment.deleted && <div className="Comment__text">
           <div dangerouslySetInnerHTML={{__html: comment.text}}/>
