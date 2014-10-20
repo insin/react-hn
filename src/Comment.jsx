@@ -189,7 +189,7 @@ var Comment = React.createClass({
     }
     var showChildCount = (props.threadStore && state.collapsed)
     var childCounts = (showChildCount && props.threadStore.getChildCounts(comment))
-    var showNewComments = (showChildCount && childCounts.newComments > 0)
+    var showNewComments = (showChildCount && childCounts.newComments > 0 && !this.isNew())
 
     return <div className={cx('Comment Comment--level' + props.level, {
       'Comment--collapsed': state.collapsed
