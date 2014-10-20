@@ -170,7 +170,7 @@ var Comment = React.createClass({
     if (comment.deleted && !comment.kids) { return null }
 
     var showParentLink = this.shouldLinkToParent()
-    var showOPLink = (this.props.comment !== null && this.state.op.id)
+    var showOPLink = ((this.props.permalinked || this.props.comment !== null) && state.op.id)
     // Don't show the parent link if the OP is the parent
     if (showOPLink && showParentLink && state.op.id == comment.parent) {
       showParentLink = false
