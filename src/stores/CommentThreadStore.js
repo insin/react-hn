@@ -113,8 +113,14 @@ function CommentThreadStore(itemId, onCommentsChanged) {
     }
   }
 
-  function getChildCount(comment) {
+  /**
+   * Get counts of children and new comments under the given comment.
+   * @return .children {Number}
+   * @return .newComments {Number}
+   */
+  function getChildCounts(comment) {
     var childCount = 0
+    var newCommentCount = 0
     var nodes = [comment.id]
     while (nodes.length) {
       var nextNodes = []
@@ -124,10 +130,18 @@ function CommentThreadStore(itemId, onCommentsChanged) {
           nextNodes.push.apply(nextNodes, nodeChildren)
         }
       }
+      for (i = 0, l = nextNodes.length; i < l; i++) {
+        if (newCommentIds[nextNodes[i]]) {
+          newCommentCount++
+        }
+      }
       childCount += nextNodes.length
       nodes = nextNodes
     }
-    return childCount
+    return {
+      children: childCount
+    , newComments: newCommentCount
+    }
   }
 
   /**
@@ -182,11 +196,11 @@ function CommentThreadStore(itemId, onCommentsChanged) {
   }
 
   return {
-    getChildCount: getChildCount
-  , getInitialState: getInitialState
+    getInitialState: getInitialState
   , markAsRead: markAsRead
   , commentAdded: commentAdded
   , commentDeleted: commentDeleted
+  , getChildCounts: getChildCounts
   , dispose: dispose
   , _getVars: function() {
       return {

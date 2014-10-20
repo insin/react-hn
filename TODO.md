@@ -9,9 +9,6 @@ Collapse threads without new comments
 * Control collapsing from top-level via CommentThreadStore? Could ditch
   collapsed state
 
-Child counts for collapsed threads
-* New comment counts in collapsed threads
-
 Always use the ItemStore when loading a story to pick up a cached version first
 when available.
 

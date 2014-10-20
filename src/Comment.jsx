@@ -188,7 +188,8 @@ var Comment = React.createClass({
       showParentLink = false
     }
     var showChildCount = (props.threadStore && state.collapsed)
-    var childCount = (showChildCount && props.threadStore.getChildCount(comment))
+    var childCounts = (showChildCount && props.threadStore.getChildCounts(comment))
+    var showNewComments = (showChildCount && childCounts.newComments > 0)
 
     return <div className={cx('Comment Comment--level' + props.level, {
       'Comment--collapsed': state.collapsed
@@ -214,7 +215,10 @@ var Comment = React.createClass({
             {state.op.title}
           </Link>}
           {comment.dead &&  ' | [dead]'}
-          {showChildCount && ' | (' +  childCount + ' child' + pluralise(childCount, ',ren') + ')'}
+          {showChildCount && ' | (' +  childCounts.children + ' child' + pluralise(childCounts.children, ',ren')}
+            {showNewComments && ', '}
+            {showNewComments && <em>{childCounts.newComments} new</em>}
+          {showChildCount && ')'}
         </div>}
         {!comment.deleted && <div className="Comment__text">
           <div dangerouslySetInnerHTML={{__html: comment.text}}/>

@@ -201,6 +201,11 @@ span.control:hover {
 .Comment__meta a:hover {
   text-decoration: underline;
 }
+.Comment__meta em {
+  font-style: normal;
+  background-color: #ffffde;
+  color: #000;
+}
 .Comment__user {
   font-weight: bold;
 }
