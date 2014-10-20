@@ -62,8 +62,10 @@ var TopStore = extend(new EventEmitter(), {
   },
 
   stop: function() {
-    topStoriesRef.off()
-    topStoriesRef = null
+    if (topStoriesRef !== null) {
+      topStoriesRef.off()
+      topStoriesRef = null
+    }
   },
 
   getItem: function(id) {

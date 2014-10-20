@@ -27,7 +27,6 @@ var App = React.createClass({
     window.addEventListener('beforeunload', this.handleBeforeUnload)
     TopStore.loadSession()
     UpdatesStore.loadSession()
-    TopStore.start()
   },
 
   componentWillUnmount: function() {

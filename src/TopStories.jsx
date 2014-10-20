@@ -27,6 +27,7 @@ var TopStories = React.createClass({
 
   componentWillMount: function() {
     TopStore.on('update', this.handleUpdate)
+    TopStore.start()
     setTitle()
   },
 
