@@ -52,16 +52,24 @@ var Comment = React.createClass({
   },
 
   componentWillUpdate: function(nextProps, nextState) {
-    if (this.props.permalinked && this.state.comment.id != nextState.comment.id) {
+    if (this.props.permalinked) {
       // Redirect to the appropriate route if a Comment "parent" link had a
       // non-comment item id.
-      if (nextState.comment.type != 'comment') {
-        this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
-        return
+      if (this.state.comment.id != nextState.comment.id) {
+        if (nextState.comment.type != 'comment') {
+          this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
+          return
+        }
       }
-      // Set/update the title from comment content
-      setTitle('Comment by ' + nextState.comment.by)
     }
+  },
+
+  setTitle: function() {
+    var title = 'Comment by ' + this.state.comment.by
+    if (this.state.op.id) {
+      title += ' | ' + this.state.op.title
+    }
+    setTitle(title)
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -75,11 +83,15 @@ var Comment = React.createClass({
         this.props.threadStore.commentDeleted(this.state.comment)
       }
     }
-    // If the top-level permalinked comment was initialised or changed, fetch
-    // its parent to determine the appropriate route for the "parent" link.
-    else if (this.props.permalinked && this.state.comment.parent != prevState.comment.parent) {
-      // Fetch the comment's parent so we can link to the appropriate route
-      this.fetchAncestors()
+
+    if (this.props.permalinked) {
+      // Fetch ancestors so we can link to the appropriate parent type and show
+      // OP info.
+      if (this.state.comment.parent != prevState.comment.parent) {
+        this.fetchAncestors()
+      }
+
+      this.setTitle()
     }
   },
 
