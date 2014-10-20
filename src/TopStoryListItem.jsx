@@ -5,7 +5,7 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var CommentThreadStore = require('./stores/CommentThreadStore')
+var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 var HNService = require('./services/HNService')
 var TopStore = require('./stores/TopStore')
 
@@ -52,7 +52,7 @@ var TopStoryListItem = React.createClass({
     else if (this.state.item.id) {
       // Display the comment state of the cached item we were given while we're
       // waiting for the live item to load.
-      this.setState(CommentThreadStore.loadState(this.state.item.id))
+      this.setState(StoryCommentThreadStore.loadState(this.state.item.id))
     }
   },
 
@@ -83,7 +83,7 @@ var TopStoryListItem = React.createClass({
   initLiveItem: function() {
     // If we were given a cached item to display initially, it will be replaced
     this.bindAsObject(HNService.itemRef(this.props.id), 'item')
-    this.setState(CommentThreadStore.loadState(this.props.id))
+    this.setState(StoryCommentThreadStore.loadState(this.props.id))
   },
 
   render: function() {

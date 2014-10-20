@@ -6,7 +6,7 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 
 var HNService = require('./services/HNService')
-var CommentThreadStore = require('./stores/CommentThreadStore')
+var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 var ItemStore = require('./stores/ItemStore')
 
 var Comment = require('./Comment')
@@ -78,8 +78,8 @@ var Item = React.createClass({
     if (this.threadStore) {
       this.threadStore.dispose()
     }
-    this.threadStore = new CommentThreadStore(this.props.params.id, this.handleCommentsChanged)
-    this.setState(this.threadStore.getInitialState())
+    this.threadStore = new StoryCommentThreadStore(this.props.params.id, this.handleCommentsChanged)
+    this.setState(this.threadStore.initialState)
   },
 
   /**

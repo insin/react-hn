@@ -2,11 +2,24 @@
 
 jest.dontMock('moment')
 jest.dontMock('../CommentThreadStore')
+jest.dontMock('../StoryCommentThreadStore')
+jest.dontMock('../../utils/extend')
 
-describe('CommentThreadStore.loadState()', function() {
+function getThreadStoreProps(threadStore) {
+  return {
+    commentCount: threadStore.commentCount
+  , newCommentCount: threadStore.newCommentCount
+  , newCommentIds: threadStore.newCommentIds
+  , maxCommentId: threadStore.maxCommentId
+  , prevMaxCommentId: threadStore.prevMaxCommentId
+  , isFirstVisit: threadStore.isFirstVisit
+  }
+}
+
+describe('StoryCommentThreadStore.loadState()', function() {
   it('returns defaults given an unknown item id', function() {
-    var CommentThreadStore = require('../CommentThreadStore')
-    expect(CommentThreadStore.loadState(123)).toEqual({
+    var StoryCommentThreadStore = require('../StoryCommentThreadStore')
+    expect(StoryCommentThreadStore.loadState(123)).toEqual({
       lastVisit: null
     , commentCount: 0
     , maxCommentId: 0
@@ -15,20 +28,20 @@ describe('CommentThreadStore.loadState()', function() {
 
   it('converts to appropriate types for a known id', function() {
     var storage = require('../../utils/storage')
-    var CommentThreadStore = require('../CommentThreadStore')
+    var StoryCommentThreadStore = require('../StoryCommentThreadStore')
     storage.setStore({
       '456:cc': '42'
     , '456:lv': '1413424287926'
     , '456:mc': '123456'
     })
-    var state = CommentThreadStore.loadState(456)
+    var state = StoryCommentThreadStore.loadState(456)
     expect(state.lastVisit.valueOf()).toEqual(1413424287926)
     expect(state.commentCount).toEqual(42)
     expect(state.maxCommentId).toEqual(123456)
   })
 })
 
-describe('CommentThreadStore', function() {
+describe('StoryCommentThreadStore', function() {
   describe('on first visit to a thread', function() {
     it('calls a debounced function to signal the end of loading after 5 seconds', function() {
       jest.mock('../../utils/cancellableDebounce.js')
@@ -36,10 +49,10 @@ describe('CommentThreadStore', function() {
       var debouncedFunc = jest.genMockFunction()
       debounce.mockReturnValue(debouncedFunc)
 
-      var CommentThreadStore = require('../CommentThreadStore')
+      var StoryCommentThreadStore = require('../StoryCommentThreadStore')
       var callback = jest.genMockFunction()
       // We're only testing a side-effect of the constructor logic
-      new CommentThreadStore(123, callback)
+      new StoryCommentThreadStore(123, callback)
 
       // A call to create the debounced function
       expect(debounce).toBeCalled()
@@ -50,15 +63,15 @@ describe('CommentThreadStore', function() {
   })
 
   describe('on first visit to a thread', function() {
-    var CommentThreadStore, storage
+    var StoryCommentThreadStore, storage
     var threadStore, callback
 
     beforeEach(function() {
       jest.dontMock('../../utils/cancellableDebounce.js')
-      CommentThreadStore = require('../CommentThreadStore')
+      StoryCommentThreadStore = require('../StoryCommentThreadStore')
       storage = require('../../utils/storage')
       callback = jest.genMockFunction()
-      threadStore = new CommentThreadStore(123, callback)
+      threadStore = new StoryCommentThreadStore(123, callback)
     })
 
     // A debounced function call is made on the first visit to a thread and when
@@ -68,7 +81,7 @@ describe('CommentThreadStore', function() {
     })
 
     it('initialises state appropriately', function() {
-      expect(threadStore._getVars()).toEqual({
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
       , newCommentIds: {}
@@ -79,7 +92,7 @@ describe('CommentThreadStore', function() {
     })
 
     it('makes initial loaded state available', function() {
-      expect(threadStore.getInitialState()).toEqual({
+      expect(threadStore.initialState).toEqual({
         lastVisit: null
       , commentCount: 0
       , maxCommentId: 0
@@ -88,7 +101,7 @@ describe('CommentThreadStore', function() {
 
     it('marks loading as complete if no comments are received for 5 seconds', function() {
       expect(callback).not.toBeCalled()
-      expect(threadStore._getVars().isFirstVisit).toBe(true)
+      expect(getThreadStoreProps(threadStore).isFirstVisit).toBe(true)
       var then = Date.now() + 5000
       spyOn(Date, 'now').andReturn(then)
       jest.runOnlyPendingTimers()
@@ -96,13 +109,13 @@ describe('CommentThreadStore', function() {
       var callbackArg = callback.mock.calls[callback.mock.calls.length - 1][0]
       expect(callbackArg.lastVisit.valueOf()).toEqual(then)
       expect(callbackArg.maxCommentId).toEqual(0)
-      expect(threadStore._getVars().isFirstVisit).toBe(false)
+      expect(getThreadStoreProps(threadStore).isFirstVisit).toBe(false)
     })
 
     describe('before loading is considered complete', function() {
       it('tracks details of incoming comments', function() {
-        threadStore.commentAdded(123456)
-        expect(threadStore._getVars()).toEqual({
+        threadStore.commentAdded({id: 123456, parent: 123})
+        expect(getThreadStoreProps(threadStore)).toEqual({
           commentCount: 1
         , newCommentCount: 0
         , newCommentIds: {}
@@ -111,8 +124,8 @@ describe('CommentThreadStore', function() {
         , isFirstVisit: true
         })
 
-        threadStore.commentDeleted(123456)
-        expect(threadStore._getVars()).toEqual({
+        threadStore.commentDeleted({id: 123456, parent: 123})
+        expect(getThreadStoreProps(threadStore)).toEqual({
           commentCount: 0
         , newCommentCount: 0
         , newCommentIds: {}
@@ -136,11 +149,11 @@ describe('CommentThreadStore', function() {
   })
 
   describe('on a return visit to a thread', function() {
-    var CommentThreadStore, storage
+    var StoryCommentThreadStore, storage
     var threadStore, callback
 
     beforeEach(function() {
-      CommentThreadStore = require('../CommentThreadStore')
+      StoryCommentThreadStore = require('../StoryCommentThreadStore')
       storage = require('../../utils/storage')
       storage.setStore({
         '456:cc': '42'
@@ -148,7 +161,7 @@ describe('CommentThreadStore', function() {
       , '456:mc': '123456'
       })
       callback = jest.genMockFunction()
-      threadStore = new CommentThreadStore(456, callback)
+      threadStore = new StoryCommentThreadStore(456, callback)
     })
 
     // A debounced function call is made when comments are added or deleted
@@ -157,7 +170,7 @@ describe('CommentThreadStore', function() {
     })
 
     it('initialises state appropriately', function() {
-      expect(threadStore._getVars()).toEqual({
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
       , newCommentIds: {}
@@ -168,15 +181,15 @@ describe('CommentThreadStore', function() {
     })
 
     it('makes initial loaded state available', function() {
-      var state = threadStore.getInitialState()
+      var state = threadStore.initialState
       expect(state.lastVisit.valueOf()).toEqual(1413424287926)
       expect(state.commentCount).toEqual(42)
       expect(state.maxCommentId).toEqual(123456)
     })
 
     it('tracks details of old comments', function() {
-      threadStore.commentAdded(123456)
-      expect(threadStore._getVars()).toEqual({
+      threadStore.commentAdded({id: 123456, parent: 456})
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 1
       , newCommentCount: 0
       , newCommentIds: {}
@@ -185,8 +198,8 @@ describe('CommentThreadStore', function() {
       , isFirstVisit: false
       })
 
-      threadStore.commentDeleted(123456)
-      expect(threadStore._getVars()).toEqual({
+      threadStore.commentDeleted({id: 123456, parent: 456})
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
       , newCommentIds: {}
@@ -207,8 +220,8 @@ describe('CommentThreadStore', function() {
     })
 
     it('tracks details of new comments', function() {
-      threadStore.commentAdded(123457)
-      expect(threadStore._getVars()).toEqual({
+      threadStore.commentAdded({id: 123457, parent: 456})
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 1
       , newCommentCount: 1
       , newCommentIds: {123457: true}
@@ -217,8 +230,8 @@ describe('CommentThreadStore', function() {
       , isFirstVisit: false
       })
 
-      threadStore.commentDeleted(123457)
-      expect(threadStore._getVars()).toEqual({
+      threadStore.commentDeleted({id: 123457, parent: 456})
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
       , newCommentIds: {}
@@ -241,9 +254,9 @@ describe('CommentThreadStore', function() {
       var now = Date.now()
       spyOn(Date, 'now').andReturn(now)
 
-      threadStore.commentAdded(123457)
+      threadStore.commentAdded({id: 123457, parent: 456})
       var newState = threadStore.markAsRead()
-      expect(threadStore._getVars()).toEqual({
+      expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 1
       , newCommentCount: 0
       , newCommentIds: {}

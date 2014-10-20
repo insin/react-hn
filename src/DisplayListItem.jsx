@@ -4,7 +4,7 @@
 
 var React = require('react')
 
-var CommentThreadStore = require('./stores/CommentThreadStore')
+var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 
 var ItemMixin = require('./mixins/ItemMixin')
 var ListItemMixin = require('./mixins/ListItemMixin')
@@ -21,7 +21,7 @@ var DisplayListItem = React.createClass({
   },
 
   getInitialState: function() {
-    return CommentThreadStore.loadState(this.props.item.id)
+    return StoryCommentThreadStore.loadState(this.props.item.id)
   },
 
   render: function() {
