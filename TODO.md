@@ -3,12 +3,6 @@
 Marking as read based on time rather than comment id would allow it to be done
 from list pages
 
-Collapse threads without new comments
-* Construct tree of ids in CommentThreadStore
-* Use newCommentIds and tree to determine which should collapse
-* Control collapsing from top-level via CommentThreadStore? Could ditch
-  collapsed state
-
 Always use the ItemStore when loading a story to pick up a cached version first
 when available.
 
@@ -24,6 +18,7 @@ persistant caches.
 Settings
 * username
 * showdead
+* showdeleted
 * themes (alt CSS, user CSS)
 * max number of cached updates (stories / comments)
 * always poll updates?
