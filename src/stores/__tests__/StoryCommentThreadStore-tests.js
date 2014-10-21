@@ -9,7 +9,7 @@ function getThreadStoreProps(threadStore) {
   return {
     commentCount: threadStore.commentCount
   , newCommentCount: threadStore.newCommentCount
-  , newCommentIds: threadStore.newCommentIds
+  , isNew: threadStore.isNew
   , maxCommentId: threadStore.maxCommentId
   , prevMaxCommentId: threadStore.prevMaxCommentId
   , isFirstVisit: threadStore.isFirstVisit
@@ -84,7 +84,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
-      , newCommentIds: {}
+      , isNew: {}
       , maxCommentId: 0
       , prevMaxCommentId: 0
       , isFirstVisit: true
@@ -107,8 +107,9 @@ describe('StoryCommentThreadStore', function() {
       jest.runOnlyPendingTimers()
       expect(callback).toBeCalled()
       var callbackArg = callback.mock.calls[callback.mock.calls.length - 1][0]
-      expect(callbackArg.lastVisit.valueOf()).toEqual(then)
-      expect(callbackArg.maxCommentId).toEqual(0)
+      expect(callbackArg.type).toEqual('load_complete')
+      expect(callbackArg.data.lastVisit.valueOf()).toEqual(then)
+      expect(callbackArg.data.maxCommentId).toEqual(0)
       expect(getThreadStoreProps(threadStore).isFirstVisit).toBe(false)
     })
 
@@ -118,7 +119,7 @@ describe('StoryCommentThreadStore', function() {
         expect(getThreadStoreProps(threadStore)).toEqual({
           commentCount: 1
         , newCommentCount: 0
-        , newCommentIds: {}
+        , isNew: {}
         , maxCommentId: 123456
         , prevMaxCommentId: 0
         , isFirstVisit: true
@@ -128,7 +129,7 @@ describe('StoryCommentThreadStore', function() {
         expect(getThreadStoreProps(threadStore)).toEqual({
           commentCount: 0
         , newCommentCount: 0
-        , newCommentIds: {}
+        , isNew: {}
         , maxCommentId: 123456
         , prevMaxCommentId: 0
         , isFirstVisit: true
@@ -173,7 +174,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
-      , newCommentIds: {}
+      , isNew: {}
       , maxCommentId: 0
       , prevMaxCommentId: 123456
       , isFirstVisit: false
@@ -192,7 +193,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 1
       , newCommentCount: 0
-      , newCommentIds: {}
+      , isNew: {}
       , maxCommentId: 123456
       , prevMaxCommentId: 123456
       , isFirstVisit: false
@@ -202,7 +203,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
-      , newCommentIds: {}
+      , isNew: {}
       , maxCommentId: 123456
       , prevMaxCommentId: 123456
       , isFirstVisit: false
@@ -224,7 +225,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 1
       , newCommentCount: 1
-      , newCommentIds: {123457: true}
+      , isNew: {123457: true}
       , maxCommentId: 123457
       , prevMaxCommentId: 123456
       , isFirstVisit: false
@@ -234,7 +235,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 0
       , newCommentCount: 0
-      , newCommentIds: {}
+      , isNew: {}
       , maxCommentId: 123457
       , prevMaxCommentId: 123456
       , isFirstVisit: false
@@ -259,7 +260,7 @@ describe('StoryCommentThreadStore', function() {
       expect(getThreadStoreProps(threadStore)).toEqual({
         commentCount: 1
       , newCommentCount: 0
-      , newCommentIds: {}
+      , isNew: {}
       , maxCommentId: 123457
       , prevMaxCommentId: 123457
       , isFirstVisit: false

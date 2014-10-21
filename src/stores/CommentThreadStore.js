@@ -75,7 +75,9 @@ extend(CommentThreadStore.prototype, {
    */
   commentDeleted: function(comment) {
     var siblings = this.children[comment.parent]
-    siblings.splice(siblings.indexOf(comment.id), 1)
+    if (siblings) {
+      siblings.splice(siblings.indexOf(comment.id), 1)
+    }
   },
 
   toggleCollapse: function(commentId) {
