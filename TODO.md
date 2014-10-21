@@ -1,5 +1,7 @@
 ## "1.0" (webapp versioning lol)
 
+*Implementation improvements and HN-equivalent features enabled by the API*
+
 Update initial load detection to fire faster
 * keep a tally of "expected" comments vs. loaded comments (add size of .kids
   from every loaded comment
@@ -9,10 +11,6 @@ Split caches into their own module so they can be used from anywhere without
 causing circular imports
 
 Always try a cache first when loading an item
-
-Filter items by type/title/date etc. etc.
-
-Saved stories
 
 User submissions
 
@@ -27,8 +25,14 @@ Settings
 
 ## Post-"1.0"
 
-Add more categories based on updates feed (show / ask / jobs) with their own
-persistant caches.
+*New features and shims for stuff not available via the API*
+
+Filter items by type/title/date etc. etc.
+
+(In lieu of API for saved stories) Manual saving of stories
+
+(In lieu of API feeds for these) Add more categories based on updates feed (show
+/ ask / jobs) with their own persistant caches.
 
 Settings
 * username
