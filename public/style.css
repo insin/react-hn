@@ -58,7 +58,13 @@ span.control:hover {
 .App__header {
   color: #00d8ff;
   background-color: #222;
-  padding: 4px;
+  padding: 3px;
+  line-height: 18px;
+  vertical-align: middle;
+}
+.App__header img {
+  border: 1px solid #00d8ff;
+  margin-right: .25em;
 }
 .App__header a {
   color: inherit;
@@ -71,7 +77,7 @@ span.control:hover {
   text-decoration: none;
   font-weight: bold;
   color: #00d8ff !important;
-  margin-right: 1.25em;
+  margin-right: .75em;
 }
 .App__content {
 }
@@ -85,8 +91,7 @@ span.control:hover {
 }
 .App__footer a {
   color: inherit;
-  font-weight: bold;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .Items__list {
