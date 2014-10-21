@@ -99,6 +99,11 @@ var Item = React.createClass({
     }
   },
 
+  autoCollapse: function(e) {
+    e.preventDefault()
+    this.threadStore.collapseThreadsWithoutNewComments()
+  },
+
   markAsRead: function(e) {
     e.preventDefault()
     this.setState(this.threadStore.markAsRead())
@@ -114,7 +119,12 @@ var Item = React.createClass({
         {this.renderItemTitle(item)}
         {this.renderItemMeta(item, (state.lastVisit !== null && state.newCommentCount > 0 && <span>{' '}
           (<em>{state.newCommentCount} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
-          <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>mark as read</span>
+          <span className="control" tabIndex="0" onClick={this.autoCollapse} onKeyPress={this.autoCollapse} title="Collapse threads without new comments">
+            auto collapse
+          </span>{' | '}
+          <span className="control" tabIndex="0" onClick={this.markAsRead} onKeyPress={this.markAsRead}>
+            mark as read
+          </span>
         </span>))}
         {item.text && <div className="Item__text">
           <div dangerouslySetInnerHTML={{__html: item.text}}/>

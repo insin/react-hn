@@ -65,9 +65,7 @@ extend(CommentThreadStore.prototype, {
    */
   commentAdded: function(comment) {
     this.children[comment.id] = []
-    if (this.children[comment.parent]) {
-      this.children[comment.parent].push(comment.id)
-    }
+    this.children[comment.parent].push(comment.id)
   },
 
   /**
@@ -75,9 +73,7 @@ extend(CommentThreadStore.prototype, {
    */
   commentDeleted: function(comment) {
     var siblings = this.children[comment.parent]
-    if (siblings) {
-      siblings.splice(siblings.indexOf(comment.id), 1)
-    }
+    siblings.splice(siblings.indexOf(comment.id), 1)
   },
 
   toggleCollapse: function(commentId) {

@@ -30,8 +30,11 @@ function loadState(itemId) {
 function StoryCommentThreadStore(itemId, onCommentsChanged) {
   CommentThreadStore.call(this, itemId, onCommentsChanged)
 
-  // We don't want the story id to be part of the comment hierarchy
-  this.children = {}
+  /**
+   * Lookup from a comment id to its parent comment id.
+   * @type {Object.<id,id>}
+   */
+  this.parents = {}
 
   this.commentCount = 0
   this.newCommentCount = 0
@@ -104,6 +107,10 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     if (comment.id > this.maxCommentId) {
       this.maxCommentId = comment.id
     }
+    // We don't want the story to be part of the comment parent hierarchy
+    if (comment.parent != this.itemId) {
+      this.parents[comment.id] = comment.parent
+    }
     // Trigger debounced callbacks
     this.numberOfCommentsChanged()
     if (this.isFirstVisit) {
@@ -118,10 +125,57 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
       this.newCommentCount--;
       delete this.isNew[comment.id]
     }
+    delete this.parents[comment.id]
     // Trigger debounced callbacks
     this.numberOfCommentsChanged()
+  },
 
+  collapseThreadsWithoutNewComments: function() {
+    // Create an id lookup for comments which have a new comment as one of their
+    // descendants. New comments themselves are not added to the lookup.
+    var newCommentIds = Object.keys(this.isNew)
+    var hasNewComments = {}
+    for (var i = 0, l = newCommentIds.length; i <l; i++) {
+      var newCommentId = newCommentIds[i]
+      var parent = this.parents[newCommentId]
+      while (parent) {
+        // Stop when we hit one we've seen before
+        if (hasNewComments[parent]) {
+          break
+        }
+        hasNewComments[parent] = true
+        parent = this.parents[parent]
+      }
+    }
 
+    // Walk the tree of comments one level at a time, only walking children to
+    // comments we know have new comment descendants, to find subtrees which
+    // don't have new comments.
+    // Other comments are marked for collapsing unless they are themselves a
+    // new comment (in which case all their replies must be new too).
+    var shouldCollapse = {}
+    var commentIds = this.children[this.itemId]
+    while (commentIds.length) {
+      var nextCommentIds = []
+      for (i = 0, l = commentIds.length; i < l; i++) {
+        var commentId = commentIds[i]
+        if (!hasNewComments[commentId]) {
+          if (!this.isNew[commentId]) {
+            shouldCollapse[commentId] = true
+          }
+        }
+        else {
+          var childCommentIds = this.children[commentId]
+          if (childCommentIds.length) {
+            nextCommentIds.push.apply(nextCommentIds, childCommentIds)
+          }
+        }
+      }
+      commentIds = nextCommentIds
+    }
+
+    this.isCollapsed = shouldCollapse
+    this.onCommentsChanged({type: 'collapse'})
   },
 
   /**
