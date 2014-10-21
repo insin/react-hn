@@ -1,30 +1,40 @@
-## Client
+## "1.0" (webapp versioning lol)
 
-Marking as read based on time rather than comment id would allow it to be done
-from list pages
+Update initial load detection to fire faster
+* keep a tally of "expected" comments vs. loaded comments (add size of .kids
+  from every loaded comment
+* shorten the debounce delay, but keep it for wiggle room
 
-Always use the ItemStore when loading a story to pick up a cached version first
-when available.
+Split caches into their own module so they can be used from anywhere without
+causing circular imports
+
+Always try a cache first when loading an item
 
 Filter items by type/title/date etc. etc.
 
 Saved stories
-User submissions (reuse Items?)
-User comments (reuse Updates?)
+
+User submissions
+
+User comments
+
+Settings
+* auto collapse threads without new comments
+* showdead
+* showdeleted
+* max number of cached updates (stories / comments)
+* always poll tostories/updates options?
+
+## Post-"1.0"
 
 Add more categories based on updates feed (show / ask / jobs) with their own
 persistant caches.
 
 Settings
 * username
-* showdead
-* showdeleted
 * themes (alt CSS, user CSS)
-* max number of cached updates (stories / comments)
-* always poll updates?
 
-Use username to implement "threads" section
-* Like Updates but not cached and include kids
+## Fancy or OTT
 
 Animation when stories change position as updates are received
 
