@@ -6,12 +6,24 @@ function CommentThreadStore(itemId, onCommentsChanged) {
   this.itemId = itemId
   this.onCommentsChanged = onCommentsChanged
 
-  /** @type {Object.<id,Array.<Number>>} */
-  this.commentChildren = {}
-  this.commentChildren[itemId] = []
+  /**
+   * Lookup from a comment id to its child comment ids.
+   * @type {Object.<id,Array.<Number>>}
+   */
+  this.children = {}
+  this.children[itemId] = []
 
-  /** @type {Object.<id,Boolean>} */
-  this.newCommentIds = {}
+  /**
+   * Lookup for new comment ids. Will only contain true.
+   * @type {Object.<id,Boolean>}
+   */
+  this.isNew = {}
+
+  /**
+   * Lookup for collapsed state of comment ids. May contain true or false.
+   * @type {Object.<id,Boolean>}
+   */
+  this.isCollapsed = {}
 }
 
 extend(CommentThreadStore.prototype, {
@@ -28,13 +40,13 @@ extend(CommentThreadStore.prototype, {
     while (nodes.length) {
       var nextNodes = []
       for (var i = 0, l = nodes.length; i < l; i++) {
-        var nodeChildren = this.commentChildren[nodes[i]]
+        var nodeChildren = this.children[nodes[i]]
         if (nodeChildren.length) {
           nextNodes.push.apply(nextNodes, nodeChildren)
         }
       }
       for (i = 0, l = nextNodes.length; i < l; i++) {
-        if (this.newCommentIds[nextNodes[i]]) {
+        if (this.isNew[nextNodes[i]]) {
           newCommentCount++
         }
       }
@@ -52,16 +64,23 @@ extend(CommentThreadStore.prototype, {
    * Register a comment's appearance in the thread.
    */
   commentAdded: function(comment) {
-    this.commentChildren[comment.id] = []
-    this.commentChildren[comment.parent].push(comment.id)
+    this.children[comment.id] = []
+    if (this.children[comment.parent]) {
+      this.children[comment.parent].push(comment.id)
+    }
   },
 
   /**
    * Register a comment's deletion from the thread.
    */
   commentDeleted: function(comment) {
-    var siblings = this.commentChildren[comment.parent]
+    var siblings = this.children[comment.parent]
     siblings.splice(siblings.indexOf(comment.id), 1)
+  },
+
+  toggleCollapse: function(commentId) {
+    this.isCollapsed[commentId] = !this.isCollapsed[commentId]
+    this.onCommentsChanged({type: 'collapse'})
   }
 })
 

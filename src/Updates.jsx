@@ -7,7 +7,7 @@ var React = require('react')
 var UpdatesStore =  require('./stores/UpdatesStore')
 
 var DisplayListItem = require('./DisplayListItem')
-var Comment = require('./Comment')
+var DisplayComment = require('./DisplayComment')
 var Paginator = require('./Paginator')
 var Spinner = require('./Spinner')
 
@@ -72,7 +72,7 @@ var Updates = React.createClass({
       return <div className="Updates Comments">
         {notice}
         {items.slice(page.startIndex, page.endIndex).map(function(comment) {
-          return <Comment key={comment.id} id={comment.id} comment={comment} showKids={false}/>
+          return <DisplayComment key={comment.id} id={comment.id} comment={comment}/>
         })}
         <Paginator route="newcomments" page={page.pageNum} hasNext={page.hasNext}/>
       </div>

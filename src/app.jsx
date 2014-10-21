@@ -10,7 +10,7 @@ var Router = require('react-router')
 var TopStore = require('./stores/TopStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 
-var Comment = require('./Comment')
+var PermalinkedComment = require('./PermalinkedComment')
 var Item = require('./Item')
 var TopStories = require('./TopStories')
 var Updates = require('./Updates')
@@ -76,7 +76,7 @@ var routes = <Routes location="hash">
     <Route name="job" path="job/:id" handler={Item}/>
     <Route name="poll" path="poll/:id" handler={Item}/>
     <Route name="story" path="story/:id" handler={Item}/>
-    <Route name="comment" path="comment/:id" handler={Comment} permalinked={true}/>
+    <Route name="comment" path="comment/:id" handler={PermalinkedComment}/>
     <Route name="newest" path="newest" handler={Updates} type="links"/>
     <Route name="newcomments" path="newcomments" handler={Updates} type="comments"/>
     <Route name="user" path="user/:id" handler={UserProfile}/>

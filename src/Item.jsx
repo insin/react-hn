@@ -90,8 +90,13 @@ var Item = React.createClass({
     this.threadStore.dispose()
   },
 
-  handleCommentsChanged: function(commentData) {
-    this.setState(commentData)
+  handleCommentsChanged: function(payload) {
+    if (payload.type != 'collapse') {
+      this.setState(payload.data)
+    }
+    else {
+      this.forceUpdate()
+    }
   },
 
   markAsRead: function(e) {
@@ -102,6 +107,7 @@ var Item = React.createClass({
   render: function() {
     var state = this.state
     var item = state.item
+    var threadStore = this.threadStore
     if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
@@ -122,11 +128,10 @@ var Item = React.createClass({
       {item.kids && <div className="Item__kids">
         {item.kids.map(function(id, index) {
           return <Comment key={id} id={id} level={0}
-            showSpinner={index === 0}
-            maxCommentId={state.maxCommentId}
-            threadStore={this.threadStore}
+            loadingSpinner={index === 0}
+            threadStore={threadStore}
           />
-        }.bind(this))}
+        })}
       </div>}
     </div>
   }

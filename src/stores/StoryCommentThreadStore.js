@@ -30,6 +30,9 @@ function loadState(itemId) {
 function StoryCommentThreadStore(itemId, onCommentsChanged) {
   CommentThreadStore.call(this, itemId, onCommentsChanged)
 
+  // We don't want the story id to be part of the comment hierarchy
+  this.children = {}
+
   this.commentCount = 0
   this.newCommentCount = 0
   this.maxCommentId = 0
@@ -54,8 +57,11 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    */
   numberOfCommentsChanged: debounce(function() {
     this.onCommentsChanged({
-      commentCount: this.commentCount
-    , newCommentCount: this.newCommentCount
+      type: 'number'
+    , data: {
+        commentCount: this.commentCount
+      , newCommentCount: this.newCommentCount
+      }
     })
   }, 100),
 
@@ -69,8 +75,11 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     this.prevMaxCommentId = this.maxCommentId
     this.isFirstVisit = false
     this.onCommentsChanged({
-      lastVisit: moment(Date.now())
-    , maxCommentId: this.prevMaxCommentId
+      type: 'load_complete'
+    , data: {
+        lastVisit: moment(Date.now())
+      , maxCommentId: this.prevMaxCommentId
+      }
     })
   }, 5000),
 
@@ -84,19 +93,18 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   },
 
   commentAdded: function(comment) {
+    CommentThreadStore.prototype.commentAdded.call(this, comment)
     this.commentCount++
-
+    // Register the comment as new if it's new
     if (this.prevMaxCommentId > 0 && comment.id > this.prevMaxCommentId) {
       this.newCommentCount++
-      this.newCommentIds[comment.id] = true
+      this.isNew[comment.id] = true
     }
-
+    // Keep track of the biggest comment id seen
     if (comment.id > this.maxCommentId) {
       this.maxCommentId = comment.id
     }
-
-    CommentThreadStore.prototype.commentAdded.call(this, comment)
-
+    // Trigger debounced callbacks
     this.numberOfCommentsChanged()
     if (this.isFirstVisit) {
       this.firstLoadComplete()
@@ -104,15 +112,16 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   },
 
   commentDeleted: function(comment) {
-    this.commentCount--
-    if (this.newCommentIds[comment.id]) {
-      this.newCommentCount--;
-      delete this.newCommentIds[comment.id]
-    }
-
     CommentThreadStore.prototype.commentDeleted.call(this, comment)
-
+    this.commentCount--
+    if (this.isNew[comment.id]) {
+      this.newCommentCount--;
+      delete this.isNew[comment.id]
+    }
+    // Trigger debounced callbacks
     this.numberOfCommentsChanged()
+
+
   },
 
   /**
@@ -124,7 +133,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   markAsRead: function() {
     this.newCommentCount = 0
     this.prevMaxCommentId = this.maxCommentId
-    this.newCommentIds = {}
+    this.isNew = {}
     this._storeState()
     return {
       lastVisit: moment(Date.now())

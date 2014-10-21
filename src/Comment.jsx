@@ -2,248 +2,108 @@
 
 'use strict';
 
-var moment = require('moment')
 var React = require('react')
 var ReactFireMixin = require('reactfire')
-var Router = require('react-router')
 
+var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
-var ItemStore = require('./stores/ItemStore')
+var UpdatesStore = require('./stores/UpdatesStore')
 
-var Spinner = require('./Spinner')
+var CommentMixin = require('./mixins/CommentMixin')
 
 var cx = require('./utils/buildClassName')
-var pluralise = require('./utils/pluralise')
-var setTitle = require('./utils/setTitle')
 
-var Link = Router.Link
-var Navigation = Router.Navigation
-
+/**
+ * A comment in a thread.
+ */
 var Comment = React.createClass({
-  mixins: [ReactFireMixin, Navigation],
+  mixins: [CommentMixin, ReactFireMixin],
+
+  propTypes: {
+    id: React.PropTypes.number.isRequired
+  , level: React.PropTypes.number.isRequired
+  , loadingSpinner: React.PropTypes.bool
+  , threadStore: React.PropTypes.instanceOf(CommentThreadStore).isRequired
+  },
+
   getDefaultProps: function() {
     return {
-      comment: null
-    , level: 0
-    , maxCommentId: 0
-    , permalinked: false
-    , permalinkThread: false
-    , showKids: true
-    , showSpinner: false
-    , threadStore: null
+      loadingSpinner: false
     }
   },
 
   getInitialState: function() {
     return {
-      comment: this.props.comment || {}
-    , parent: {type: 'comment'}
-    , op: {}
-    , collapsed: false
+      comment: UpdatesStore.getComment(this.props.id) || {}
     }
   },
 
   componentWillMount: function() {
-    if (this.props.comment === null) {
-      this.bindAsObject(HNService.itemRef(this.props.id || this.props.params.id), 'comment')
+    this.bindAsObject(HNService.itemRef(this.props.id), 'comment')
+    // Register a comment retrieved from the cache with the thread store
+    if (this.state.comment.id) {
+      this.props.threadStore.commentAdded(this.state.comment)
     }
-    else {
-      this.fetchAncestors()
-    }
-  },
-
-  componentWillUpdate: function(nextProps, nextState) {
-    if (this.props.permalinked) {
-      // Redirect to the appropriate route if a Comment "parent" link had a
-      // non-comment item id.
-      if (this.state.comment.id != nextState.comment.id) {
-        if (nextState.comment.type != 'comment') {
-          this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
-          return
-        }
-      }
-    }
-  },
-
-  setTitle: function() {
-    var title = 'Comment by ' + this.state.comment.by
-    if (this.state.op.id) {
-      title += ' | ' + this.state.op.title
-    }
-    setTitle(title)
   },
 
   componentDidUpdate: function(prevProps, prevState) {
-    if (this.shouldUseCommentStore()) {
-      // Register a newly-loaded, non-deleted comment with the thread store
-      if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
-        this.props.threadStore.commentAdded(this.state.comment)
-      }
-      // Let the store know if the comment got deleted
-      else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
-        this.props.threadStore.commentDeleted(this.state.comment)
-      }
+    // Register a newly-loaded, non-deleted comment with the thread store
+    if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
+      this.props.threadStore.commentAdded(this.state.comment)
     }
-
-    if (this.props.permalinked) {
-      // Fetch ancestors so we can link to the appropriate parent type and show
-      // OP info.
-      if (this.state.comment.parent != prevState.comment.parent) {
-        this.fetchAncestors()
-      }
-
-      this.setTitle()
+    // Let the thread store know if the comment got deleted
+    else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
+      this.props.threadStore.commentDeleted(this.state.comment)
     }
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    // If the top-level comment id changes (i.e. a "parent" or "link" link is
-    // used on a permalinked comment page, or the URL is edited), we need to
-    // start listening for updates to the new item id.
-    if (this.props.permalinked && this.props.params.id != nextProps.params.id) {
-      this.unbind('comment')
-      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'comment')
-    }
-  },
-
-  shouldUseCommentStore: function() {
-    return (!this.isInPermalinkThread() && this.props.comment === null)
-  },
-
-  shouldLinkToParent: function() {
-    return (this.props.permalinked || this.props.comment !== null)
-  },
-
-  fetchAncestors: function() {
-    ItemStore.fetchCommentAncestors(this.state.comment, function(result) {
-      if ("production" !== process.env.NODE_ENV) {
-        console.info(
-          'fetchAncestors(' + this.state.comment.id + ') took ' +
-          result.timeTaken + ' ms for ' +
-          result.itemCount + ' item' + pluralise(result.itemCount) + ' with ' +
-          result.cacheHits + ' cache hit' + pluralise(result.cacheHits) + ' ('  +
-          (result.cacheHits / result.itemCount * 100).toFixed(1) + '%)'
-        )
-      }
-      if (!this.isMounted()) {
-        if ("production" !== process.env.NODE_ENV) {
-          console.info("...but the comment isn't mounted")
-        }
-        // Too late - the comment or the user has moved elsewhere
-        return
-      }
-      this.setState({
-        parent: result.parent
-      , op: result.op
-      })
-    }.bind(this))
-  },
-
-  /**
-   * Determine if this comment is permalinked or is being displayed under a
-   * permalinked comment.
-   */
-  isInPermalinkThread: function() {
-    return (this.props.permalinked || this.props.permalinkThread)
-  },
-
-  /**
-   * Determine if this is a new comment.
-   */
-  isNew: function() {
-    return (this.props.maxCommentId > 0 &&
-            this.props.id > this.props.maxCommentId)
-  },
-
-  toggleCollapsed: function(e) {
+  toggleCollapse: function(e) {
     e.preventDefault()
-    this.setState({collapsed: !this.state.collapsed})
+    this.props.threadStore.toggleCollapse(this.state.comment.id)
   },
 
   render: function() {
+    var comment = this.state.comment
     var props = this.props
-    var state = this.state
-    var comment = state.comment
-
     // Render a placeholder while we're waiting for the comment to load
-    if (!comment.id) {
-      return <div className={cx(
-        'Comment Comment--loading Comment--level' + props.level,
-        {'Comment--new': this.isNew()
-      })}>
-        {(props.permalinked || props.showSpinner ) && <Spinner size="20"/>}
-        {comment.error && <p>Error loading comment - this may be because the author has configured a delay.</p>}
-      </div>
+    if (!comment.id) { return this.renderCommentLoading(comment) }
+    // Render a link to HN for deleted comments
+    if (comment.deleted) {
+      return this.renderCommentDeleted(comment, {
+        className: 'Comment Comment--deleted Comment--level' + props.level
+      })
     }
 
-    // XXX Don't render anything if we're replacing the route after loading a non-comment
-    if (comment.type != 'comment') { return null }
-
-    // Don't render anything for deleted comments with no kids
-    if (comment.deleted && !comment.kids) { return null }
-
-    var showParentLink = this.shouldLinkToParent()
-    var showOPLink = ((props.permalinked || props.comment !== null) && state.op.id)
-    // Don't show the parent link if the OP is the parent
-    if (showOPLink && showParentLink && state.op.id == comment.parent) {
-      showParentLink = false
-    }
-    var showChildCount = (props.threadStore && state.collapsed)
-    var childCounts = (showChildCount && props.threadStore.getChildCounts(comment))
-    var showNewComments = (showChildCount && childCounts.newComments > 0 && !this.isNew())
-
-    return <div className={cx('Comment Comment--level' + props.level, {
-      'Comment--collapsed': state.collapsed
+    var isNew = props.threadStore.isNew[comment.id]
+    var collapsed = !!props.threadStore.isCollapsed[comment.id]
+    var childCounts = (collapsed && props.threadStore.getChildCounts(comment))
+    if (collapsed && isNew) { childCounts.newComments = 0 }
+    var className = cx('Comment Comment--level' + props.level, {
+      'Comment--collapsed': collapsed
     , 'Comment--dead': comment.dead
-    , 'Comment--deleted': comment.deleted
-    , 'Comment--new': this.isNew()
-    })}>
+    , 'Comment--new': isNew
+    })
+
+    return <div className={className}>
       <div className="Comment__content">
-        {comment.deleted && <div className="Comment__meta">
-          {this.renderCollapseControl()}{' '}
-          [deleted]
-        </div>}
-        {!comment.deleted && <div className="Comment__meta">
-          {props.showKids && this.renderCollapseControl()}
-          {props.showKids && ' '}
-          <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
-          {moment(comment.time * 1000).fromNow()}
-          {!props.permalinked && ' | '}
-          {!props.permalinked && <Link to="comment" params={{id: comment.id}}>link</Link>}
-          {showParentLink && ' | '}
-          {showParentLink && <Link to={state.parent.type} params={{id: comment.parent}}>parent</Link>}
-          {showOPLink && ' | on: '}
-          {showOPLink && <Link to={state.op.type} params={{id: state.op.id}}>
-            {state.op.title}
-          </Link>}
-          {comment.dead &&  ' | [dead]'}
-          {showChildCount && ' | (' +  childCounts.children + ' child' + pluralise(childCounts.children, ',ren')}
-            {showNewComments && ', '}
-            {showNewComments && <em>{childCounts.newComments} new</em>}
-          {showChildCount && ')'}
-        </div>}
-        {!comment.deleted && <div className="Comment__text">
-          <div dangerouslySetInnerHTML={{__html: comment.text}}/>
-        </div>}
+        {this.renderCommentMeta(comment, {
+          collapsible: true
+        , collapsed: collapsed
+        , link: true
+        , childCounts: childCounts
+        })}
+        {this.renderCommentText(comment)}
       </div>
-      {props.showKids && comment.kids && <div className="Comment__kids">
-        {comment.kids.map(function(id, index) {
+      {comment.kids && <div className="Comment__kids">
+        {comment.kids.map(function(id) {
           return <Comment key={id} id={id}
             level={props.level + 1}
-            showSpinner={props.showSpinner || (props.permalinked && index === 0)}
-            permalinkThread={props.permalinkThread || props.permalinked}
-            maxCommentId={props.maxCommentId}
+            loadingSpinner={props.loadingSpinner}
             threadStore={props.threadStore}
           />
         })}
       </div>}
     </div>
-  },
-
-  renderCollapseControl: function() {
-    return <span className="Comment__collapse" onClick={this.toggleCollapsed} onKeyPress={this.toggleCollapsed} tabIndex="0">
-      [{this.state.collapsed ? '+' : '–'}]
-    </span>
   }
 })
 
