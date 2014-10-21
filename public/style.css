@@ -245,7 +245,7 @@ span.control:hover {
 .Comment__text a:visited {
   color: #666;
 }
-.Comment__text p:last-child {
+.Comment__text p:last-child, .Comment__text pre:last-child {
   margin-bottom: 0;
 }
 .Comment--dead > .Comment__content > .Comment__text {
