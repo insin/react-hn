@@ -136,8 +136,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     var newCommentIds = Object.keys(this.isNew)
     var hasNewComments = {}
     for (var i = 0, l = newCommentIds.length; i <l; i++) {
-      var newCommentId = newCommentIds[i]
-      var parent = this.parents[newCommentId]
+      var parent = this.parents[newCommentIds[i]]
       while (parent) {
         // Stop when we hit one we've seen before
         if (hasNewComments[parent]) {
