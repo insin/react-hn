@@ -4,6 +4,9 @@ body {
 img {
   vertical-align: text-bottom;
 }
+pre {
+  white-space: pre-wrap;
+}
 span.control {
   cursor: pointer;
 }
