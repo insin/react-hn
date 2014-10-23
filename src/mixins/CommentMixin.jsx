@@ -78,6 +78,10 @@ var CommentMixin = {
         {options.collapsible && this.renderCollapseControl(options.collapsed)}
         {options.collapsible && ' '}
         [dead]
+        {options.childCounts && ' | (' + options.childCounts.children + ' child' + pluralise(options.childCounts.children, ',ren')}
+          {options.childCounts && options.childCounts.newComments > 0 && ', '}
+          {options.childCounts && options.childCounts.newComments > 0 && <em>{options.childCounts.newComments} new</em>}
+        {options.childCounts && ')'}
       </div>
     }
 
