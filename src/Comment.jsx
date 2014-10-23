@@ -7,7 +7,6 @@ var ReactFireMixin = require('reactfire')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
-var UpdatesStore = require('./stores/UpdatesStore')
 
 var CommentMixin = require('./mixins/CommentMixin')
 
@@ -34,26 +33,30 @@ var Comment = React.createClass({
 
   getInitialState: function() {
     return {
-      comment: UpdatesStore.getComment(this.props.id) || {}
+      comment: {}
     }
   },
 
   componentWillMount: function() {
     this.bindAsObject(HNService.itemRef(this.props.id), 'comment')
-    // Register a comment retrieved from the cache with the thread store
-    if (this.state.comment.id) {
-      this.props.threadStore.commentAdded(this.state.comment)
-    }
   },
 
   componentDidUpdate: function(prevProps, prevState) {
-    // Register a newly-loaded, non-deleted comment with the thread store
-    if (!prevState.comment.id && this.state.comment.id && !this.state.comment.deleted) {
+    // Register a newly-loaded comment with the thread store
+    if (!prevState.comment.id && this.state.comment.id) {
       this.props.threadStore.commentAdded(this.state.comment)
     }
     // Let the thread store know if the comment got deleted
     else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
       this.props.threadStore.commentDeleted(this.state.comment)
+    }
+    // If the comment has been updated from Firebase and the initial set
+    // of comments is still loading, the number of expected comments might need
+    // to be adjusted.
+    else if (prevState.comment !== this.state.comment && this.props.threadStore.loading) {
+      var kids = (this.state.comment.kids ? this.state.comment.kids.length : 0)
+      var prevKids = (prevState.comment.kids ? prevState.comment.kids.length : 0)
+      this.props.threadStore.adjustExpectedComments(kids - prevKids)
     }
   },
 

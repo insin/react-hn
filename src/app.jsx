@@ -9,6 +9,7 @@ var Router = require('react-router')
 
 var TopStore = require('./stores/TopStore')
 var UpdatesStore = require('./stores/UpdatesStore')
+var SettingsStore = require('./stores/SettingsStore')
 
 var PermalinkedComment = require('./PermalinkedComment')
 var Item = require('./Item')
@@ -24,9 +25,10 @@ var Routes = Router.Routes
 
 var App = React.createClass({
   componentWillMount: function() {
-    window.addEventListener('beforeunload', this.handleBeforeUnload)
+    SettingsStore.load()
     TopStore.loadSession()
     UpdatesStore.loadSession()
+    window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
 
   componentWillUnmount: function() {

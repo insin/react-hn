@@ -3,6 +3,7 @@
 var moment = require('moment')
 
 var CommentThreadStore = require('./CommentThreadStore')
+var SettingsStore = require('./SettingsStore')
 
 var debounce = require('../utils/cancellableDebounce')
 var extend = require('../utils/extend')
@@ -27,25 +28,36 @@ function loadState(itemId) {
   }
 }
 
-function StoryCommentThreadStore(itemId, onCommentsChanged) {
-  CommentThreadStore.call(this, itemId, onCommentsChanged)
+function StoryCommentThreadStore(item, onCommentsChanged, options) {
+  CommentThreadStore.call(this, item, onCommentsChanged)
+  this.startedLoading = Date.now()
 
-  /**
-   * Lookup from a comment id to its parent comment id.
-   * @type {Object.<id,id>}
-   */
+  /** Lookup from a comment id to its parent comment id. */
   this.parents = {}
-
+  /** The number of comments which have loaded. */
   this.commentCount = 0
+  /** The number of new comments which have loaded. */
   this.newCommentCount = 0
+  /** The max comment id seen by the store. */
   this.maxCommentId = 0
-  this.initialState = loadState(itemId)
-  this.prevMaxCommentId = this.initialState.maxCommentId
-  this.isFirstVisit = (this.initialState.lastVisit === null)
+  /** Has the comment thread finished loading? */
+  this.loading = true
+  /** The number of comments we're expecting to load. */
+  this.expectedComments = item.kids ? item.kids.length : 0
 
-  // Start the first load completion callback's debounce timer running
-  if (this.isFirstVisit) {
-    this.firstLoadComplete()
+  var initialState = loadState(item.id)
+  /** Time of last visit to the story. */
+  this.lastVisit = initialState.lastVisit
+  /** Max comment id on the last visit - determines which comments are new.  */
+  this.prevMaxCommentId = initialState.maxCommentId
+  /** Is this the user's first time viewing the story? */
+  this.isFirstVisit = (initialState.lastVisit === null)
+
+  // Trigger an immediate check for thread load completion if the item was not
+  // retieved from the cache, so is the latest version. This completes page
+  // loading immediately for items which have no comments yet.
+  if (!options.cached) {
+    this.checkLoadCompletion()
   }
 }
 
@@ -59,32 +71,78 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * comments will be loading frequently on initial load.
    */
   numberOfCommentsChanged: debounce(function() {
-    this.onCommentsChanged({
-      type: 'number'
-    , data: {
-        commentCount: this.commentCount
-      , newCommentCount: this.newCommentCount
-      }
-    })
-  }, 100),
+    this.onCommentsChanged({type: 'number'})
+  }, 123),
 
   /**
    * If we don't have a last visit time stored for an item, it must have been
-   * visited for the first time. Allow some time for comments to load by only
-   * starting to mark comments as new after a 5 second gap without any new
-   * comments being added.
+   * visited for the first time. Once it finishes loading, establish the last
+   * visit time and max comment id which will be used to track and display new
+   * comments.
    */
-  firstLoadComplete: debounce(function() {
+  firstLoadComplete: function() {
+    this.lastVisit = moment(Date.now())
     this.prevMaxCommentId = this.maxCommentId
     this.isFirstVisit = false
-    this.onCommentsChanged({
-      type: 'load_complete'
-    , data: {
-        lastVisit: moment(Date.now())
-      , maxCommentId: this.prevMaxCommentId
+    this.onCommentsChanged({type: 'first_load_complete'})
+  },
+
+  /**
+   * Quick HACK for forcing completion of loading when there are delayed
+   * comments present.
+   */
+  forceLoadCompletion: debounce(function() {
+    if ("production" !== process.env.NODE_ENV) {
+      if (!this.loading) {
+        console.warn('Forcing loading completion ' +
+          'after ' + ((Date.now() - this.startedLoading) / 1000).toFixed(1) + 's\n' +
+           JSON.stringify(this)
+        )
       }
-    })
+    }
+    this.loading = false
+    if (this.isFirstVisit) {
+      this.firstLoadComplete()
+    }
+    else if (SettingsStore.autoCollapse && this.newCommentCount > 0) {
+      this.collapseThreadsWithoutNewComments()
+    }
   }, 5000),
+
+  /**
+   * Check whether the number of comments has reached the expected number yet.
+   */
+  checkLoadCompletion: function() {
+    if ("production" !== process.env.NODE_ENV) {
+      if (!this.loading) {
+        console.warn(
+          'StoryCommentThreadStore.checkLoadCompletion() was called ' +
+          'when loading=false\n' + JSON.stringify(this)
+        )
+      }
+    }
+
+    if (this.loading && this.commentCount >= this.expectedComments) {
+      this.forceLoadCompletion.cancel()
+      if ("production" !== process.env.NODE_ENV) {
+        console.info('Loading completed ' +
+          'after ' + ((Date.now() - this.startedLoading) / 1000).toFixed(1) + 's ' +
+          'with ' + this.commentCount + ' comments ' +
+          'and ' + this.expectedComments + ' expected comments'
+        )
+      }
+      this.loading = false
+      if (this.isFirstVisit) {
+        this.firstLoadComplete()
+      }
+      else if (SettingsStore.autoCollapse && this.newCommentCount > 0) {
+        this.collapseThreadsWithoutNewComments()
+      }
+    }
+    else {
+      this.forceLoadCompletion()
+    }
+  },
 
   /**
    * Persist comment thread state.
@@ -95,9 +153,27 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     storage.set(this.itemId + MAX_COMMENT_KEY, this.maxCommentId)
   },
 
+  /**
+   * A comment got loaded initially or added later.
+   */
   commentAdded: function(comment) {
+    // Deleted comments don't count towards the comment count
+    if (comment.deleted) {
+      // Adjust the number of comments expected during the initial page load.
+      if (this.loading) {
+        this.expectedComments--
+        this.checkLoadCompletion()
+      }
+      return
+    }
+
     CommentThreadStore.prototype.commentAdded.call(this, comment)
     this.commentCount++
+    // Add the number of kids the comment has to the expected total for the
+    // initial load.
+    if (this.loading && comment.kids) {
+      this.expectedComments += comment.kids.length
+    }
     // Register the comment as new if it's new
     if (this.prevMaxCommentId > 0 && comment.id > this.prevMaxCommentId) {
       this.newCommentCount++
@@ -111,13 +187,25 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     if (comment.parent != this.itemId) {
       this.parents[comment.id] = comment.parent
     }
-    // Trigger debounced callbacks
+
     this.numberOfCommentsChanged()
-    if (this.isFirstVisit) {
-      this.firstLoadComplete()
+    if (this.loading) {
+      this.checkLoadCompletion()
     }
   },
 
+  /**
+   * Change the expected number of comments if an update was received during
+   * initial loding and trigger a re-check of loading completion.
+   */
+  adjustExpectedComments: function(change) {
+    this.expectedComments += change
+    this.checkLoadCompletion()
+  },
+
+  /**
+   * A comment which wasn't previously deleted became deleted.
+   */
   commentDeleted: function(comment) {
     CommentThreadStore.prototype.commentDeleted.call(this, comment)
     this.commentCount--
@@ -179,20 +267,13 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
 
   /**
    * Merk the thread as read.
-   * @return .lastVisit {moment}
-   * @return .maxCommentId {Number}
-   * @return .newCommentCount {Number}
    */
   markAsRead: function() {
+    this.lastVisit = moment(Date.now())
     this.newCommentCount = 0
     this.prevMaxCommentId = this.maxCommentId
     this.isNew = {}
     this._storeState()
-    return {
-      lastVisit: moment(Date.now())
-    , maxCommentId: this.maxCommentId
-    , newCommentCount: this.newCommentCount
-    }
   },
 
   /**
@@ -201,7 +282,6 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   dispose: function() {
     // Cancel debounced callbacks in case any are pending
     this.numberOfCommentsChanged.cancel()
-    this.firstLoadComplete.cancel()
     this._storeState()
   }
 })

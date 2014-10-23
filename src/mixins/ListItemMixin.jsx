@@ -21,23 +21,22 @@ function filter(arr, cb) {
  */
 var ListItemMixin = {
   getNewThreadCount: function(item) {
-    if (this.state.lastVisit === null) {
+    if (this.threadState.lastVisit === null) {
       return 0
     }
     return filter(item.kids, function(threadId) {
-      return threadId > this.state.maxCommentId
+      return threadId > this.threadState.prevMaxCommentId
     }.bind(this)).length
   },
 
-  renderListItem: function(item) {
+  renderListItem: function(item, threadState) {
     if (item.deleted) { return null }
-    var state = this.state
     var newThreads = this.getNewThreadCount(item)
     var hasNewThreads = (newThreads > 0)
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {this.renderItemTitle(item)}
-      {this.renderItemMeta(item, (state.lastVisit !== null && <span>{' '}
-        ({state.lastVisit.fromNow()})
+      {this.renderItemMeta(item, threadState, (threadState.lastVisit !== null && <span>{' '}
+        ({threadState.lastVisit.fromNow()})
         {hasNewThreads && ' | '}
         {hasNewThreads && <Link to="item" params={{id: item.id}}>
           <em>{newThreads} new thread{pluralise(newThreads)}</em>

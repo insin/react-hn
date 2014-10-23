@@ -20,12 +20,12 @@ var DisplayListItem = React.createClass({
     item: React.PropTypes.object.isRequired
   },
 
-  getInitialState: function() {
-    return StoryCommentThreadStore.loadState(this.props.item.id)
+  componentWillMount: function() {
+    this.threadState = StoryCommentThreadStore.loadState(this.props.item.id)
   },
 
   render: function() {
-    return this.renderListItem(this.props.item)
+    return this.renderListItem(this.props.item, this.threadState)
   }
 })
 

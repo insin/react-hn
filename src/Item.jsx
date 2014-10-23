@@ -31,16 +31,15 @@ var Item = React.createClass({
   getInitialState: function() {
     return {
       item: ItemStore.getCachedStory(Number(this.props.params.id)) || {}
-    , lastVisit: null
-    , commentCount: 0
-    , maxCommentId: 0
-    , newCommentCount: 0
     }
   },
 
   componentWillMount: function() {
     this.bindAsObject(HNService.itemRef(this.props.params.id), 'item')
-    this.initThreadStore()
+    if (this.state.item.id) {
+      this.threadStore = new StoryCommentThreadStore(this.state.item, this.handleCommentsChanged, {cached: true})
+      setTitle(this.state.item.title)
+    }
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
 
@@ -49,37 +48,50 @@ var Item = React.createClass({
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
 
-  /**
-   * Update the title whenever an item has loaded.
-   */
+  componentWillReceiveProps: function(nextProps) {
+    if (this.props.params.id != nextProps.params.id) {
+      // Tear it down...
+      this.threadStore.dispose()
+      this.threadStore = null
+      this.unbind('item')
+      // ...and set it up again
+      var item = ItemStore.getCachedStory(Number(nextProps.params.id))
+      if (item) {
+        this.threadStore = new StoryCommentThreadStore(item, this.handleCommentsChanged, {cached: true})
+        setTitle(item.title)
+      }
+      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'item')
+      this.setState({item: item || {}})
+    }
+  },
+
   componentWillUpdate: function(nextProps, nextState) {
-    if (this.state.item.id != nextState.item.id) {
+    // Update the title when the item has loaded.
+    if (!this.state.item.id && nextState.item.id) {
       setTitle(nextState.item.title)
     }
   },
 
-  /**
-   * Handle changing the displayed item without unmounting the component, e.g.
-   * when a link to another item is posted, or the user edits the URL.
-   */
-  componentWillReceiveProps: function(nextProps) {
-    if (this.props.params.id != nextProps.params.id) {
-      this.unbind('item')
-      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'item')
-      this.initThreadStore()
+  componentDidUpdate: function(prevProps, prevState) {
+    // If the state item id changed, an initial or new item must have loaded
+    if (prevState.item.id != this.state.item.id) {
+      if (!this.threadStore || this.threadStore.itemId != this.state.item.id) {
+        this.threadStore = new StoryCommentThreadStore(this.state.item, this.handleCommentsChanged, {cached: false})
+        setTitle(this.state.item.title)
+        this.forceUpdate()
+      }
     }
-  },
-
-  /**
-   * Creates a new thread store and set its initial state. If there's already
-   * an existing thread store, dispose of it first.
-   */
-  initThreadStore: function() {
-    if (this.threadStore) {
-      this.threadStore.dispose()
+    // If the item has been updated from Firebase and the initial set
+    // of comments is still loading, the number of expected comments might need
+    // to be adjusted.
+    // This triggers a check for thread load completion, completing it
+    // immediately if a cached item had 0 kids and the latest version from
+    // Firebase also has 0 kids.
+    else if (prevState.item !== this.state.item && this.threadStore.loading) {
+      var kids = (this.state.item.kids ? this.state.item.kids.length : 0)
+      var prevKids = (prevState.item.kids ? prevState.item.kids.length : 0)
+      this.threadStore.adjustExpectedComments(kids - prevKids)
     }
-    this.threadStore = new StoryCommentThreadStore(this.props.params.id, this.handleCommentsChanged)
-    this.setState(this.threadStore.initialState)
   },
 
   /**
@@ -91,12 +103,7 @@ var Item = React.createClass({
   },
 
   handleCommentsChanged: function(payload) {
-    if (payload.type != 'collapse') {
-      this.setState(payload.data)
-    }
-    else {
-      this.forceUpdate()
-    }
+    this.forceUpdate()
   },
 
   autoCollapse: function(e) {
@@ -106,19 +113,20 @@ var Item = React.createClass({
 
   markAsRead: function(e) {
     e.preventDefault()
-    this.setState(this.threadStore.markAsRead())
+    this.threadStore.markAsRead()
+    this.forceUpdate()
   },
 
   render: function() {
     var state = this.state
     var item = state.item
     var threadStore = this.threadStore
-    if (!item.id) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
+    if (!item.id || !threadStore) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {this.renderItemTitle(item)}
-        {this.renderItemMeta(item, (state.lastVisit !== null && state.newCommentCount > 0 && <span>{' '}
-          (<em>{state.newCommentCount} new</em> in the last {timeUnitsAgo(state.lastVisit)}{') | '}
+        {this.renderItemMeta(item, threadStore, (threadStore.lastVisit !== null && threadStore.newCommentCount > 0 && <span>{' '}
+          (<em>{threadStore.newCommentCount} new</em> in the last {timeUnitsAgo(threadStore.lastVisit)}{') | '}
           <span className="control" tabIndex="0" onClick={this.autoCollapse} onKeyPress={this.autoCollapse} title="Collapse threads without new comments">
             auto collapse
           </span>{' | '}

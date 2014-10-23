@@ -37,51 +37,52 @@ var PermalinkedComment = React.createClass({
 
   componentWillMount: function() {
     this.bindAsObject(HNService.itemRef(this.props.params.id), 'comment')
-    this.threadStore = new CommentThreadStore(this.props.params.id, this.handleCommentsChanged)
     if (this.state.comment.id) {
-      this.fetchAncestors(this.state.comment)
+      this.commentLoaded(this.state.comment)
+    }
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (nextProps.params.id != this.props.params.id) {
+      var comment = UpdatesStore.getComment(nextProps.params.id)
+      if (comment) {
+        this.commentLoaded(comment)
+        this.setState({comment: comment})
+      }
+      this.unbind('comment')
+      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'comment')
     }
   },
 
   componentWillUpdate: function(nextProps, nextState) {
-    // Redirect to the appropriate route if a Comment "parent" link had a
-    // non-comment item id.
-    if (this.state.comment.id != nextState.comment.id && !nextState.comment.deleted) {
-      if (nextState.comment.type != 'comment') {
-        this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
-        return
+    if (this.state.comment.id != nextState.comment.id) {
+      if (!nextState.comment.deleted) {
+        // Redirect to the appropriate route if a Comment "parent" link had a
+        // non-comment item id.
+        if (nextState.comment.type != 'comment') {
+          this.replaceWith(nextState.comment.type, {id: nextState.comment.id})
+          return
+        }
+      }
+      if (!this.threadStore || this.threadStore.itemId != nextState.comment.id) {
+        this.commentLoaded(nextState.comment)
       }
     }
   },
 
-  componentDidUpdate: function(prevProps, prevState) {
-    // Fetch ancestors once the comment loads
-    if (this.state.comment.id != prevState.comment.id && !this.state.comment.deleted) {
-      this.fetchAncestors(this.state.comment)
-    }
-    this.setTitle()
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    // If the top-level comment id changes (i.e. a "parent" or "link" link is
-    // used on a permalinked comment page, or the URL is edited), we need to
-    // start listening for updates to the new item id.
-    if (this.props.params.id != nextProps.params.id) {
-      this.unbind('comment')
-      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'comment')
-      this.threadStore = new CommentThreadStore(nextProps.params.id, this.handleCommentsChanged)
-      var cachedComment = UpdatesStore.getComment(nextProps.params.id)
-      if (cachedComment) {
-        this.setState({comment: cachedComment})
-      }
+  commentLoaded: function(comment) {
+    this.setTitle(comment)
+    if (!comment.deleted) {
+      this.threadStore = new CommentThreadStore(comment, this.handleCommentsChanged)
+      this.fetchAncestors(comment)
     }
   },
 
-  setTitle: function() {
-    if (this.state.comment.deleted) {
+  setTitle: function(comment) {
+    if (comment.deleted) {
       return setTitle('Deleted comment')
     }
-    var title = 'Comment by ' + this.state.comment.by
+    var title = 'Comment by ' + comment.by
     if (this.state.op.id) {
       title += ' | ' + this.state.op.title
     }

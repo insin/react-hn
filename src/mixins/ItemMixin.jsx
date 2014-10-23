@@ -29,11 +29,11 @@ var ItemMixin = {
   /**
    * Render an item's metadata bar.
    */
-  renderItemMeta: function (item, extraContent) {
+  renderItemMeta: function (item, threadState, extraContent) {
     var timeMoment = moment(item.time * 1000)
     var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
-    if (this.state.commentCount > 0) {
-      comments = this.state.commentCount + ' comment' + pluralise(this.state.commentCount)
+    if (threadState.commentCount > 0) {
+      comments = threadState.commentCount + ' comment' + pluralise(threadState.commentCount)
     }
     // Item comment/permalink should only be displayed when in a list
     if (this.constructor.displayName.indexOf('ListItem') != -1) {

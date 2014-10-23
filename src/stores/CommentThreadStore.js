@@ -2,8 +2,8 @@
 
 var extend = require('../utils/extend')
 
-function CommentThreadStore(itemId, onCommentsChanged) {
-  this.itemId = itemId
+function CommentThreadStore(item, onCommentsChanged) {
+  this.itemId = item.id
   this.onCommentsChanged = onCommentsChanged
 
   /**
@@ -11,7 +11,7 @@ function CommentThreadStore(itemId, onCommentsChanged) {
    * @type {Object.<id,Array.<Number>>}
    */
   this.children = {}
-  this.children[itemId] = []
+  this.children[item.id] = []
 
   /**
    * Lookup for new comment ids. Will only contain true.
@@ -64,6 +64,8 @@ extend(CommentThreadStore.prototype, {
    * Register a comment's appearance in the thread.
    */
   commentAdded: function(comment) {
+    if (comment.deleted) { return }
+
     this.children[comment.id] = []
     this.children[comment.parent].push(comment.id)
   },

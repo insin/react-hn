@@ -2,26 +2,26 @@
 
 *Implementation improvements and HN-equivalent features enabled by the API*
 
-Update initial load detection to fire faster
-* keep a tally of "expected" comments vs. loaded comments (add size of .kids
-  from every loaded comment
-* shorten the debounce delay, but keep it for wiggle room
-
 Split caches into their own module so they can be used from anywhere without
 causing circular imports
-
-Always try a cache first when loading an item
 
 User submissions
 
 User comments
 
 Settings
-* auto collapse threads without new comments
+* auto collapse
 * showdead
 * showdeleted
 * max number of cached updates (stories / comments)
 * always poll tostories/updates options?
+
+Deal with delated comments - spinning forever and stopping new load completion
+from working!
+* Firebase has a callback for errors (it seems?)
+* Reactfire doesn't have a way to indicate errors back to the component
+
+Use context instead of manually passing threadStore props down comment trees?
 
 ## Post-"1.0"
 
