@@ -61,6 +61,10 @@ var Comment = React.createClass({
     else if (prevState.comment.id && !prevState.comment.deleted && this.state.comment.deleted) {
       this.props.threadStore.commentDeleted(this.state.comment)
     }
+    // Let the thread store know if the comment died
+    else if (prevState.comment.id && !prevState.comment.dead && this.state.comment.dead) {
+      this.props.threadStore.commentDied(this.state.comment)
+    }
     // If the comment has been updated from Firebase and the initial set
     // of comments is still loading, the number of expected comments might need
     // to be adjusted.

@@ -159,14 +159,20 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     }
 
     CommentThreadStore.prototype.commentAdded.call(this, comment)
-    this.commentCount++
+
+    // Dead comments don't contribute to the comment count if showDead is off
+    if (!comment.dead || SettingsStore.showDead) {
+      this.commentCount++
+    }
     // Add the number of kids the comment has to the expected total for the
     // initial load.
     if (this.loading && comment.kids) {
       this.expectedComments += comment.kids.length
     }
-    // Register the comment as new if it's new
-    if (this.prevMaxCommentId > 0 && comment.id > this.prevMaxCommentId) {
+    // Register the comment as new if it's new, unless it's dead and showDead is off
+    if (this.prevMaxCommentId > 0 &&
+        comment.id > this.prevMaxCommentId &&
+        (!comment.dead || SettingsStore.showDead)) {
       this.newCommentCount++
       this.isNew[comment.id] = true
     }
@@ -186,15 +192,6 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   },
 
   /**
-   * Change the expected number of comments if an update was received during
-   * initial loding and trigger a re-check of loading completion.
-   */
-  adjustExpectedComments: function(change) {
-    this.expectedComments += change
-    this.checkLoadCompletion()
-  },
-
-  /**
    * A comment which wasn't previously deleted became deleted.
    */
   commentDeleted: function(comment) {
@@ -207,6 +204,28 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     delete this.parents[comment.id]
     // Trigger debounced callbacks
     this.numberOfCommentsChanged()
+  },
+
+  /**
+   * A comment which wasn't previously dead became dead.
+   */
+  commentDied: function(comment) {
+    if (!SettingsStore.showDead) {
+      this.commentCount--
+      if (this.isNew[comment.id]) {
+        this.newCommentCount--;
+        delete this.isNew[comment.id]
+      }
+    }
+  },
+
+  /**
+   * Change the expected number of comments if an update was received during
+   * initial loding and trigger a re-check of loading completion.
+   */
+  adjustExpectedComments: function(change) {
+    this.expectedComments += change
+    this.checkLoadCompletion()
   },
 
   collapseThreadsWithoutNewComments: function() {

@@ -2,8 +2,6 @@
 
 *Implementation improvements and HN-equivalent features enabled by the API*
 
-Dead comments shouldn't contribute to the comment count
-
 Split caches into their own module so they can be used from anywhere without
 causing circular imports
 
@@ -15,8 +13,6 @@ Settings
 * always poll tostories/updates options?
 
 Stop vendoring Reactfire once pull request gets merged: https://github.com/firebase/reactfire/pull/24
-
-Use context instead of manually passing threadStore props down comment trees?
 
 ## Post-"1.0"
 
