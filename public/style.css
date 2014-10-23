@@ -211,6 +211,9 @@ span.control:hover {
   color: #666;
 }
 
+.PermalinkedComment > .Comment__content {
+  margin-bottom: 1em;
+}
 .Comment {
 }
 .Comment--new > .Comment__content {

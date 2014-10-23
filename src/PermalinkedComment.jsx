@@ -110,7 +110,7 @@ var PermalinkedComment = React.createClass({
     // XXX Don't render anything if we're replacing the route after loading a non-comment
     if (comment.type != 'comment') { return null }
 
-    var className = cx('Comment Comment--level0', {'Comment--dead': comment.dead})
+    var className = cx('PermalinkedComment Comment Comment--level0', {'Comment--dead': comment.dead})
     var threadStore = this.threadStore
 
     return <div className={className}>
@@ -124,7 +124,7 @@ var PermalinkedComment = React.createClass({
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
           return <Comment key={id} id={id}
-            level={1}
+            level={0}
             loadingSpinner={index === 0}
             threadStore={threadStore}
           />
