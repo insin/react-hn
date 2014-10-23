@@ -43,8 +43,11 @@ var CommentMixin = {
 
   renderCommentLoading: function(comment) {
     return <div className={'Comment Comment--loading Comment--level' + this.props.level}>
-      {this.props.loadingSpinner && <Spinner size="20"/>}
-      {comment.error && <p>Error loading comment - this may be because the author has configured a delay.</p>}
+      {(this.props.loadingSpinner || comment.error) && <Spinner size="20"/>}
+      {comment.error && <p>
+        Unable to load comment &ndash; this usually indicates the author has configured a delay.
+        Trying again in 30 seconds.
+      </p>}
     </div>
   },
 

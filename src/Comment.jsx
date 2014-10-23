@@ -39,12 +39,22 @@ var Comment = React.createClass({
   },
 
   componentWillMount: function() {
-    this.bindAsObject(HNService.itemRef(this.props.id), 'comment')
+    this.bindFirebaseRef()
+  },
+
+  componentWillUnmount: function() {
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
   },
 
   componentDidUpdate: function(prevProps, prevState) {
     // Register a newly-loaded comment with the thread store
     if (!prevState.comment.id && this.state.comment.id) {
+      if (prevState.comment.error && this.timeout) {
+        clearTimeout(this.timeout)
+        this.timeout = null
+      }
       this.props.threadStore.commentAdded(this.state.comment)
     }
     // Let the thread store know if the comment got deleted
@@ -54,10 +64,33 @@ var Comment = React.createClass({
     // If the comment has been updated from Firebase and the initial set
     // of comments is still loading, the number of expected comments might need
     // to be adjusted.
-    else if (prevState.comment !== this.state.comment && this.props.threadStore.loading) {
+    else if (prevState.comment.id &&
+             prevState.comment !== this.state.comment &&
+             this.props.threadStore.loading) {
       var kids = (this.state.comment.kids ? this.state.comment.kids.length : 0)
       var prevKids = (prevState.comment.kids ? prevState.comment.kids.length : 0)
       this.props.threadStore.adjustExpectedComments(kids - prevKids)
+    }
+  },
+
+  bindFirebaseRef: function() {
+    this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
+    if (this.timeout) {
+      this.timeout = null
+    }
+  },
+
+  handleFirebaseRefCancelled: function(e) {
+    if ("production" !== process.env.NODE_ENV) {
+      console.error('Firebase ref for comment ' + this.props.id + ' was cancelled: ' + e.message)
+    }
+    // This is probably due to a user's delay setting, which is measured in
+    // minutes - try again in 30 seconds.
+    this.unbind('comment')
+    this.timeout = setTimeout(this.bindFirebaseRef, 30000)
+    if (!this.state.comment.error) {
+      this.state.comment.error = true
+      this.forceUpdate()
     }
   },
 

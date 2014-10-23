@@ -11,23 +11,18 @@ User submissions
 * One big list of ids for stories, polls and comments
 
 Settings
-* auto collapse
-* showdead
-* showdeleted
 * max number of cached updates (stories / comments)
 * always poll tostories/updates options?
 
-Deal with delayed comments - spinning forever and stopping new load completion
-from working!
-* Firebase has a callback for errors (it seems?)
-* Reactfire doesn't have a way to indicate errors back to the component
-* Pull request: https://github.com/firebase/reactfire/pull/24
+Stop vendoring Reactfire once pull request gets merged: https://github.com/firebase/reactfire/pull/24
 
 Use context instead of manually passing threadStore props down comment trees?
 
 ## Post-"1.0"
 
 *New features and shims for stuff not available via the API*
+
+Improve styling, offer HN-alike style as an option (see below)
 
 Filter items by type/title/date etc. etc.
 
