@@ -7,6 +7,7 @@ var React = require('react')
 var Router = require('react-router')
 
 var ItemStore = require('../stores/ItemStore')
+var SettingsStore = require('../stores/SettingsStore')
 
 var Spinner = require('../Spinner')
 
@@ -72,6 +73,14 @@ var CommentMixin = {
    * @param options.childCounts {Object} with .children and .newComments
    */
   renderCommentMeta: function(comment, options) {
+    if (comment.dead && !SettingsStore.showDead) {
+      return <div className="Comment__meta">
+        {options.collapsible && this.renderCollapseControl(options.collapsed)}
+        {options.collapsible && ' '}
+        [dead]
+      </div>
+    }
+
     return <div className="Comment__meta">
       {options.collapsible && this.renderCollapseControl(options.collapsed)}
       {options.collapsible && ' '}
@@ -93,7 +102,7 @@ var CommentMixin = {
 
   renderCommentText: function(comment) {
     return <div className="Comment__text">
-      <div dangerouslySetInnerHTML={{__html: comment.text}}/>
+      {(!comment.dead || SettingsStore.showDead) ? <div dangerouslySetInnerHTML={{__html: comment.text}}/> : '[dead]'}
     </div>
   }
 }

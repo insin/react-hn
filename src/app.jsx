@@ -13,6 +13,7 @@ var SettingsStore = require('./stores/SettingsStore')
 
 var PermalinkedComment = require('./PermalinkedComment')
 var Item = require('./Item')
+var Settings = require('./Settings')
 var TopStories = require('./TopStories')
 var Updates = require('./Updates')
 var UserProfile = require('./UserProfile')
@@ -24,6 +25,12 @@ var Route = Router.Route
 var Routes = Router.Routes
 
 var App = React.createClass({
+  getInitialState: function() {
+    return {
+      showSettings: false
+    }
+  },
+
   componentWillMount: function() {
     SettingsStore.load()
     TopStore.loadSession()
@@ -45,13 +52,21 @@ var App = React.createClass({
     UpdatesStore.saveSession()
   },
 
-  render: function() {
-    return <div className="App">
+  toggleSettings: function(e) {
+    e.preventDefault()
+    this.setState({showSettings: !this.state.showSettings})
+  },
+
+  render: function() {    return <div className="App">
       <div className="App__header">
         <img src="logo.png" width="16" height="16" alt="" />{' '}
         <Link to="news" className="App__homelink">React HN</Link>{' '}
         <Link to="newest">new</Link>{' | '}
         <Link to="newcomments">comments</Link>
+        <a className="App__settings" tabIndex="0" onClick={this.toggleSettings} onKeyPress={this.toggleSettings}>
+          {this.state.showSettings ? 'hide settings' : 'settings'}
+        </a>
+        {this.state.showSettings && <Settings key="settings"/>}
       </div>
       <div className="App__content">
         <this.props.activeRouteHandler/>

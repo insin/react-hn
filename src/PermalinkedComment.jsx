@@ -8,6 +8,7 @@ var Router = require('react-router')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
+var SettingsStore = require('./stores/SettingsStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 
 var Comment = require('./Comment')
@@ -118,7 +119,7 @@ var PermalinkedComment = React.createClass({
           parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
         , op: !!this.state.op.id
         })}
-        {this.renderCommentText(comment)}
+        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment)}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {

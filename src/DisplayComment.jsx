@@ -4,6 +4,8 @@
 
 var React = require('react')
 
+var SettingsStore = require('./stores/SettingsStore')
+
 var CommentMixin = require('./mixins/CommentMixin')
 
 var cx = require('./utils/buildClassName')
@@ -31,6 +33,7 @@ var DisplayComment = React.createClass({
 
   render: function() {
     if (this.props.comment.deleted) { return null }
+    if (this.props.comment.dead && !SettingsStore.showDead) { return null }
 
     var comment = this.props.comment
     var className = cx('Comment Comment--level0', {

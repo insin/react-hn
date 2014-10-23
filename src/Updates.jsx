@@ -4,6 +4,7 @@
 
 var React = require('react')
 
+var SettingsStore = require('./stores/SettingsStore')
 var UpdatesStore =  require('./stores/UpdatesStore')
 
 var DisplayListItem = require('./DisplayListItem')
@@ -19,11 +20,25 @@ var setTitle = require('./utils/setTitle')
 
 var ITEMS_PER_PAGE = constants.ITEMS_PER_PAGE
 
+function filterDead(item) {
+  return !item.dead
+}
+
+function filterUpdates(updates) {
+  if (!SettingsStore.showDead) {
+    return {
+      comments: updates.comments.filter(filterDead)
+    , stories: updates.stories.filter(filterDead)
+    }
+  }
+  return updates
+}
+
 var Updates = React.createClass({
   mixins: [PageNumberMixin],
 
   getInitialState: function() {
-    return UpdatesStore.getUpdates()
+    return filterUpdates(UpdatesStore.getUpdates())
   },
 
   componentWillMount: function() {
@@ -54,7 +69,7 @@ var Updates = React.createClass({
       }
       return
     }
-    this.setState(updates)
+    this.setState(filterUpdates(updates))
   },
 
   render: function() {

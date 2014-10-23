@@ -2,12 +2,13 @@
 
 *Implementation improvements and HN-equivalent features enabled by the API*
 
+Dead comments shouldn't contribute to the comment count
+
 Split caches into their own module so they can be used from anywhere without
 causing circular imports
 
 User submissions
-
-User comments
+* One big list of ids for stories, polls and comments
 
 Settings
 * auto collapse
@@ -16,10 +17,11 @@ Settings
 * max number of cached updates (stories / comments)
 * always poll tostories/updates options?
 
-Deal with delated comments - spinning forever and stopping new load completion
+Deal with delayed comments - spinning forever and stopping new load completion
 from working!
 * Firebase has a callback for errors (it seems?)
 * Reactfire doesn't have a way to indicate errors back to the component
+* Pull request: https://github.com/firebase/reactfire/pull/24
 
 Use context instead of manually passing threadStore props down comment trees?
 

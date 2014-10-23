@@ -7,6 +7,7 @@ var ReactFireMixin = require('reactfire')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
+var SettingsStore = require('./stores/SettingsStore')
 
 var CommentMixin = require('./mixins/CommentMixin')
 
@@ -70,8 +71,9 @@ var Comment = React.createClass({
     var props = this.props
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) { return this.renderCommentLoading(comment) }
-    // Render a link to HN for deleted comments
+    // Render a link to HN for deleted comments if they're being displayed
     if (comment.deleted) {
+      if (!SettingsStore.showDeleted) { return null }
       return this.renderCommentDeleted(comment, {
         className: 'Comment Comment--deleted Comment--level' + props.level
       })
@@ -95,7 +97,7 @@ var Comment = React.createClass({
         , link: true
         , childCounts: childCounts
         })}
-        {this.renderCommentText(comment)}
+        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment)}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id) {
