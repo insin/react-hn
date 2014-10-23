@@ -36,11 +36,7 @@ var Settings = React.createClass({
           <label htmlFor="showDeleted">
             <input type="checkbox" name="showDeleted" id="showDeleted" checked={SettingsStore.showDeleted}/> show deleted
           </label>
-          <p>
-            Show comments flagged as deleted &ndash; these can sometimes have replies, which are not
-            available via the Hacker News API. Deleted comments will provide a link to Hacker News,
-            should you wish to check for replies.
-          </p>
+          <p>Show comments flagged as deleted in threads.</p>
         </div>
       </form>
     </div>

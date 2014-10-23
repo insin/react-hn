@@ -68,22 +68,26 @@ span.control:hover {
   line-height: 18px;
   vertical-align: middle;
   position: relative;
+  border-top-right-radius: 1em;
 }
 .App__settings {
   position: absolute;
   top: 3px;
-  right: 8px;
+  right: 10px;
   cursor: pointer;
 }
 .Settings {
   box-sizing: border-box;
   padding: .75em;
   position: absolute;
-  width: 50%;
+  width: 36%%;
   background-color: inherit;
   right: 0;
   border-bottom-left-radius: 1em;
   border-bottom-right-radius: 1em;
+}
+.Settings p {
+  color: #fff;
 }
 .Settings div:last-child > p:last-child {
   margin-bottom: 0;
@@ -114,6 +118,8 @@ span.control:hover {
   color: #00d8ff;
   background-color: #222;
   padding: 4px;
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
 }
 .App__footer a {
   color: inherit;
