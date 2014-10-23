@@ -80,16 +80,6 @@ function handleUpdateItems(items) {
     // Silently ignore deleted items (because irony)
     if (item.deleted) { continue }
 
-    if (typeof item.error != 'undefined') {
-      if ("production" !== process.env.NODE_ENV) {
-        console.warn(
-          "An item with an 'error' property was received in the updates " +
-          'stream: ' + JSON.stringify(item)
-        )
-      }
-      continue
-    }
-
     if (typeof updateItemTypes[item.type] == 'undefined') {
       if ("production" !== process.env.NODE_ENV) {
         console.warn(
