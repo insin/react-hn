@@ -113,15 +113,6 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * Check whether the number of comments has reached the expected number yet.
    */
   checkLoadCompletion: function() {
-    if ("production" !== process.env.NODE_ENV) {
-      if (!this.loading) {
-        console.warn(
-          'StoryCommentThreadStore.checkLoadCompletion() was called ' +
-          'when loading=false\n' + JSON.stringify(this)
-        )
-      }
-    }
-
     if (this.loading && this.commentCount >= this.expectedComments) {
       this.forceLoadCompletion.cancel()
       if ("production" !== process.env.NODE_ENV) {
