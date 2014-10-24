@@ -39,7 +39,7 @@ var ListItemMixin = {
         ({threadState.lastVisit.fromNow()})
         {hasNewThreads && ' | '}
         {hasNewThreads && <Link to={item.type} params={{id: item.id}}>
-          <em>{newThreads} new thread{pluralise(newThreads)}</em>
+          {newThreads} new thread{pluralise(newThreads)}
         </Link>}
       </span>))}
     </li>
