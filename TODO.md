@@ -8,10 +8,6 @@ causing circular imports
 User submissions
 * One big list of ids for stories, polls and comments
 
-Settings
-* max number of cached updates (stories / comments)
-* always poll tostories/updates options?
-
 Stop vendoring Reactfire once pull request gets merged: https://github.com/firebase/reactfire/pull/24
 
 ## Post-"1.0"
@@ -30,6 +26,8 @@ Filter items by type/title/date etc. etc.
 Settings
 * username
 * themes (alt CSS, user CSS)
+* max number of cached updates (stories / comments)
+* always poll tostories/updates options?
 
 ## Fancy or OTT
 

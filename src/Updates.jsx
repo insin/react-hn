@@ -79,13 +79,9 @@ var Updates = React.createClass({
     }
 
     var page = pageCalc(this.getPageNumber(), ITEMS_PER_PAGE, items.length)
-    var notice = (page.pageNum == 1 && <p className="Updates__notice">
-      This view will currently only update while you have it open - this will be configurable sometime&hellip;
-    </p>)
 
     if (this.props.type == 'comments') {
       return <div className="Updates Comments">
-        {notice}
         {items.slice(page.startIndex, page.endIndex).map(function(comment) {
           return <DisplayComment key={comment.id} id={comment.id} comment={comment}/>
         })}
@@ -94,7 +90,6 @@ var Updates = React.createClass({
     }
     else {
       return <div className="Updates Items">
-        {notice}
         <ol className="Items__list" start={page.startIndex + 1}>
           {items.slice(page.startIndex, page.endIndex).map(function(item) {
             return <DisplayListItem key={item.id} item={item}/>
