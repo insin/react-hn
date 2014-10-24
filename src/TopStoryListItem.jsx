@@ -43,6 +43,7 @@ var TopStoryListItem = React.createClass({
   },
 
   componentWillMount: function() {
+    TopStore.onThreadStateChange(this.props.id, this.updateThreadState)
     if (this.props.id != null) {
       this.initLiveItem()
     }
@@ -51,6 +52,10 @@ var TopStoryListItem = React.createClass({
       // waiting for the live item to load.
       this.threadState = StoryCommentThreadStore.loadState(this.state.item.id)
     }
+  },
+
+  componentWillUnmount: function() {
+    TopStore.offThreadStateChange(this.props.id, this.updateThreadState)
   },
 
   /**
@@ -81,6 +86,15 @@ var TopStoryListItem = React.createClass({
     // If we were given a cached item to display initially, it will be replaced
     this.bindAsObject(HNService.itemRef(this.props.id), 'item')
     this.threadState = StoryCommentThreadStore.loadState(this.props.id)
+  },
+
+  /**
+   * Update thread state in response to a storage event indicating it has been
+   * modified.
+   */
+  updateThreadState: function() {
+    this.threadState = StoryCommentThreadStore.loadState(this.props.id)
+    this.forceUpdate()
   },
 
   render: function() {

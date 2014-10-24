@@ -5,13 +5,12 @@ var moment = require('moment')
 var CommentThreadStore = require('./CommentThreadStore')
 var SettingsStore = require('./SettingsStore')
 
+var constants = require('../utils/constants')
 var debounce = require('../utils/cancellableDebounce')
 var extend = require('../utils/extend')
 var storage = require('../utils/storage')
 
-var COMMENT_COUNT_KEY = ':cc'
-var LAST_VISIT_KEY = ':lv'
-var MAX_COMMENT_KEY = ':mc'
+var storageSuffixes = constants.storageSuffixes
 
 /**
  * Load persisted comment thread state.
@@ -20,11 +19,11 @@ var MAX_COMMENT_KEY = ':mc'
  * @return .maxCommentId {Number} 0 if the item hasn't been visited before.
  */
 function loadState(itemId) {
-  var lastVisitTime = storage.get(itemId + LAST_VISIT_KEY, null)
+  var lastVisitTime = storage.get(itemId + storageSuffixes.LAST_VISIT, null)
   return {
     lastVisit: (lastVisitTime !== null ? moment(Number(lastVisitTime)) : null)
-  , commentCount: Number(storage.get(itemId + COMMENT_COUNT_KEY, '0'))
-  , maxCommentId: Number(storage.get(itemId + MAX_COMMENT_KEY, '0'))
+  , commentCount: Number(storage.get(itemId + storageSuffixes.COMMENT_COUNT, '0'))
+  , maxCommentId: Number(storage.get(itemId + storageSuffixes.MAX_COMMENT, '0'))
   }
 }
 
@@ -106,6 +105,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
       else if (SettingsStore.autoCollapse && this.newCommentCount > 0) {
         this.collapseThreadsWithoutNewComments()
       }
+      this._storeState()
     }
   },
 
@@ -113,9 +113,9 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * Persist comment thread state.
    */
   _storeState: function() {
-    storage.set(this.itemId + COMMENT_COUNT_KEY, this.commentCount)
-    storage.set(this.itemId + LAST_VISIT_KEY, Date.now())
-    storage.set(this.itemId + MAX_COMMENT_KEY, this.maxCommentId)
+    storage.set(this.itemId + storageSuffixes.COMMENT_COUNT, this.commentCount)
+    storage.set(this.itemId + storageSuffixes.LAST_VISIT, Date.now())
+    storage.set(this.itemId + storageSuffixes.MAX_COMMENT, this.maxCommentId)
   },
 
   /**

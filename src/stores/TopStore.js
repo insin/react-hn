@@ -4,7 +4,19 @@ var EventEmitter = require('events').EventEmitter
 
 var HNService = require('../services/HNService')
 
+var constants = require('../utils/constants')
 var extend = require('../utils/extend')
+
+var storageSuffixes = constants.storageSuffixes
+
+function endsWith(subject, test) {
+  if (subject.length < test.length) {
+    return false
+  }
+  else {
+    return (subject.lastIndexOf(test) == subject.length - test.length)
+  }
+}
 
 /**
  * Firebase reference used to stream updates.
@@ -38,6 +50,16 @@ function handleUpdatedTopStories(snapshot) {
   topStoryIds = snapshot.val()
   populateTopStories()
   TopStore.emit('update', TopStore.getTopStories())
+}
+
+/**
+ * Emit a same-named event if a storage key corresponding to a comment thread's
+ * last visit time has been changed.
+ */
+function handleStorage(e) {
+  if (endsWith(e.key, storageSuffixes.LAST_VISIT)) {
+    TopStore.emit(e.key)
+  }
 }
 
 var TopStore = extend(new EventEmitter(), {
@@ -82,6 +104,22 @@ var TopStore = extend(new EventEmitter(), {
   setItem: function(index, item) {
     topStories[index] = item
     topStoriesCache[item.id] = item
+  },
+
+  listenToStorage: function() {
+    window.addEventListener('storage', handleStorage)
+  },
+
+  stopListeningToStorage: function() {
+    window.removeEventListener('storage', handleStorage)
+  },
+
+  onThreadStateChange: function(itemId, handler) {
+    this.on(itemId + storageSuffixes.LAST_VISIT, handler)
+  },
+
+  offThreadStateChange: function(itemId, handler) {
+    this.off(itemId + storageSuffixes.LAST_VISIT, handler)
   }
 })
 TopStore.off = TopStore.removeListener

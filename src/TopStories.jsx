@@ -28,11 +28,13 @@ var TopStories = React.createClass({
   componentWillMount: function() {
     TopStore.on('update', this.handleUpdate)
     TopStore.start()
+    TopStore.listenToStorage()
     setTitle()
   },
 
   componentWillUnmount: function() {
     TopStore.off('update', this.handleUpdate)
+    TopStore.stopListeningToStorage()
   },
 
   handleUpdate: function(topStories) {
