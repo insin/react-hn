@@ -88,33 +88,10 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   },
 
   /**
-   * Quick HACK for forcing completion of loading when there are delayed
-   * comments present.
-   */
-  forceLoadCompletion: debounce(function() {
-    if ("production" !== process.env.NODE_ENV) {
-      if (!this.loading) {
-        console.warn('Forcing loading completion ' +
-          'after ' + ((Date.now() - this.startedLoading) / 1000).toFixed(1) + 's\n' +
-           JSON.stringify(this)
-        )
-      }
-    }
-    this.loading = false
-    if (this.isFirstVisit) {
-      this.firstLoadComplete()
-    }
-    else if (SettingsStore.autoCollapse && this.newCommentCount > 0) {
-      this.collapseThreadsWithoutNewComments()
-    }
-  }, 5000),
-
-  /**
    * Check whether the number of comments has reached the expected number yet.
    */
   checkLoadCompletion: function() {
     if (this.loading && this.commentCount >= this.expectedComments) {
-      this.forceLoadCompletion.cancel()
       if ("production" !== process.env.NODE_ENV) {
         console.info('Loading completed ' +
           'after ' + ((Date.now() - this.startedLoading) / 1000).toFixed(1) + 's ' +
@@ -129,9 +106,6 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
       else if (SettingsStore.autoCollapse && this.newCommentCount > 0) {
         this.collapseThreadsWithoutNewComments()
       }
-    }
-    else {
-      this.forceLoadCompletion()
     }
   },
 
@@ -161,7 +135,10 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     CommentThreadStore.prototype.commentAdded.call(this, comment)
 
     // Dead comments don't contribute to the comment count if showDead is off
-    if (!comment.dead || SettingsStore.showDead) {
+    if (comment.dead && !SettingsStore.showDead) {
+      this.expectedComments--
+    }
+    else {
       this.commentCount++
     }
     // Add the number of kids the comment has to the expected total for the
@@ -189,6 +166,14 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     if (this.loading) {
       this.checkLoadCompletion()
     }
+  },
+
+  /**
+   * A comment which hasn't loaded yet is being delayed.
+   */
+  commentDelayed: function(commentId) {
+    // Don't wait for delayed comments
+    this.expectedComments--
   },
 
   /**
