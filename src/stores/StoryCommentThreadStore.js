@@ -8,6 +8,7 @@ var SettingsStore = require('./SettingsStore')
 var constants = require('../utils/constants')
 var debounce = require('../utils/cancellableDebounce')
 var extend = require('../utils/extend')
+var pluralise = require('../utils/pluralise')
 var storage = require('../utils/storage')
 
 var storageSuffixes = constants.storageSuffixes
@@ -92,10 +93,11 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   checkLoadCompletion: function() {
     if (this.loading && this.commentCount >= this.expectedComments) {
       if ("production" !== process.env.NODE_ENV) {
-        console.info('Loading completed ' +
-          'after ' + ((Date.now() - this.startedLoading) / 1000).toFixed(1) + 's ' +
-          'with ' + this.commentCount + ' comments ' +
-          'and ' + this.expectedComments + ' expected comments'
+        console.info(
+          'Initial load of ' +
+           this.commentCount + ' comment' + pluralise(this.commentCount) +
+          ' for ' + this.itemId + ' took ' +
+          ((Date.now() - this.startedLoading) / 1000).toFixed(2) + 's'
         )
       }
       this.loading = false
