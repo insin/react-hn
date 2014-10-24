@@ -20,25 +20,25 @@ function filter(arr, cb) {
  * Must be used in conjunction with ItemMixin for its rendering methods.
  */
 var ListItemMixin = {
-  getNewThreadCount: function(item) {
-    if (this.threadState.lastVisit === null) {
+  getNewThreadCount: function(item, threadState) {
+    if (threadState.lastVisit === null) {
       return 0
     }
     return filter(item.kids, function(threadId) {
-      return threadId > this.threadState.prevMaxCommentId
-    }.bind(this)).length
+      return threadId > threadState.maxCommentId
+    }).length
   },
 
   renderListItem: function(item, threadState) {
     if (item.deleted) { return null }
-    var newThreads = this.getNewThreadCount(item)
+    var newThreads = this.getNewThreadCount(item, threadState)
     var hasNewThreads = (newThreads > 0)
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
       {this.renderItemTitle(item)}
       {this.renderItemMeta(item, threadState, (threadState.lastVisit !== null && <span>{' '}
         ({threadState.lastVisit.fromNow()})
         {hasNewThreads && ' | '}
-        {hasNewThreads && <Link to="item" params={{id: item.id}}>
+        {hasNewThreads && <Link to={item.type} params={{id: item.id}}>
           <em>{newThreads} new thread{pluralise(newThreads)}</em>
         </Link>}
       </span>))}
