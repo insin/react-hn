@@ -2,6 +2,8 @@
 
 *Implementation improvements and HN-equivalent features enabled by the API*
 
+Reduce number of localStorage accesses - use a single key for thread state
+
 Split caches into their own module so they can be used from anywhere without
 causing circular imports
 
