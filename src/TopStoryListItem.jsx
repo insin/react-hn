@@ -43,7 +43,7 @@ var TopStoryListItem = React.createClass({
   },
 
   componentWillMount: function() {
-    TopStore.onThreadStateChange(this.props.id, this.updateThreadState)
+    TopStore.on(this.props.id, this.updateThreadState)
     if (this.props.id != null) {
       this.initLiveItem()
     }
@@ -55,7 +55,7 @@ var TopStoryListItem = React.createClass({
   },
 
   componentWillUnmount: function() {
-    TopStore.offThreadStateChange(this.props.id, this.updateThreadState)
+    TopStore.off(this.props.id, this.updateThreadState)
   },
 
   /**

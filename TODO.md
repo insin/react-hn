@@ -1,20 +1,9 @@
-## "1.0" (webapp versioning lol)
-
-*Implementation improvements and HN-equivalent features enabled by the API*
-
-Reduce number of localStorage accesses - use a single key for thread state
-
-Split caches into their own module so they can be used from anywhere without
-causing circular imports
-
 User submissions
 * One big list of ids for stories, polls and comments
 
 Stop vendoring Reactfire once pull request gets merged: https://github.com/firebase/reactfire/pull/24
 
-## Post-"1.0"
-
-*New features and shims for stuff not available via the API*
+Split caches into their own module
 
 Improve styling, offer HN-alike style as an option (see below)
 

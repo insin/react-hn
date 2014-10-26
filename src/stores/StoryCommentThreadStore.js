@@ -5,13 +5,10 @@ var moment = require('moment')
 var CommentThreadStore = require('./CommentThreadStore')
 var SettingsStore = require('./SettingsStore')
 
-var constants = require('../utils/constants')
 var debounce = require('../utils/cancellableDebounce')
 var extend = require('../utils/extend')
 var pluralise = require('../utils/pluralise')
 var storage = require('../utils/storage')
-
-var storageSuffixes = constants.storageSuffixes
 
 /**
  * Load persisted comment thread state.
@@ -20,11 +17,16 @@ var storageSuffixes = constants.storageSuffixes
  * @return .maxCommentId {Number} 0 if the item hasn't been visited before.
  */
 function loadState(itemId) {
-  var lastVisitTime = storage.get(itemId + storageSuffixes.LAST_VISIT, null)
+  var json = storage.get(itemId)
+  if (json) {
+    var state = JSON.parse(json)
+    state.lastVisit = moment(state.lastVisit)
+    return state
+  }
   return {
-    lastVisit: (lastVisitTime !== null ? moment(Number(lastVisitTime)) : null)
-  , commentCount: Number(storage.get(itemId + storageSuffixes.COMMENT_COUNT, '0'))
-  , maxCommentId: Number(storage.get(itemId + storageSuffixes.MAX_COMMENT, '0'))
+    lastVisit: null
+  , commentCount: 0
+  , maxCommentId: 0
   }
 }
 
@@ -115,9 +117,11 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * Persist comment thread state.
    */
   _storeState: function() {
-    storage.set(this.itemId + storageSuffixes.COMMENT_COUNT, this.commentCount)
-    storage.set(this.itemId + storageSuffixes.LAST_VISIT, Date.now())
-    storage.set(this.itemId + storageSuffixes.MAX_COMMENT, this.maxCommentId)
+    storage.set(this.itemId, JSON.stringify({
+      lastVisit: Date.now()
+    , commentCount: this.commentCount
+    , maxCommentId: this.maxCommentId
+    }))
   },
 
   /**
