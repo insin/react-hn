@@ -37,6 +37,9 @@ var ItemMixin = {
     }
     // Item comment/permalink should only be displayed when in a list
     if (this.constructor.displayName.indexOf('ListItem') != -1) {
+      if (threadState.lastVisit === null && item.kids && item.kids.length) {
+        comments = item.kids.length + ' thread' + pluralise(item.kids.length)
+      }
       comments = <Link to={item.type} params={{id: item.id}}>{comments}</Link>
     }
 
