@@ -51,7 +51,7 @@ gulp.task('build-deps', function() {
   b.require('react/addons', {expose: 'react'})
   b.require('react-router')
   b.require('firebase')
-  b.require('./vendor/reactfire', {expose: 'reactfire'})
+  b.require('reactfire')
   b.require('moment')
   b.transform('envify')
 

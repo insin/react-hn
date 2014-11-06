@@ -1,8 +1,6 @@
 User submissions
 * One big list of ids for stories, polls and comments
 
-Stop vendoring Reactfire once pull request gets merged: https://github.com/firebase/reactfire/pull/24
-
 Split caches into their own module
 
 Improve styling, offer HN-alike style as an option (see below)
