@@ -41,20 +41,16 @@ Live version: http://insin.github.io/react-hn
 
 ## Building
 
-Install [gulp](https://github.com/gulpjs/gulp/) (if you don't already have it)
-and dependencies:
+Install dependencies:
 
 ```
-npm install -g gulp
 npm install
 ```
 
-### Gulp Tasks
+### npm scripts
 
-* `gulp dist` - builds from scratch into the `/dist` directory.
-* `gulp watch` - watches JavaScript in `/src`, linting, transpiling, browserifying
-  and copying to `/dist` on every change.
-
-Pass a `--production` flag to use minified JavaScript.
+* `npm run dist` - builds from scratch into the `/dist` directory.
+* `npm run watch` - watches JavaScript in `/src`, linting, transpiling,
+  browserifying and copying to `/dist` on every change.
 
 ## MIT Licensed

@@ -9,7 +9,9 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "test": "jest"
+    "dist": "gulp dist",
+    "test": "jest",
+    "watch": "gulp watch"
   },
   "jest": {
     "testPathDirs": [
