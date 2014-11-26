@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var moment = require('moment')

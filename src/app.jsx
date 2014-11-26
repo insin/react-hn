@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 require('setimmediate')
@@ -22,7 +20,7 @@ var DefaultRoute = Router.DefaultRoute
 var Link = Router.Link
 var NotFoundRoute = Router.NotFoundRoute
 var Route = Router.Route
-var Routes = Router.Routes
+var RouteHandler = Router.RouteHandler
 
 var App = React.createClass({
   getInitialState: function() {
@@ -69,7 +67,7 @@ var App = React.createClass({
         {this.state.showSettings && <Settings key="settings"/>}
       </div>
       <div className="App__content">
-        <this.props.activeRouteHandler/>
+        <RouteHandler {...this.props}/>
       </div>
       <div className="App__footer">
         react-hn v{process.env.VERSION} | <a href="https://github.com/insin/react-hn">insin/react-hn</a>
@@ -84,23 +82,28 @@ var NotFound = React.createClass({
   }
 })
 
-var routes = <Routes location="hash">
-  <Route name="app" path="/" handler={App}>
-    <DefaultRoute handler={TopStories}/>
-    <NotFoundRoute handler={NotFound}/>
-    <Route name="news" path="news" handler={TopStories}/>
-    <Route name="item" path="item/:id" handler={Item}/>
-    <Route name="job" path="job/:id" handler={Item}/>
-    <Route name="poll" path="poll/:id" handler={Item}/>
-    <Route name="story" path="story/:id" handler={Item}/>
-    <Route name="comment" path="comment/:id" handler={PermalinkedComment}/>
-    <Route name="newest" path="newest" handler={Updates} type="links"/>
-    <Route name="newcomments" path="newcomments" handler={Updates} type="comments"/>
-    <Route name="user" path="user/:id" handler={UserProfile}/>
-  </Route>
-</Routes>
+function updatesHandler(type) {
+  return React.createClass({
+    render: function() {
+      return <Updates {...this.props} type={type}/>
+    }
+  })
+}
 
-// Expose React globally for React Developer Tools
-window.React = React
+var routes = <Route name="app" path="/" handler={App}>
+  <DefaultRoute handler={TopStories}/>
+  <NotFoundRoute handler={NotFound}/>
+  <Route name="news" path="news" handler={TopStories}/>
+  <Route name="item" path="item/:id" handler={Item}/>
+  <Route name="job" path="job/:id" handler={Item}/>
+  <Route name="poll" path="poll/:id" handler={Item}/>
+  <Route name="story" path="story/:id" handler={Item}/>
+  <Route name="comment" path="comment/:id" handler={PermalinkedComment}/>
+  <Route name="newest" path="newest" handler={updatesHandler('links')}/>
+  <Route name="newcomments" path="newcomments" handler={updatesHandler('comments')}/>
+  <Route name="user" path="user/:id" handler={UserProfile}/>
+</Route>
 
-React.renderComponent(routes, document.getElementById('app'))
+Router.run(routes, function (Handler, state) {
+  React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
+})
