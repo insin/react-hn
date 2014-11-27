@@ -18,11 +18,11 @@ var DisplayListItem = React.createClass({
     item: React.PropTypes.object.isRequired
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.threadState = StoryCommentThreadStore.loadState(this.props.item.id)
   },
 
-  render: function() {
+  render() {
     return this.renderListItem(this.props.item, this.threadState)
   }
 })

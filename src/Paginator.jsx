@@ -1,12 +1,10 @@
 'use strict';
 
 var React = require('react')
-var Router = require('react-router')
-
-var Link = Router.Link
+var {Link} = require('react-router')
 
 var Paginator = React.createClass({
-  render: function() {
+  render() {
     if (this.props.page == 1 && !this.props.hasNext) { return null }
     return <div className="Paginator">
       {this.props.page > 1 && <span className="Paginator__prev">

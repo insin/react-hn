@@ -1,12 +1,10 @@
 'use strict';
 
 var React = require('react')
-var Router = require('react-router')
+var {Link} = require('react-router')
 
 var cx = require('../utils/buildClassName')
 var pluralise = require('../utils/pluralise')
-
-var Link = Router.Link
 
 function filter(arr, cb) {
   if (!arr) { return [] }
@@ -18,7 +16,7 @@ function filter(arr, cb) {
  * Must be used in conjunction with ItemMixin for its rendering methods.
  */
 var ListItemMixin = {
-  getNewThreadCount: function(item, threadState) {
+  getNewThreadCount(item, threadState) {
     if (threadState.lastVisit === null) {
       return 0
     }
@@ -27,7 +25,7 @@ var ListItemMixin = {
     }).length
   },
 
-  renderListItem: function(item, threadState) {
+  renderListItem(item, threadState) {
     if (item.deleted) { return null }
     var newThreads = this.getNewThreadCount(item, threadState)
     var hasNewThreads = (newThreads > 0)

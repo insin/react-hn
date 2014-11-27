@@ -12,11 +12,9 @@ var Spinner = require('./Spinner')
 
 var PageNumberMixin = require('./mixins/PageNumberMixin')
 
-var constants = require('./utils/constants')
+var {ITEMS_PER_PAGE} = require('./utils/constants')
 var pageCalc = require('./utils/pageCalc')
 var setTitle = require('./utils/setTitle')
-
-var ITEMS_PER_PAGE = constants.ITEMS_PER_PAGE
 
 function filterDead(item) {
   return !item.dead
@@ -35,32 +33,32 @@ function filterUpdates(updates) {
 var Updates = React.createClass({
   mixins: [PageNumberMixin],
 
-  getInitialState: function() {
+  getInitialState() {
     return filterUpdates(UpdatesStore.getUpdates())
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.setTitle(this.props.type)
     UpdatesStore.start()
     UpdatesStore.on('updates', this.handleUpdates)
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     UpdatesStore.off('updates', this.handleUpdates)
     UpdatesStore.stop()
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.type != nextProps.type) {
       this.setTitle(nextProps.type)
     }
   },
 
-  setTitle: function(type) {
+  setTitle(type) {
     setTitle('New ' + (type == 'comments' ? 'Comments' : 'Links'))
   },
 
-  handleUpdates: function(updates) {
+  handleUpdates(updates) {
     if (!this.isMounted()) {
       if ("production" !== process.env.NODE_ENV) {
         console.warn('Skipping update of ' + this.props.type + ' as the Updates component is not mounted')
@@ -70,7 +68,7 @@ var Updates = React.createClass({
     this.setState(filterUpdates(updates))
   },
 
-  render: function() {
+  render() {
     var items= (this.props.type == 'comments' ? this.state.comments: this.state.stories)
     if (items.length === 0) {
       return <div className="Updates Updates--loading"><Spinner size="20"/></div>

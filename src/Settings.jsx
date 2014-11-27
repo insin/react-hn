@@ -5,17 +5,17 @@ var React = require('react')
 var SettingsStore = require('./stores/SettingsStore')
 
 var Settings = React.createClass({
-  componentDidMount: function() {
+  componentDidMount() {
     this.refs.container.getDOMNode().focus()
   },
 
-  onChange: function(e) {
+  onChange(e) {
     SettingsStore[e.target.name] = e.target.checked
     this.forceUpdate()
     SettingsStore.save()
   },
 
-  render: function() {
+  render() {
     return <div ref="container" className="Settings" tabIndex="-1">
       <form onChange={this.onChange}>
         <div className="Settings__setting Settings__setting--checkbox">

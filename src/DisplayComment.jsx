@@ -18,18 +18,18 @@ var DisplayComment = React.createClass({
     comment: React.PropTypes.object.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       op: {}
     , parent: {type: 'comment'}
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.fetchAncestors(this.props.comment)
   },
 
-  render: function() {
+  render() {
     if (this.props.comment.deleted) { return null }
     if (this.props.comment.dead && !SettingsStore.showDead) { return null }
 

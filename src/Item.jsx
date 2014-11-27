@@ -26,13 +26,13 @@ function timeUnitsAgo(_moment) {
 var Item = React.createClass({
   mixins: [ItemMixin, ReactFireMixin],
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       item: ItemStore.getCachedStory(Number(this.props.params.id)) || {}
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.bindAsObject(HNService.itemRef(this.props.params.id), 'item')
     if (this.state.item.id) {
       this.threadStore = new StoryCommentThreadStore(this.state.item, this.handleCommentsChanged, {cached: true})
@@ -41,12 +41,12 @@ var Item = React.createClass({
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.threadStore.dispose()
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       // Tear it down...
       this.threadStore.dispose()
@@ -63,14 +63,14 @@ var Item = React.createClass({
     }
   },
 
-  componentWillUpdate: function(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     // Update the title when the item has loaded.
     if (!this.state.item.id && nextState.item.id) {
       setTitle(nextState.item.title)
     }
   },
 
-  componentDidUpdate: function(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     // If the state item id changed, an initial or new item must have loaded
     if (prevState.item.id != this.state.item.id) {
       if (!this.threadStore || this.threadStore.itemId != this.state.item.id) {
@@ -96,26 +96,26 @@ var Item = React.createClass({
    * Ensure the last visit time and comment details get stored for this item if
    * the user refreshes or otherwise navigates off the page.
    */
-  handleBeforeUnload: function() {
+  handleBeforeUnload() {
     this.threadStore.dispose()
   },
 
-  handleCommentsChanged: function(payload) {
+  handleCommentsChanged(payload) {
     this.forceUpdate()
   },
 
-  autoCollapse: function(e) {
+  autoCollapse(e) {
     e.preventDefault()
     this.threadStore.collapseThreadsWithoutNewComments()
   },
 
-  markAsRead: function(e) {
+  markAsRead(e) {
     e.preventDefault()
     this.threadStore.markAsRead()
     this.forceUpdate()
   },
 
-  render: function() {
+  render() {
     var state = this.state
     var item = state.item
     var threadStore = this.threadStore

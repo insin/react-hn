@@ -9,33 +9,30 @@ var Paginator = require('./Paginator')
 var Spinner = require('./Spinner')
 var TopStoryListItem = require('./TopStoryListItem')
 
-var constants = require('./utils/constants')
+var {ITEMS_PER_PAGE, TOP_STORIES} = require('./utils/constants')
 var pageCalc = require('./utils/pageCalc')
 var setTitle = require('./utils/setTitle')
-
-var ITEMS_PER_PAGE = constants.ITEMS_PER_PAGE
-var TOP_STORIES = constants.TOP_STORIES
 
 var TopStories = React.createClass({
   mixins: [PageNumberMixin],
 
-  getInitialState: function() {
+  getInitialState() {
     return TopStore.getTopStories()
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     TopStore.on('update', this.handleUpdate)
     TopStore.start()
     TopStore.listenToStorage()
     setTitle()
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     TopStore.off('update', this.handleUpdate)
     TopStore.stopListeningToStorage()
   },
 
-  handleUpdate: function(topStories) {
+  handleUpdate(topStories) {
     if (!this.isMounted()) {
       if ("production" !== process.env.NODE_ENV) {
         console.warn('Skipping update of top stories as the TopStories component is not mounted')
@@ -45,7 +42,7 @@ var TopStories = React.createClass({
     this.setState(topStories)
   },
 
-  render: function() {
+  render() {
     var page = pageCalc(this.getPageNumber(), ITEMS_PER_PAGE, TOP_STORIES)
 
     if (this.state.topStories.length === 0 && this.state.topStoryIds.length === 0) {
@@ -67,7 +64,7 @@ var TopStories = React.createClass({
     </div>
   },
 
-  renderItems: function(startIndex, endIndex) {
+  renderItems(startIndex, endIndex) {
     var rendered = []
     for (var i = startIndex; i < endIndex; i++) {
       var item = this.state.topStories[i]

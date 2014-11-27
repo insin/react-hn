@@ -2,11 +2,9 @@
 
 var React = require('react')
 var moment = require('moment')
-var Router = require('react-router')
+var {Link} = require('react-router')
 
 var pluralise = require('../utils/pluralise')
-
-var Link = Router.Link
 
 var parseHost = (function() {
   var a = document.createElement('a')
@@ -27,7 +25,7 @@ var ItemMixin = {
   /**
    * Render an item's metadata bar.
    */
-  renderItemMeta: function (item, threadState, extraContent) {
+  renderItemMeta(item, threadState, extraContent) {
     var timeMoment = moment(item.time * 1000)
     var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
     if (threadState.commentCount > 0) {
@@ -65,7 +63,7 @@ var ItemMixin = {
   /**
    * Render an item's title bar.
    */
-  renderItemTitle: function(item) {
+  renderItemTitle(item) {
     var hasURL = !!item.url
     var title
     if (item.dead) {

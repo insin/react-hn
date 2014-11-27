@@ -4,10 +4,8 @@ var EventEmitter = require('events').EventEmitter
 
 var HNService = require('../services/HNService')
 
-var constants = require('../utils/constants')
+var {UPDATES_CACHE_SIZE} = require('../utils/constants')
 var extend = require('../utils/extend')
-
-var UPDATES_CACHE_SIZE = constants.UPDATES_CACHE_SIZE
 
 /**
  * Firebase reference used to stream updates.
@@ -103,17 +101,17 @@ function handleUpdateItems(items) {
 }
 
 var UpdatesStore = extend(new EventEmitter(), {
-  loadSession: function() {
+  loadSession() {
     var json = sessionStorage.updates
     updatesCache = (json ? JSON.parse(json) : {comments: {}, stories: {}})
     populateUpdates()
   },
 
-  saveSession: function() {
+  saveSession() {
     sessionStorage.updates = JSON.stringify(updatesCache)
   },
 
-  start: function() {
+  start() {
     if (updatesRef === null) {
       updatesRef = HNService.updatesRef()
       updatesRef.on('value', function(snapshot) {
@@ -122,24 +120,24 @@ var UpdatesStore = extend(new EventEmitter(), {
     }
   },
 
-  stop: function() {
+  stop() {
     updatesRef.off()
     updatesRef = null
   },
 
-  getUpdates: function() {
+  getUpdates() {
     return updates
   },
 
-  getItem: function(id) {
+  getItem(id) {
     return (updatesCache.comments[id] || updatesCache.stories[id] || null)
   },
 
-  getComment: function(id) {
+  getComment(id) {
     return (updatesCache.comments[id] || null)
   },
 
-  getStory: function(id) {
+  getStory(id) {
     return (updatesCache.stories[id] || null)
   }
 })

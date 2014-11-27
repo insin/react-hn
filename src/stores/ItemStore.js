@@ -65,7 +65,7 @@ function processCommentParent(item, cb, result) {
 }
 
 var ItemStore = {
-  getItem: function(id, cb, result) {
+  getItem(id, cb, result) {
     var cachedItem = this.getCachedItem(id)
     if (cachedItem) {
       if (result) {
@@ -78,15 +78,15 @@ var ItemStore = {
     }
   },
 
-  getCachedItem: function(id) {
+  getCachedItem(id) {
     return TopStore.getItem(id) || UpdatesStore.getItem(id) || null
   },
 
-  getCachedStory: function(id) {
+  getCachedStory(id) {
     return TopStore.getItem(id) || UpdatesStore.getStory(id) || null
   },
 
-  fetchCommentAncestors: function(comment, cb) {
+  fetchCommentAncestors(comment, cb) {
     var startTime = Date.now()
     var result = {itemCount: 0, cacheHits: 0}
     fetchCommentParent(comment, function() {

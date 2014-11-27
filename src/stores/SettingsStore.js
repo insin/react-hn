@@ -10,14 +10,14 @@ var SettingsStore = {
   showDead: false,
   showDeleted: false,
 
-  load: function() {
+  load() {
     var json = storage.get(STORAGE_KEY)
     if (json) {
       extend(this, JSON.parse(json))
     }
   },
 
-  save: function() {
+  save() {
     storage.set(STORAGE_KEY, JSON.stringify({
       autoCollapse: this.autoCollapse
     , showDead: this.showDead

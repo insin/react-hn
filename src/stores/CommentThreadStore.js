@@ -32,7 +32,7 @@ extend(CommentThreadStore.prototype, {
    * @return .children {Number}
    * @return .newComments {Number}
    */
-  getChildCounts: function(comment) {
+  getChildCounts(comment) {
     var childCount = 0
     var newCommentCount = 0
     var nodes = [comment.id]
@@ -63,7 +63,7 @@ extend(CommentThreadStore.prototype, {
   /**
    * Register a comment's appearance in the thread.
    */
-  commentAdded: function(comment) {
+  commentAdded(comment) {
     if (comment.deleted) { return }
 
     this.children[comment.id] = []
@@ -73,12 +73,12 @@ extend(CommentThreadStore.prototype, {
   /**
    * Register a comment's deletion from the thread.
    */
-  commentDeleted: function(comment) {
+  commentDeleted(comment) {
     var siblings = this.children[comment.parent]
     siblings.splice(siblings.indexOf(comment.id), 1)
   },
 
-  toggleCollapse: function(commentId) {
+  toggleCollapse(commentId) {
     this.isCollapsed[commentId] = !this.isCollapsed[commentId]
     this.onCommentsChanged({type: 'collapse'})
   }

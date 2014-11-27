@@ -16,27 +16,23 @@ var TopStories = require('./TopStories')
 var Updates = require('./Updates')
 var UserProfile = require('./UserProfile')
 
-var DefaultRoute = Router.DefaultRoute
-var Link = Router.Link
-var NotFoundRoute = Router.NotFoundRoute
-var Route = Router.Route
-var RouteHandler = Router.RouteHandler
+var {DefaultRoute, Link, NotFoundRoute, Route, RouteHandler} = Router
 
 var App = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       showSettings: false
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     SettingsStore.load()
     TopStore.loadSession()
     UpdatesStore.loadSession()
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
 
@@ -44,18 +40,19 @@ var App = React.createClass({
    * Give stores a chance to persist data to sessionStorage in case this is a
    * refresh or an external link in the same tab.
    */
-  handleBeforeUnload: function() {
+  handleBeforeUnload() {
     TopStore.stop()
     TopStore.saveSession()
     UpdatesStore.saveSession()
   },
 
-  toggleSettings: function(e) {
+  toggleSettings(e) {
     e.preventDefault()
     this.setState({showSettings: !this.state.showSettings})
   },
 
-  render: function() {    return <div className="App">
+  render() {
+    return <div className="App">
       <div className="App__header">
         <img src="logo.png" width="16" height="16" alt="" />{' '}
         <Link to="news" className="App__homelink">React HN</Link>{' '}
@@ -77,14 +74,14 @@ var App = React.createClass({
 })
 
 var NotFound = React.createClass({
-  render: function() {
+  render() {
     return <h2>Not found</h2>
   }
 })
 
 function updatesHandler(type) {
   return React.createClass({
-    render: function() {
+    render() {
       return <Updates {...this.props} type={type}/>
     }
   })
@@ -104,6 +101,6 @@ var routes = <Route name="app" path="/" handler={App}>
   <Route name="user" path="user/:id" handler={UserProfile}/>
 </Route>
 
-Router.run(routes, function (Handler, state) {
+Router.run(routes, function(Handler, state) {
   React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
 })

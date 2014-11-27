@@ -16,28 +16,28 @@ var setTitle = require('./utils/setTitle')
 
 var UserProfile = React.createClass({
   mixins: [ReactFireMixin],
-  getInitialState: function() {
+  getInitialState() {
     return {user: {}}
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.bindAsObject(HNService.userRef(this.props.params.id), 'user')
   },
 
-  componentWillUpdate: function(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     if (this.state.user.id != nextState.user.id) {
       setTitle('Profile: ' + nextState.user.id)
     }
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.params.id != nextProps.params.id) {
       this.unbind('user')
       this.bindAsObject(HNService.userRef(nextProps.params.id), 'user')
     }
   },
 
-  render: function() {
+  render() {
     var user = this.state.user
     if (!user.id) {
       return <div className="UserProfile UserProfile--loading">

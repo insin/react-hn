@@ -1,6 +1,6 @@
 'use strict';
 
-var EventEmitter = require('events').EventEmitter
+var {EventEmitter} = require('events')
 
 var HNService = require('../services/HNService')
 
@@ -51,7 +51,7 @@ function handleStorage(e) {
 }
 
 var TopStore = extend(new EventEmitter(), {
-  loadSession: function() {
+  loadSession() {
     var json = sessionStorage.topStories
     topStoriesCache = (json ? JSON.parse(json) : {})
     json = sessionStorage.topStoryIds
@@ -59,46 +59,43 @@ var TopStore = extend(new EventEmitter(), {
     populateTopStories()
   },
 
-  saveSession: function() {
+  saveSession() {
     sessionStorage.topStories = JSON.stringify(topStoriesCache)
     sessionStorage.topStoryIds = JSON.stringify(topStoryIds)
   },
 
-  start: function() {
+  start() {
     if (topStoriesRef === null) {
       topStoriesRef = HNService.topStoriesRef()
       topStoriesRef.on('value', handleUpdatedTopStories)
     }
   },
 
-  stop: function() {
+  stop() {
     if (topStoriesRef !== null) {
       topStoriesRef.off()
       topStoriesRef = null
     }
   },
 
-  getItem: function(id) {
+  getItem(id) {
     return topStoriesCache[id] || null
   },
 
-  getTopStories: function() {
-    return {
-      topStories: topStories
-    , topStoryIds: topStoryIds
-    }
+  getTopStories() {
+    return {topStories, topStoryIds}
   },
 
-  setItem: function(index, item) {
+  setItem(index, item) {
     topStories[index] = item
     topStoriesCache[item.id] = item
   },
 
-  listenToStorage: function() {
+  listenToStorage() {
     window.addEventListener('storage', handleStorage)
   },
 
-  stopListeningToStorage: function() {
+  stopListeningToStorage() {
     window.removeEventListener('storage', handleStorage)
   }
 })

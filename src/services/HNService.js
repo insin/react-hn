@@ -39,11 +39,4 @@ function updatesRef() {
   return api.child('updates/items')
 }
 
-module.exports = {
-  fetchItem: fetchItem
-, fetchItems: fetchItems
-, topStoriesRef: topStoriesRef
-, itemRef: itemRef
-, userRef: userRef
-, updatesRef: updatesRef
-}
+module.exports = {fetchItem, fetchItems, topStoriesRef, itemRef, userRef, updatesRef}

@@ -26,7 +26,7 @@ var TopStoryListItem = React.createClass({
   , topIndex: React.PropTypes.number
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       id: null
     , cachedItem: null
@@ -34,13 +34,13 @@ var TopStoryListItem = React.createClass({
     }
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       item: this.props.cachedItem || {}
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     TopStore.on(this.props.id, this.updateThreadState)
     if (this.props.id != null) {
       this.initLiveItem()
@@ -52,7 +52,7 @@ var TopStoryListItem = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     TopStore.off(this.props.id, this.updateThreadState)
   },
 
@@ -60,7 +60,7 @@ var TopStoryListItem = React.createClass({
    * Catch the transition from not having an id prop to having one.
    * Scenario: we were waiting for the initial topstories ids to load.
    */
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.id == null && nextProps.id != null) {
       this.initLiveItem()
     }
@@ -70,7 +70,7 @@ var TopStoryListItem = React.createClass({
    * If the live item has been loaded or updated, update the TopStore cache
    * with its current index and latest data.
    */
-  componentWillUpdate: function(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     if (this.state.item !== nextState.item) {
       TopStore.setItem(this.props.topIndex, nextState.item)
     }
@@ -80,7 +80,7 @@ var TopStoryListItem = React.createClass({
    * Initialise listening to updates for the item with the given id and
    * initialise its comment thread state.
    */
-  initLiveItem: function() {
+  initLiveItem() {
     // If we were given a cached item to display initially, it will be replaced
     this.bindAsObject(HNService.itemRef(this.props.id), 'item')
     this.threadState = StoryCommentThreadStore.loadState(this.props.id)
@@ -90,12 +90,12 @@ var TopStoryListItem = React.createClass({
    * Update thread state in response to a storage event indicating it has been
    * modified.
    */
-  updateThreadState: function() {
+  updateThreadState() {
     this.threadState = StoryCommentThreadStore.loadState(this.props.id)
     this.forceUpdate()
   },
 
-  render: function() {
+  render() {
     // Display the loading spinner if we have nothing to show initially
     if (!this.state.item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
     return this.renderListItem(this.state.item, this.threadState)
