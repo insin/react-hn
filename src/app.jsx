@@ -52,7 +52,8 @@ var App = React.createClass({
   },
 
   render() {
-    return <div className="App">
+    return <div className="App" onClick={this.state.showSettings && this.toggleSettings}>
+      <div className="App__wrap">
       <div className="App__header">
         <img src="logo.png" width="16" height="16" alt="" />{' '}
         <Link to="news" className="App__homelink">React HN</Link>{' '}
@@ -68,6 +69,7 @@ var App = React.createClass({
       </div>
       <div className="App__footer">
         react-hn v{process.env.VERSION} | <a href="https://github.com/insin/react-hn">insin/react-hn</a>
+      </div>
       </div>
     </div>
   }

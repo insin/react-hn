@@ -15,8 +15,12 @@ var Settings = React.createClass({
     SettingsStore.save()
   },
 
+  onClick(e) {
+    e.stopPropagation()
+  },
+
   render() {
-    return <div ref="container" className="Settings" tabIndex="-1">
+    return <div ref="container" className="Settings" tabIndex="-1" onClick={this.onClick}>
       <form onChange={this.onChange}>
         <div className="Settings__setting Settings__setting--checkbox">
           <label htmlFor="autoCollapse">
