@@ -119,6 +119,8 @@ var Comment = React.createClass({
     var props = this.props
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) { return this.renderCommentLoading(comment) }
+    // Don't show dead coments or their children, when configured
+    if (comment.dead && !SettingsStore.showDead) { return null }
     // Render a link to HN for deleted comments if they're being displayed
     if (comment.deleted) {
       if (!SettingsStore.showDeleted) { return null }
@@ -145,7 +147,7 @@ var Comment = React.createClass({
         , link: true
         , childCounts: childCounts
         })}
-        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment, {replyLink: true})}
+        {this.renderCommentText(comment, {replyLink: true})}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id) {
