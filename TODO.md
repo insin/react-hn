@@ -1,5 +1,3 @@
-Reply links to HN
-
 Split caches into their own module
 
 Improve styling, offer HN-alike style as an option (see below)
@@ -20,7 +18,7 @@ Settings
 * always poll tostories/updates options?
 
 User submissions
-* One big list of ids for stories, polls and comments
+* API: One big list of ids for stories, polls and comments
 
 ## Fancy or OTT
 
