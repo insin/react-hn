@@ -7,6 +7,7 @@ var STORAGE_KEY = 'settings'
 
 var SettingsStore = {
   autoCollapse: true,
+  replyLinks: true,
   showDead: false,
   showDeleted: false,
 

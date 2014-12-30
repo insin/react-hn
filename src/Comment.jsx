@@ -145,7 +145,7 @@ var Comment = React.createClass({
         , link: true
         , childCounts: childCounts
         })}
-        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment)}
+        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment, {replyLink: true})}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id) {

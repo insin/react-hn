@@ -25,6 +25,12 @@ var Settings = React.createClass({
           <p>Automatically collapse comment threads without new comments on page load.</p>
         </div>
         <div className="Settings__setting Settings__setting--checkbox">
+          <label htmlFor="replyLinks">
+            <input type="checkbox" name="replyLinks" id="replyLinks" checked={SettingsStore.replyLinks}/> show reply links
+          </label>
+          <p>Show "reply" links to Hacker News</p>
+        </div>
+        <div className="Settings__setting Settings__setting--checkbox">
           <label htmlFor="showDead">
             <input type="checkbox" name="showDead" id="showDead" checked={SettingsStore.showDead}/> show dead
           </label>

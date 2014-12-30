@@ -45,7 +45,7 @@ var DisplayComment = React.createClass({
         , parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
         , op: !!this.state.op.id
         })}
-        {this.renderCommentText(comment)}
+        {this.renderCommentText(comment, {replyLink: false})}
       </div>
     </div>
   }

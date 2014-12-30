@@ -115,7 +115,7 @@ var PermalinkedComment = React.createClass({
           parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
         , op: !!this.state.op.id
         })}
-        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment)}
+        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment, {replyLink: true})}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {
