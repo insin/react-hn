@@ -21,6 +21,7 @@ var SettingsStore = {
   save() {
     storage.set(STORAGE_KEY, JSON.stringify({
       autoCollapse: this.autoCollapse
+    , replyLinks: this.replyLinks
     , showDead: this.showDead
     , showDeleted: this.showDeleted
     }))
