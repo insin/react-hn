@@ -50,13 +50,15 @@ function StoryCommentThreadStore(item, onCommentsChanged, options) {
   var initialState = loadState(item.id)
   /** Time of last visit to the story. */
   this.lastVisit = initialState.lastVisit
-  /** Max comment id on the last visit - determines which comments are new.  */
+  /** Comment count on the last visit - determines how many comments are new. */
+  this.prevCommentCount = initialState.commentCount
+  /** Max comment id on the last visit - determines which comments are new. */
   this.prevMaxCommentId = initialState.maxCommentId
   /** Is this the user's first time viewing the story? */
   this.isFirstVisit = (initialState.lastVisit === null)
 
   // Trigger an immediate check for thread load completion if the item was not
-  // retieved from the cache, so is the latest version. This completes page
+  // retrieved from the cache, so is the latest version. This completes page
   // loading immediately for items which have no comments yet.
   if (!options.cached) {
     this.checkLoadCompletion()
@@ -273,6 +275,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     this.lastVisit = moment(Date.now())
     this.newCommentCount = 0
     this.prevMaxCommentId = this.maxCommentId
+    this.prevCommentCount = this.commentCount
     this.isNew = {}
     this._storeState()
   },

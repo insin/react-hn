@@ -201,7 +201,7 @@ span.control:hover {
   background-color: #ffffde;
   color: #000;
 }
-.Item__by a {
+.Item__by a, .ListItem__newcomments a {
   font-weight: bold;
 }
 .Item__text {

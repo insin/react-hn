@@ -119,12 +119,13 @@ var Item = React.createClass({
     var state = this.state
     var item = state.item
     var threadStore = this.threadStore
+    var newCommentCount = item.descendants - threadStore.prevCommentCount
     if (!item.id || !threadStore) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {this.renderItemTitle(item)}
-        {this.renderItemMeta(item, threadStore, (threadStore.lastVisit !== null && threadStore.newCommentCount > 0 && <span>{' '}
-          (<em>{threadStore.newCommentCount} new</em> in the last {timeUnitsAgo(threadStore.lastVisit)}{') | '}
+        {this.renderItemMeta(item, (threadStore.lastVisit !== null && newCommentCount > 0 && <span>{' '}
+          (<em>{newCommentCount} new</em> in the last {timeUnitsAgo(threadStore.lastVisit)}{') | '}
           <span className="control" tabIndex="0" onClick={this.autoCollapse} onKeyPress={this.autoCollapse} title="Collapse threads without new comments">
             auto collapse
           </span>{' | '}
