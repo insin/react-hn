@@ -111,6 +111,9 @@ span.control:hover {
   color: #00d8ff !important;
   margin-right: .75em;
 }
+.App__homelink.active {
+  color: #fff !important;
+}
 .App__content {
 }
 .App__footer {
