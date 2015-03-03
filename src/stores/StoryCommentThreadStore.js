@@ -87,6 +87,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   firstLoadComplete() {
     this.lastVisit = moment(Date.now())
     this.prevMaxCommentId = this.maxCommentId
+    this.prevCommentCount = this.commentCount
     this.isFirstVisit = false
     this.onCommentsChanged({type: 'first_load_complete'})
   },
