@@ -42,7 +42,9 @@ var Item = React.createClass({
   },
 
   componentWillUnmount() {
-    this.threadStore.dispose()
+    if (this.threadStore) {
+      this.threadStore.dispose()
+    }
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
 
@@ -97,7 +99,9 @@ var Item = React.createClass({
    * the user refreshes or otherwise navigates off the page.
    */
   handleBeforeUnload() {
-    this.threadStore.dispose()
+    if (this.threadStore) {
+      this.threadStore.dispose()
+    }
   },
 
   handleCommentsChanged(payload) {
@@ -119,8 +123,8 @@ var Item = React.createClass({
     var state = this.state
     var item = state.item
     var threadStore = this.threadStore
-    var newCommentCount = item.descendants - threadStore.prevCommentCount
     if (!item.id || !threadStore) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
+    var newCommentCount = item.descendants - threadStore.prevCommentCount
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {this.renderItemTitle(item)}
