@@ -2,7 +2,7 @@
 
 var HNService = require('../services/HNService')
 
-var TopStore = require('./TopStore')
+var StoryStore = require('./StoryStore')
 var UpdatesStore = require('./UpdatesStore')
 
 var commentParentLookup = {}
@@ -79,11 +79,11 @@ var ItemStore = {
   },
 
   getCachedItem(id) {
-    return TopStore.getItem(id) || UpdatesStore.getItem(id) || null
+    return StoryStore.getItem(id) || UpdatesStore.getItem(id) || null
   },
 
   getCachedStory(id) {
-    return TopStore.getItem(id) || UpdatesStore.getStory(id) || null
+    return StoryStore.getItem(id) || UpdatesStore.getStory(id) || null
   },
 
   fetchCommentAncestors(comment, cb) {

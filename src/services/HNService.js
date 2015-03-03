@@ -23,8 +23,8 @@ function fetchItems(ids, cb) {
   }
 }
 
-function topStoriesRef() {
-  return api.child('topstories')
+function storiesRef(path) {
+  return api.child(path)
 }
 
 function itemRef(id) {
@@ -32,11 +32,18 @@ function itemRef(id) {
 }
 
 function userRef(id) {
-    return api.child('user/' + id)
+  return api.child('user/' + id)
 }
 
 function updatesRef() {
   return api.child('updates/items')
 }
 
-module.exports = {fetchItem, fetchItems, topStoriesRef, itemRef, userRef, updatesRef}
+module.exports = {
+  fetchItem,
+  fetchItems,
+  storiesRef,
+  itemRef,
+  userRef,
+  updatesRef
+}
