@@ -93,7 +93,7 @@ var Stories = React.createClass({
       var item = this.state.stories[i]
       var id = this.state.ids[i]
       if (id) {
-        rendered.push(<StoryListItem key={id} id={id} topIndex={i} cachedItem={item} store={this.store}/>)
+        rendered.push(<StoryListItem key={id} id={id} index={i} cachedItem={item} store={this.store}/>)
       }
       else {
         rendered.push(<StoryListItem cachedItem={item} store={this.store}/>)
