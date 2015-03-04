@@ -50,13 +50,15 @@ function StoryCommentThreadStore(item, onCommentsChanged, options) {
   var initialState = loadState(item.id)
   /** Time of last visit to the story. */
   this.lastVisit = initialState.lastVisit
-  /** Max comment id on the last visit - determines which comments are new.  */
+  /** Comment count on the last visit - determines how many comments are new. */
+  this.prevCommentCount = initialState.commentCount
+  /** Max comment id on the last visit - determines which comments are new. */
   this.prevMaxCommentId = initialState.maxCommentId
   /** Is this the user's first time viewing the story? */
   this.isFirstVisit = (initialState.lastVisit === null)
 
   // Trigger an immediate check for thread load completion if the item was not
-  // retieved from the cache, so is the latest version. This completes page
+  // retrieved from the cache, so is the latest version. This completes page
   // loading immediately for items which have no comments yet.
   if (!options.cached) {
     this.checkLoadCompletion()
@@ -82,9 +84,10 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * visit time and max comment id which will be used to track and display new
    * comments.
    */
-  firstLoadComplete: function() {
+  firstLoadComplete() {
     this.lastVisit = moment(Date.now())
     this.prevMaxCommentId = this.maxCommentId
+    this.prevCommentCount = this.commentCount
     this.isFirstVisit = false
     this.onCommentsChanged({type: 'first_load_complete'})
   },
@@ -92,7 +95,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * Check whether the number of comments has reached the expected number yet.
    */
-  checkLoadCompletion: function() {
+  checkLoadCompletion() {
     if (this.loading && this.commentCount >= this.expectedComments) {
       if ("production" !== process.env.NODE_ENV) {
         console.info(
@@ -116,7 +119,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * Persist comment thread state.
    */
-  _storeState: function() {
+  _storeState() {
     storage.set(this.itemId, JSON.stringify({
       lastVisit: Date.now()
     , commentCount: this.commentCount
@@ -127,7 +130,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * A comment got loaded initially or added later.
    */
-  commentAdded: function(comment) {
+  commentAdded(comment) {
     // Deleted comments don't count towards the comment count
     if (comment.deleted) {
       // Adjust the number of comments expected during the initial page load.
@@ -177,7 +180,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * A comment which hasn't loaded yet is being delayed.
    */
-  commentDelayed: function(commentId) {
+  commentDelayed(commentId) {
     // Don't wait for delayed comments
     this.expectedComments--
   },
@@ -185,7 +188,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * A comment which wasn't previously deleted became deleted.
    */
-  commentDeleted: function(comment) {
+  commentDeleted(comment) {
     CommentThreadStore.prototype.commentDeleted.call(this, comment)
     this.commentCount--
     if (this.isNew[comment.id]) {
@@ -200,7 +203,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * A comment which wasn't previously dead became dead.
    */
-  commentDied: function(comment) {
+  commentDied(comment) {
     if (!SettingsStore.showDead) {
       this.commentCount--
       if (this.isNew[comment.id]) {
@@ -214,12 +217,12 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * Change the expected number of comments if an update was received during
    * initial loding and trigger a re-check of loading completion.
    */
-  adjustExpectedComments: function(change) {
+  adjustExpectedComments(change) {
     this.expectedComments += change
     this.checkLoadCompletion()
   },
 
-  collapseThreadsWithoutNewComments: function() {
+  collapseThreadsWithoutNewComments() {
     // Create an id lookup for comments which have a new comment as one of their
     // descendants. New comments themselves are not added to the lookup.
     var newCommentIds = Object.keys(this.isNew)
@@ -269,10 +272,11 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * Merk the thread as read.
    */
-  markAsRead: function() {
+  markAsRead() {
     this.lastVisit = moment(Date.now())
     this.newCommentCount = 0
     this.prevMaxCommentId = this.maxCommentId
+    this.prevCommentCount = this.commentCount
     this.isNew = {}
     this._storeState()
   },
@@ -280,7 +284,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   /**
    * Persist comment thread state and perform any necessary internal cleanup.
    */
-  dispose: function() {
+  dispose() {
     // Cancel debounced callbacks in case any are pending
     this.numberOfCommentsChanged.cancel()
     this._storeState()

@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
@@ -7,24 +5,34 @@ var React = require('react')
 var SettingsStore = require('./stores/SettingsStore')
 
 var Settings = React.createClass({
-  componentDidMount: function() {
+  componentDidMount() {
     this.refs.container.getDOMNode().focus()
   },
 
-  onChange: function(e) {
+  onChange(e) {
     SettingsStore[e.target.name] = e.target.checked
     this.forceUpdate()
     SettingsStore.save()
   },
 
-  render: function() {
-    return <div ref="container" className="Settings" tabIndex="-1">
+  onClick(e) {
+    e.stopPropagation()
+  },
+
+  render() {
+    return <div ref="container" className="Settings" tabIndex="-1" onClick={this.onClick}>
       <form onChange={this.onChange}>
         <div className="Settings__setting Settings__setting--checkbox">
           <label htmlFor="autoCollapse">
             <input type="checkbox" name="autoCollapse" id="autoCollapse" checked={SettingsStore.autoCollapse}/> auto collapse
           </label>
           <p>Automatically collapse comment threads without new comments on page load.</p>
+        </div>
+        <div className="Settings__setting Settings__setting--checkbox">
+          <label htmlFor="replyLinks">
+            <input type="checkbox" name="replyLinks" id="replyLinks" checked={SettingsStore.replyLinks}/> show reply links
+          </label>
+          <p>Show "reply" links to Hacker News</p>
         </div>
         <div className="Settings__setting Settings__setting--checkbox">
           <label htmlFor="showDead">

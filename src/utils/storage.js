@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = {
-  get: function(key, defaultValue) {
+  get(key, defaultValue) {
     var value = localStorage[key]
     return (typeof value != 'undefined' ? value : defaultValue)
   },
-  set: function(key, value) {
+  set(key, value) {
     localStorage[key] = value
   }
 }

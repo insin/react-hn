@@ -7,19 +7,21 @@ var STORAGE_KEY = 'settings'
 
 var SettingsStore = {
   autoCollapse: true,
+  replyLinks: true,
   showDead: false,
   showDeleted: false,
 
-  load: function() {
+  load() {
     var json = storage.get(STORAGE_KEY)
     if (json) {
       extend(this, JSON.parse(json))
     }
   },
 
-  save: function() {
+  save() {
     storage.set(STORAGE_KEY, JSON.stringify({
       autoCollapse: this.autoCollapse
+    , replyLinks: this.replyLinks
     , showDead: this.showDead
     , showDeleted: this.showDeleted
     }))

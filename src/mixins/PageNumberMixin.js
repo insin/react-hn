@@ -1,7 +1,7 @@
 'use strict';
 
 var PageNumberMixin = {
-  getPageNumber: function(page) {
+  getPageNumber(page) {
     if (typeof page == 'undefined') {
       page = this.props.query.page
     }

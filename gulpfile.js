@@ -14,8 +14,7 @@ var template = require('gulp-template')
 var uglify = require('gulp-uglify')
 
 var testFiles = ['./src/**/__tests__/*.js', './src/**/__mocks__/*.js']
-var jsFiles = ['./src/**/*.js'].concat(testFiles.map(function(p) { return '!' + p }))
-var jsxFiles = jsFiles[0] + 'x'
+var jsFiles = ['./src/**/*.js', './src/**/*.jsx'].concat(testFiles.map(function(p) { return '!' + p }))
 var buildFiles = './build/modules/**/*.js'
 
 var jsExt = (gutil.env.production ? 'min.js' : 'js')
@@ -29,17 +28,13 @@ gulp.task('clean-modules', function(cb) {
   del('./build/modules/**', cb)
 })
 
-/** Copy non-jsx JavaScript to /build/modules */
-gulp.task('copy-js', ['clean-modules'], function() {
-  return gulp.src(jsFiles)
-    .pipe(gulp.dest('./build/modules'))
-})
-
 /** Transpile JSX to plain old JavaScript and copy to /build/modules */
-gulp.task('transpile-jsx', ['clean-modules'], function() {
-  return gulp.src(jsxFiles)
+gulp.task('transpile-js', ['clean-modules'], function() {
+  return gulp.src(jsFiles)
     .pipe(plumber())
-    .pipe(react())
+    .pipe(react({
+      harmony: true
+    }))
     .pipe(gulp.dest('./build/modules'))
 })
 
@@ -64,7 +59,7 @@ gulp.task('build-deps', function() {
 })
 
 /** Lint everything in /build/modules */
-gulp.task('lint', ['copy-js', 'transpile-jsx'], function() {
+gulp.task('lint', ['transpile-js'], function() {
   return gulp.src(buildFiles)
     .pipe(jshint('./.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
@@ -162,7 +157,7 @@ gulp.task('dist', ['dist-copy'], function() {
  * against everything else which is already in /dist
  */
 gulp.task('watch', ['copy-app', 'lint-tests'], function() {
-  gulp.watch([jsFiles, jsxFiles], ['copy-app'])
+  gulp.watch(jsFiles, ['copy-app'])
   gulp.watch(testFiles, ['lint-tests'])
   gulp.watch('./public/**/*.css', ['dist-css'])
 })

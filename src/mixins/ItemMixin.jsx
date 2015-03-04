@@ -1,14 +1,10 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
 var moment = require('moment')
-var Router = require('react-router')
+var {Link} = require('react-router')
 
 var pluralise = require('../utils/pluralise')
-
-var Link = Router.Link
 
 var parseHost = (function() {
   var a = document.createElement('a')
@@ -29,25 +25,15 @@ var ItemMixin = {
   /**
    * Render an item's metadata bar.
    */
-  renderItemMeta: function (item, threadState, extraContent) {
+  renderItemMeta(item, extraContent) {
     var timeMoment = moment(item.time * 1000)
-    var comments  = (item.kids && item.kids.length > 0 ? 'comments' : 'discuss')
-    if (threadState.commentCount > 0) {
-      comments = threadState.commentCount + ' comment' + pluralise(threadState.commentCount)
-    }
-    // Item comment/permalink should only be displayed when in a list
-    if (this.constructor.displayName.indexOf('ListItem') != -1) {
-      if (threadState.lastVisit === null && item.kids && item.kids.length) {
-        comments = item.kids.length + ' thread' + pluralise(item.kids.length)
-      }
-      comments = <Link to={item.type} params={{id: item.id}}>{comments}</Link>
-    }
 
     if (item.type == 'job') {
       return <div className="Item__meta">
         <span className="Item__time">{timeMoment.fromNow()}</span>
       </div>
     }
+
     return <div className="Item__meta">
       <span className="Item__score">
         {item.score} point{pluralise(item.score)}
@@ -59,7 +45,9 @@ var ItemMixin = {
         {timeMoment.fromNow()}
       </span>
       {' | '}
-      {comments}
+      <Link to={item.type} params={{id: item.id}}>
+        {item.descendants > 0 ? item.descendants + ' comment' + pluralise(item.descendants) : 'discuss'}
+      </Link>
       {extraContent}
     </div>
   },
@@ -67,7 +55,7 @@ var ItemMixin = {
   /**
    * Render an item's title bar.
    */
-  renderItemTitle: function(item) {
+  renderItemTitle(item) {
     var hasURL = !!item.url
     var title
     if (item.dead) {

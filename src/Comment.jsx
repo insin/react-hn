@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
@@ -26,27 +24,27 @@ var Comment = React.createClass({
   , threadStore: React.PropTypes.instanceOf(CommentThreadStore).isRequired
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       loadingSpinner: false
     }
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       comment: {}
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.bindFirebaseRef()
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.clearDelayTimeout()
   },
 
-  componentDidUpdate: function(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (!prevState.comment.id) {
       // Register a newly-loaded comment with the thread store
       if (this.state.comment.id) {
@@ -80,7 +78,7 @@ var Comment = React.createClass({
     }
   },
 
-  bindFirebaseRef: function() {
+  bindFirebaseRef() {
     this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
     if (this.timeout) {
       this.timeout = null
@@ -92,7 +90,7 @@ var Comment = React.createClass({
    * its author using the delay setting, which is measured in minutes - try
    * again in 30 seconds.
    */
-  handleFirebaseRefCancelled: function(e) {
+  handleFirebaseRefCancelled(e) {
     if ("production" !== process.env.NODE_ENV) {
       console.error('Firebase ref for comment ' + this.props.id + ' was cancelled: ' + e.message)
     }
@@ -104,23 +102,25 @@ var Comment = React.createClass({
     }
   },
 
-  clearDelayTimeout: function() {
+  clearDelayTimeout() {
     if (this.timeout) {
       clearTimeout(this.timeout)
       this.timeout = null
     }
   },
 
-  toggleCollapse: function(e) {
+  toggleCollapse(e) {
     e.preventDefault()
     this.props.threadStore.toggleCollapse(this.state.comment.id)
   },
 
-  render: function() {
+  render() {
     var comment = this.state.comment
     var props = this.props
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) { return this.renderCommentLoading(comment) }
+    // Don't show dead coments or their children, when configured
+    if (comment.dead && !SettingsStore.showDead) { return null }
     // Render a link to HN for deleted comments if they're being displayed
     if (comment.deleted) {
       if (!SettingsStore.showDeleted) { return null }
@@ -147,7 +147,7 @@ var Comment = React.createClass({
         , link: true
         , childCounts: childCounts
         })}
-        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment)}
+        {this.renderCommentText(comment, {replyLink: true})}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id) {

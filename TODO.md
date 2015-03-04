@@ -1,11 +1,10 @@
-User submissions
-* One big list of ids for stories, polls and comments
-
 Split caches into their own module
 
 Improve styling, offer HN-alike style as an option (see below)
 
 Filter items by type/title/date etc. etc.
+
+Filter stories you've read/aren't interested in
 
 (In lieu of API for saved stories) Manual saving of stories
 
@@ -17,6 +16,9 @@ Settings
 * themes (alt CSS, user CSS)
 * max number of cached updates (stories / comments)
 * always poll tostories/updates options?
+
+User submissions
+* API: One big list of ids for stories, polls and comments
 
 ## Fancy or OTT
 

@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
@@ -7,45 +5,50 @@ var ReactFireMixin = require('reactfire')
 
 var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 var HNService = require('./services/HNService')
-var TopStore = require('./stores/TopStore')
+var StoryStore = require('./stores/StoryStore')
 
 var ItemMixin = require('./mixins/ItemMixin')
 var ListItemMixin = require('./mixins/ListItemMixin')
 var Spinner = require('./Spinner')
 
 /**
- * Display story title and metadataas as a list item.
+ * Display story title and metadata as as a list item.
  * Cached story data may be given as a prop, but this component is also
- * responsible for listening to updates to the story and caching the latest
- * version in TopStore.
+ * responsible for listening to updates to the story and providing the latest
+ * version for StoryStore's cache.
  */
-var TopStoryListItem = React.createClass({
+var StoryListItem = React.createClass({
   mixins: [ItemMixin, ListItemMixin, ReactFireMixin],
 
   propTypes: {
-    id: React.PropTypes.number
-  , cachedItem: React.PropTypes.object
-  , topIndex: React.PropTypes.number
+    // The StoryStore handling caching and updates to the stories being displayed
+    store: React.PropTypes.instanceOf(StoryStore).isRequired,
+
+    // The story's id in Hacker News
+    id: React.PropTypes.number,
+    // A version of the story from the cache, for initial display
+    cachedItem: React.PropTypes.object,
+    // The current index of the story in the list being displayed
+    index: React.PropTypes.number
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
-      id: null
-    , cachedItem: null
-    , topIndex: null
+      id: null,
+      cachedItem: null,
+      index: null
     }
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       item: this.props.cachedItem || {}
     }
   },
 
-  componentWillMount: function() {
-    TopStore.on(this.props.id, this.updateThreadState)
+  componentWillMount() {
     if (this.props.id != null) {
-      this.initLiveItem()
+      this.initLiveItem(this.props)
     }
     else if (this.props.cachedItem != null) {
       // Display the comment state of the cached item we were given while we're
@@ -54,27 +57,29 @@ var TopStoryListItem = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
-    TopStore.off(this.props.id, this.updateThreadState)
-  },
-
-  /**
-   * Catch the transition from not having an id prop to having one.
-   * Scenario: we were waiting for the initial topstories ids to load.
-   */
-  componentWillReceiveProps: function(nextProps) {
-    if (this.props.id == null && nextProps.id != null) {
-      this.initLiveItem()
+  componentWillUnmount() {
+    if (this.props.id != null) {
+      this.props.store.removeListener(this.props.id, this.updateThreadState)
     }
   },
 
   /**
-   * If the live item has been loaded or updated, update the TopStore cache
+   * Catch the transition from not having an id prop to having one.
+   * Scenario: we were waiting for the initial list of story ids to load.
+   */
+  componentWillReceiveProps(nextProps) {
+    if (this.props.id == null && nextProps.id != null) {
+      this.initLiveItem(nextProps)
+    }
+  },
+
+  /**
+   * If the live item has been loaded or updated, update the StoryStore cache
    * with its current index and latest data.
    */
-  componentWillUpdate: function(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     if (this.state.item !== nextState.item) {
-      TopStore.setItem(this.props.topIndex, nextState.item)
+      this.props.store.itemUpdated(nextState.item, this.props.index)
     }
   },
 
@@ -82,26 +87,30 @@ var TopStoryListItem = React.createClass({
    * Initialise listening to updates for the item with the given id and
    * initialise its comment thread state.
    */
-  initLiveItem: function() {
+  initLiveItem(props) {
     // If we were given a cached item to display initially, it will be replaced
-    this.bindAsObject(HNService.itemRef(this.props.id), 'item')
-    this.threadState = StoryCommentThreadStore.loadState(this.props.id)
+    this.bindAsObject(HNService.itemRef(props.id), 'item')
+    this.threadState = StoryCommentThreadStore.loadState(props.id)
+    this.props.store.addListener(props.id, this.updateThreadState)
   },
 
   /**
    * Update thread state in response to a storage event indicating it has been
    * modified.
    */
-  updateThreadState: function() {
+  updateThreadState() {
     this.threadState = StoryCommentThreadStore.loadState(this.props.id)
     this.forceUpdate()
   },
 
-  render: function() {
+  render() {
     // Display the loading spinner if we have nothing to show initially
-    if (!this.state.item.id) { return <li className="ListItem ListItem--loading"><Spinner/></li> }
+    if (!this.state.item.id) {
+      return <li className="ListItem ListItem--loading"><Spinner/></li>
+    }
+
     return this.renderListItem(this.state.item, this.threadState)
   }
 })
 
-module.exports = TopStoryListItem
+module.exports = StoryListItem

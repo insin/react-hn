@@ -1,10 +1,8 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var moment = require('moment')
 var React = require('react')
-var Router = require('react-router')
+var {Link} = require('react-router')
 
 var ItemStore = require('../stores/ItemStore')
 var SettingsStore = require('../stores/SettingsStore')
@@ -13,11 +11,9 @@ var Spinner = require('../Spinner')
 
 var pluralise = require('../utils/pluralise')
 
-var Link = Router.Link
-
 var CommentMixin = {
-  fetchAncestors: function(comment) {
-    ItemStore.fetchCommentAncestors(comment, function(result) {
+  fetchAncestors(comment) {
+    ItemStore.fetchCommentAncestors(comment, result => {
       if ("production" !== process.env.NODE_ENV) {
         console.info(
           'fetchAncestors(' + comment.id + ') took ' +
@@ -38,10 +34,10 @@ var CommentMixin = {
         parent: result.parent
       , op: result.op
       })
-    }.bind(this))
+    })
   },
 
-  renderCommentLoading: function(comment) {
+  renderCommentLoading(comment) {
     return <div className={'Comment Comment--loading Comment--level' + this.props.level}>
       {(this.props.loadingSpinner || comment.delayed) && <Spinner size="20"/>}
       {comment.delayed && <div className="Comment__text">
@@ -51,7 +47,7 @@ var CommentMixin = {
     </div>
   },
 
-  renderCommentDeleted: function(comment, options) {
+  renderCommentDeleted(comment, options) {
     return <div className={options.className}>
       <div className="Comment__content">
         <div className="Comment__meta">
@@ -61,7 +57,7 @@ var CommentMixin = {
     </div>
   },
 
-  renderCollapseControl: function(collapsed) {
+  renderCollapseControl(collapsed) {
     return <span className="Comment__collapse" onClick={this.toggleCollapse} onKeyPress={this.toggleCollapse} tabIndex="0">
       [{collapsed ? '+' : '–'}]
     </span>
@@ -75,7 +71,7 @@ var CommentMixin = {
    * @param options.op {Boolean} if true, assumes this.state.op
    * @param options.childCounts {Object} with .children and .newComments
    */
-  renderCommentMeta: function(comment, options) {
+  renderCommentMeta(comment, options) {
     if (comment.dead && !SettingsStore.showDead) {
       return <div className="Comment__meta">
         {options.collapsible && this.renderCollapseControl(options.collapsed)}
@@ -107,9 +103,12 @@ var CommentMixin = {
     </div>
   },
 
-  renderCommentText: function(comment) {
+  renderCommentText(comment, options) {
     return <div className="Comment__text">
       {(!comment.dead || SettingsStore.showDead) ? <div dangerouslySetInnerHTML={{__html: comment.text}}/> : '[dead]'}
+      {SettingsStore.replyLinks && options.replyLink && !comment.dead && <p>
+        <a href={`https://news.ycombinator.com/reply?id=${comment.id}`}>reply</a>
+      </p>}
     </div>
   }
 }

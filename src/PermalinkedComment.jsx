@@ -1,10 +1,8 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
 var ReactFireMixin = require('reactfire')
-var Router = require('react-router')
+var {Navigation} = require('react-router')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
@@ -17,18 +15,16 @@ var CommentMixin = require('./mixins/CommentMixin')
 var cx = require('./utils/buildClassName')
 var setTitle = require('./utils/setTitle')
 
-var Navigation = Router.Navigation
-
 var PermalinkedComment = React.createClass({
   mixins: [CommentMixin, ReactFireMixin, Navigation],
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       level: 0
     }
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       comment: UpdatesStore.getComment(this.props.params.id) || {}
     , parent: {type: 'comment'}
@@ -36,14 +32,14 @@ var PermalinkedComment = React.createClass({
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.bindAsObject(HNService.itemRef(this.props.params.id), 'comment')
     if (this.state.comment.id) {
       this.commentLoaded(this.state.comment)
     }
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.params.id != this.props.params.id) {
       var comment = UpdatesStore.getComment(nextProps.params.id)
       if (comment) {
@@ -55,7 +51,7 @@ var PermalinkedComment = React.createClass({
     }
   },
 
-  componentWillUpdate: function(nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     if (this.state.comment.id != nextState.comment.id) {
       if (!nextState.comment.deleted) {
         // Redirect to the appropriate route if a Comment "parent" link had a
@@ -71,7 +67,7 @@ var PermalinkedComment = React.createClass({
     }
   },
 
-  commentLoaded: function(comment) {
+  commentLoaded(comment) {
     this.setTitle(comment)
     if (!comment.deleted) {
       this.threadStore = new CommentThreadStore(comment, this.handleCommentsChanged)
@@ -79,7 +75,7 @@ var PermalinkedComment = React.createClass({
     }
   },
 
-  setTitle: function(comment) {
+  setTitle(comment) {
     if (comment.deleted) {
       return setTitle('Deleted comment')
     }
@@ -90,14 +86,14 @@ var PermalinkedComment = React.createClass({
     setTitle(title)
   },
 
-  handleCommentsChanged: function(payload) {
+  handleCommentsChanged(payload) {
     // We're only interested in re-rendering to update collapsed display
     if (payload.type == 'collapse') {
       this.forceUpdate()
     }
   },
 
-  render: function() {
+  render() {
     var comment = this.state.comment
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) { return this.renderCommentLoading(comment) }
@@ -119,7 +115,7 @@ var PermalinkedComment = React.createClass({
           parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
         , op: !!this.state.op.id
         })}
-        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment)}
+        {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment, {replyLink: true})}
       </div>
       {comment.kids && <div className="Comment__kids">
         {comment.kids.map(function(id, index) {

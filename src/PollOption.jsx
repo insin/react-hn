@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
@@ -14,15 +12,15 @@ var pluralise = require('./utils/pluralise')
 var PollOption = React.createClass({
   mixins: [ReactFireMixin],
 
-  getInitialState: function() {
+  getInitialState() {
     return {pollopt: {}}
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.bindAsObject(HNService.itemRef(this.props.id), 'pollopt')
   },
 
-  render: function() {
+  render() {
     var pollopt = this.state.pollopt
     if (!pollopt.id) { return <div className="PollOption PollOption--loading"><Spinner size="20"/></div> }
     return <div className="PollOption">

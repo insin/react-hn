@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 'use strict';
 
 var React = require('react')
@@ -20,18 +18,18 @@ var DisplayComment = React.createClass({
     comment: React.PropTypes.object.isRequired
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       op: {}
     , parent: {type: 'comment'}
     }
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.fetchAncestors(this.props.comment)
   },
 
-  render: function() {
+  render() {
     if (this.props.comment.deleted) { return null }
     if (this.props.comment.dead && !SettingsStore.showDead) { return null }
 
@@ -47,7 +45,7 @@ var DisplayComment = React.createClass({
         , parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
         , op: !!this.state.op.id
         })}
-        {this.renderCommentText(comment)}
+        {this.renderCommentText(comment, {replyLink: false})}
       </div>
     </div>
   }
