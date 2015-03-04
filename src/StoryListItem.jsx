@@ -79,7 +79,14 @@ var StoryListItem = React.createClass({
    */
   componentWillUpdate(nextProps, nextState) {
     if (this.state.item !== nextState.item) {
-      this.props.store.itemUpdated(nextState.item, this.props.index)
+      if (nextState.item != null) {
+        this.props.store.itemUpdated(nextState.item, this.props.index)
+      }
+      else {
+        if ("production" !== process.env.NODE_ENV) {
+          console.warn(`Item ${this.props.id} went from ${JSON.stringify(this.state.item)} to ${nextProps.item}`)
+        }
+      }
     }
   },
 
@@ -105,7 +112,7 @@ var StoryListItem = React.createClass({
 
   render() {
     // Display the loading spinner if we have nothing to show initially
-    if (!this.state.item.id) {
+    if (!this.state.item || !this.state.item.id) {
       return <li className="ListItem ListItem--loading"><Spinner/></li>
     }
 
