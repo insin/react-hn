@@ -47,7 +47,7 @@ gulp.task('build-deps', function() {
   b.require('react-router')
   b.require('firebase')
   b.require('reactfire')
-  b.require('moment')
+  b.require('react-timeago')
   b.transform('envify')
 
   return b.bundle()
@@ -87,7 +87,7 @@ gulp.task('build-app', ['lint'], function() {
   b.external('react-router')
   b.external('firebase')
   b.external('reactfire')
-  b.external('moment')
+  b.external('react-timeago')
   b.transform('envify')
 
   var stream = b.bundle()

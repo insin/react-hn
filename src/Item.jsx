@@ -2,6 +2,7 @@
 
 var React = require('react')
 var ReactFireMixin = require('reactfire')
+var TimeAgo = require('react-timeago')
 
 var HNService = require('./services/HNService')
 var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
@@ -15,12 +16,11 @@ var ItemMixin = require('./mixins/ItemMixin')
 var cx = require('./utils/buildClassName')
 var setTitle = require('./utils/setTitle')
 
-/**
- * Describe the time from now until the given time in terms of units without any
- * "a" or "an" prefixes.
- */
-function timeUnitsAgo(_moment) {
-  return _moment.fromNow(true).replace(/^an? /, '')
+function timeUnitsAgo(value, unit, suffix) {
+  if (value == 1) {
+    return unit
+  }
+  return `${value} ${unit}s`
 }
 
 var Item = React.createClass({
@@ -129,7 +129,7 @@ var Item = React.createClass({
       <div className="Item__content">
         {this.renderItemTitle(item)}
         {this.renderItemMeta(item, (threadStore.lastVisit !== null && newCommentCount > 0 && <span>{' '}
-          (<em>{newCommentCount} new</em> in the last {timeUnitsAgo(threadStore.lastVisit)}{') | '}
+          (<em>{newCommentCount} new</em> in the last <TimeAgo date={threadStore.lastVisit} formatter={timeUnitsAgo}/>{') | '}
           <span className="control" tabIndex="0" onClick={this.autoCollapse} onKeyPress={this.autoCollapse} title="Collapse threads without new comments">
             auto collapse
           </span>{' | '}

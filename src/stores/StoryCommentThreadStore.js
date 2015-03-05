@@ -1,7 +1,5 @@
 'use strict';
 
-var moment = require('moment')
-
 var CommentThreadStore = require('./CommentThreadStore')
 var SettingsStore = require('./SettingsStore')
 
@@ -12,16 +10,14 @@ var storage = require('../utils/storage')
 
 /**
  * Load persisted comment thread state.
- * @return .lastVisit {moment} null if the item hasn't been visited before.
+ * @return .lastVisit {Date} null if the item hasn't been visited before.
  * @return .commentCount {Number} 0 if the item hasn't been visited before.
  * @return .maxCommentId {Number} 0 if the item hasn't been visited before.
  */
 function loadState(itemId) {
   var json = storage.get(itemId)
   if (json) {
-    var state = JSON.parse(json)
-    state.lastVisit = moment(state.lastVisit)
-    return state
+    return JSON.parse(json)
   }
   return {
     lastVisit: null
@@ -85,7 +81,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * comments.
    */
   firstLoadComplete() {
-    this.lastVisit = moment(Date.now())
+    this.lastVisit = Date.now()
     this.prevMaxCommentId = this.maxCommentId
     this.prevCommentCount = this.commentCount
     this.isFirstVisit = false
@@ -273,7 +269,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    * Merk the thread as read.
    */
   markAsRead() {
-    this.lastVisit = moment(Date.now())
+    this.lastVisit = Date.now()
     this.newCommentCount = 0
     this.prevMaxCommentId = this.maxCommentId
     this.prevCommentCount = this.commentCount

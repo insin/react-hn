@@ -1,8 +1,8 @@
 'use strict';
 
-var moment = require('moment')
 var React = require('react')
 var {Link} = require('react-router')
+var TimeAgo = require('react-timeago')
 
 var ItemStore = require('../stores/ItemStore')
 var SettingsStore = require('../stores/SettingsStore')
@@ -88,7 +88,7 @@ var CommentMixin = {
       {options.collapsible && this.renderCollapseControl(options.collapsed)}
       {options.collapsible && ' '}
       <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
-      {moment(comment.time * 1000).fromNow()}
+      <TimeAgo date={comment.time * 1000}/>
       {options.link && ' | '}
       {options.link && <Link to="comment" params={{id: comment.id}}>link</Link>}
       {options.parent && ' | '}

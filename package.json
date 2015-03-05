@@ -20,9 +20,9 @@
   },
   "dependencies": {
     "firebase": "^2.2.1",
-    "moment": "^2.9.0",
     "react": "^0.12.2",
     "react-router": "^0.12.4",
+    "react-timeago": "^2.0.0",
     "reactfire": "^0.4.0",
     "setimmediate": "^1.0.2"
   },

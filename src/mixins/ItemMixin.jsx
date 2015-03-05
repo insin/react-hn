@@ -1,8 +1,8 @@
 'use strict';
 
 var React = require('react')
-var moment = require('moment')
 var {Link} = require('react-router')
+var TimeAgo = require('react-timeago')
 
 var pluralise = require('../utils/pluralise')
 
@@ -26,11 +26,11 @@ var ItemMixin = {
    * Render an item's metadata bar.
    */
   renderItemMeta(item, extraContent) {
-    var timeMoment = moment(item.time * 1000)
+    var itemDate = new Date(item.time * 1000)
 
     if (item.type == 'job') {
       return <div className="Item__meta">
-        <span className="Item__time">{timeMoment.fromNow()}</span>
+        <TimeAgo date={itemDate} className="Item__time"/>
       </div>
     }
 
@@ -41,9 +41,7 @@ var ItemMixin = {
       <span className="Item__by">
         by <Link to="user" params={{id: item.by}}>{item.by}</Link>
       </span>{' '}
-      <span className="Item__time">
-        {timeMoment.fromNow()}
-      </span>
+      <TimeAgo date={itemDate} className="Item__time"/>
       {' | '}
       <Link to={item.type} params={{id: item.id}}>
         {item.descendants > 0 ? item.descendants + ' comment' + pluralise(item.descendants) : 'discuss'}

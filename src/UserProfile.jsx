@@ -1,8 +1,8 @@
 'use strict';
 
-var moment = require('moment')
 var React = require('react')
 var ReactFireMixin = require('reactfire')
+var TimeAgo = require('react-timeago')
 
 var HNService = require('./services/HNService')
 
@@ -45,12 +45,12 @@ var UserProfile = React.createClass({
         <Spinner size="20"/>
       </div>
     }
-    var createdMoment = moment(user.created * 1000)
+    var createdDate = new Date(user.created * 1000)
     return <div className="UserProfile">
       <h4>{user.id}</h4>
       <dl>
         <dt>Created</dt>
-        <dd>{createdMoment.fromNow()} ({createdMoment.format('LL')})</dd>
+        <dd><TimeAgo date={createdDate}/> ({createdDate.toDateString()})</dd>
         <dt>Karma</dt>
         <dd>{user.karma}</dd>
         <dt>Delay</dt>
