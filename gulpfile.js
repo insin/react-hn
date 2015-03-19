@@ -42,8 +42,7 @@ gulp.task('transpile-js', ['clean-modules'], function() {
 gulp.task('build-deps', function() {
   var b = browserify({detectGlobals: false})
   b.require('events')
-  b.require('react/addons')
-  b.require('react/addons', {expose: 'react'})
+  b.require('react')
   b.require('react-router')
   b.require('firebase')
   b.require('reactfire')
@@ -82,7 +81,6 @@ gulp.task('build-app', ['lint'], function() {
   , detectGlobals: false
   })
   b.external('events')
-  b.external('react/addons')
   b.external('react')
   b.external('react-router')
   b.external('firebase')
