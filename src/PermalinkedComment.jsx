@@ -19,7 +19,8 @@ var PermalinkedComment = React.createClass({
 
   getDefaultProps() {
     return {
-      level: 0
+      level: 0,
+      loadingSpinner: true
     }
   },
 
