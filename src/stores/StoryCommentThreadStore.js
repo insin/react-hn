@@ -42,12 +42,20 @@ function StoryCommentThreadStore(item, onCommentsChanged, options) {
   this.loading = true
   /** The number of comments we're expecting to load. */
   this.expectedComments = item.kids ? item.kids.length : 0
+  /**
+   * The number of descendants the story has according to the API.
+   * This count includes deleted comments, which aren't accessible via the API,
+   * so a thread with deleted comments (example story id: 9273709) will never
+   * load this number of comments
+   * However, we still need to persist the last known descendant count in order
+   * to determine how many new comments there are when displaying the story on a
+   * list page.
+   */
+  this.itemDescendantCount = item.descendants
 
   var initialState = loadState(item.id)
   /** Time of last visit to the story. */
   this.lastVisit = initialState.lastVisit
-  /** Comment count on the last visit - determines how many comments are new. */
-  this.prevCommentCount = initialState.commentCount
   /** Max comment id on the last visit - determines which comments are new. */
   this.prevMaxCommentId = initialState.maxCommentId
   /** Is this the user's first time viewing the story? */
@@ -83,7 +91,6 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   firstLoadComplete() {
     this.lastVisit = Date.now()
     this.prevMaxCommentId = this.maxCommentId
-    this.prevCommentCount = this.commentCount
     this.isFirstVisit = false
     this.onCommentsChanged({type: 'first_load_complete'})
   },
@@ -118,9 +125,16 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   _storeState() {
     storage.set(this.itemId, JSON.stringify({
       lastVisit: Date.now()
-    , commentCount: this.commentCount
+    , commentCount: this.itemDescendantCount
     , maxCommentId: this.maxCommentId
     }))
+  },
+
+  /**
+   * The item this comment thread belongs to got updated.
+   */
+  itemUpdated(item) {
+    this.itemDescendantCount = item.descendants
   },
 
   /**
@@ -272,7 +286,6 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     this.lastVisit = Date.now()
     this.newCommentCount = 0
     this.prevMaxCommentId = this.maxCommentId
-    this.prevCommentCount = this.commentCount
     this.isNew = {}
     this._storeState()
   },

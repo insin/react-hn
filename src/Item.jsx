@@ -81,16 +81,22 @@ var Item = React.createClass({
         this.forceUpdate()
       }
     }
-    // If the item has been updated from Firebase and the initial set
-    // of comments is still loading, the number of expected comments might need
-    // to be adjusted.
-    // This triggers a check for thread load completion, completing it
-    // immediately if a cached item had 0 kids and the latest version from
-    // Firebase also has 0 kids.
-    else if (prevState.item !== this.state.item && this.threadStore.loading) {
-      var kids = (this.state.item.kids ? this.state.item.kids.length : 0)
-      var prevKids = (prevState.item.kids ? prevState.item.kids.length : 0)
-      this.threadStore.adjustExpectedComments(kids - prevKids)
+    else if (prevState.item !== this.state.item) {
+      // If the item has been updated from Firebase and the initial set
+      // of comments is still loading, the number of expected comments might
+      // need to be adjusted.
+      // This triggers a check for thread load completion, completing it
+      // immediately if a cached item had 0 kids and the latest version from
+      // Firebase also has 0 kids.
+      if (this.threadStore.loading) {
+        var kids = (this.state.item.kids ? this.state.item.kids.length : 0)
+        var prevKids = (prevState.item.kids ? prevState.item.kids.length : 0)
+        var kidDiff = kids - prevKids
+        if (kidDiff !== 0) {
+          this.threadStore.adjustExpectedComments(kidDiff)
+        }
+      }
+      this.threadStore.itemUpdated(this.state.item)
     }
   },
 
@@ -124,12 +130,11 @@ var Item = React.createClass({
     var item = state.item
     var threadStore = this.threadStore
     if (!item.id || !threadStore) { return <div className="Item Item--loading"><Spinner size="20"/></div> }
-    var newCommentCount = item.descendants - threadStore.prevCommentCount
     return <div className={cx('Item', {'Item--dead': item.dead})}>
       <div className="Item__content">
         {this.renderItemTitle(item)}
-        {this.renderItemMeta(item, (threadStore.lastVisit !== null && newCommentCount > 0 && <span>{' '}
-          (<em>{newCommentCount} new</em> in the last <TimeAgo date={threadStore.lastVisit} formatter={timeUnitsAgo}/>{') | '}
+        {this.renderItemMeta(item, (threadStore.lastVisit !== null && threadStore.newCommentCount > 0 && <span>{' '}
+          (<em>{threadStore.newCommentCount} new</em> in the last <TimeAgo date={threadStore.lastVisit} formatter={timeUnitsAgo}/>{') | '}
           <span className="control" tabIndex="0" onClick={this.autoCollapse} onKeyPress={this.autoCollapse} title="Collapse threads without new comments">
             auto collapse
           </span>{' | '}
