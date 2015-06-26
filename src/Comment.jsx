@@ -45,6 +45,10 @@ var Comment = React.createClass({
   },
 
   componentDidUpdate(prevProps, prevState) {
+    if (!this.state.comment) {
+      return
+    }
+
     if (!prevState.comment.id) {
       // Register a newly-loaded comment with the thread store
       if (this.state.comment.id) {
@@ -117,6 +121,12 @@ var Comment = React.createClass({
   render() {
     var comment = this.state.comment
     var props = this.props
+    if (!comment) {
+      return this.renderError(comment, {
+        id: this.props.id,
+        className: 'Comment Comment--error Comment--level' + props.level
+      })
+    }
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) { return this.renderCommentLoading(comment) }
     // Don't show dead coments or their children, when configured

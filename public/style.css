@@ -296,6 +296,9 @@ span.control:hover {
 .Comment--dead > .Comment__content > .Comment__text {
   color: #ddd !important;
 }
+.Comment--error .Comment__meta {
+  color: #f33;
+}
 
 .UserProfile {
   padding-left: 1.25em;

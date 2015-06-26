@@ -57,6 +57,16 @@ var CommentMixin = {
     </div>
   },
 
+  renderError(comment, options) {
+    return <div className={options.className}>
+      <div className="Comment__content">
+        <div className="Comment__meta">
+          [error] | comment is {JSON.stringify(comment)} | <a href={'https://news.ycombinator.com/item?id=' + options.id}>view on Hacker News</a>
+        </div>
+      </div>
+    </div>
+  },
+
   renderCollapseControl(collapsed) {
     return <span className="Comment__collapse" onClick={this.toggleCollapse} onKeyPress={this.toggleCollapse} tabIndex="0">
       [{collapsed ? '+' : '–'}]

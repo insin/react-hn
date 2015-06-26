@@ -52,6 +52,10 @@ var PermalinkedComment = React.createClass({
   },
 
   componentWillUpdate(nextProps, nextState) {
+    if (!nextState.comment) {
+      return
+    }
+
     if (this.state.comment.id != nextState.comment.id) {
       if (!nextState.comment.deleted) {
         // Redirect to the appropriate route if a Comment "parent" link had a
@@ -95,6 +99,12 @@ var PermalinkedComment = React.createClass({
 
   render() {
     var comment = this.state.comment
+    if (!comment) {
+      return this.renderError(comment, {
+        id: this.props.params.id,
+        className: 'Comment Comment--level0 Comment--error'
+      })
+    }
     // Render a placeholder while we're waiting for the comment to load
     if (!comment.id) { return this.renderCommentLoading(comment) }
     // Render a link to HN for deleted comments
