@@ -45,7 +45,10 @@ var Comment = React.createClass({
   },
 
   componentDidUpdate(prevProps, prevState) {
+    // Huge, fast-growing threads like https://news.ycombinator.com/item?id=9784470
+    // seem to break the API - some comments are coming back from Firebase as null.
     if (!this.state.comment) {
+      this.props.threadStore.adjustExpectedComments(-1)
       return
     }
 
