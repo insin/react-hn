@@ -52,16 +52,18 @@ var Comment = React.createClass({
       return
     }
 
-    if (!prevState.comment.id) {
+    // On !prevState.comment: a comment which was initially null - see
+    // above - may eventually load when the API catches up.
+    if (!prevState.comment || !prevState.comment.id) {
       // Register a newly-loaded comment with the thread store
       if (this.state.comment.id) {
-        // If the commant was delayed, cancel any pending timeout
-        if (prevState.comment.delayed) {
+        // If the comment was delayed, cancel any pending timeout
+        if (prevState.comment && prevState.comment.delayed) {
           this.clearDelayTimeout()
         }
         this.props.threadStore.commentAdded(this.state.comment)
       }
-      if (!prevState.comment.delayed && this.state.comment.delayed) {
+      if (prevState.comment && !prevState.comment.delayed && this.state.comment.delayed) {
         this.props.threadStore.commentDelayed(this.props.id)
       }
     }
@@ -94,8 +96,8 @@ var Comment = React.createClass({
 
   /**
    * This is usually caused by a permissions error loading the comment due to
-   * its author using the delay setting, which is measured in minutes - try
-   * again in 30 seconds.
+   * its author using the delay setting (note: this is conjecture), which is
+   * measured in minutes - try again in 30 seconds.
    */
   handleFirebaseRefCancelled(e) {
     if ("production" !== process.env.NODE_ENV) {
@@ -103,7 +105,7 @@ var Comment = React.createClass({
     }
     this.unbind('comment')
     this.timeout = setTimeout(this.bindFirebaseRef, 30000)
-    if (!this.state.comment.delayed) {
+    if (this.state.comment && !this.state.comment.delayed) {
       this.state.comment.delayed = true
       this.forceUpdate()
     }

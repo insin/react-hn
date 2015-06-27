@@ -74,6 +74,10 @@ extend(CommentThreadStore.prototype, {
    * Register a comment's deletion from the thread.
    */
   commentDeleted(comment) {
+    // Comments which initially failed to load (null from Firebase API) can be
+    // deleted by the time the API catches up.
+    if (!comment) { return }
+
     var siblings = this.children[comment.parent]
     siblings.splice(siblings.indexOf(comment.id), 1)
   },
