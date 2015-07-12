@@ -66,15 +66,14 @@ span.control:hover {
 .App__header {
   color: #00d8ff;
   background-color: #222;
-  padding: 3px;
+  padding: 6px;
   line-height: 18px;
   vertical-align: middle;
   position: relative;
-  border-top-right-radius: 1em;
 }
 .App__settings {
   position: absolute;
-  top: 3px;
+  top: 6px;
   right: 10px;
   cursor: pointer;
 }
@@ -118,13 +117,10 @@ span.control:hover {
 }
 .App__footer {
   margin-top: 1em;
-  border-top: 1px solid #222;
+  border-top: 1px solid #e7e7e7;
   text-align: center;
-  color: #00d8ff;
-  background-color: #222;
-  padding: 4px;
-  border-bottom-left-radius: 1em;
-  border-bottom-right-radius: 1em;
+  color: #333;
+  padding-top: 6px;
 }
 .App__footer a {
   color: inherit;
@@ -138,7 +134,7 @@ span.control:hover {
   margin-bottom: .5em;
 }
 .ListItem {
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 .ListItem--loading {
   min-height: 34px;
@@ -175,6 +171,7 @@ span.control:hover {
 }
 .Item__title {
   color: #666;
+  font-size:18px;
 }
 .Item__title a {
   text-decoration: none;
