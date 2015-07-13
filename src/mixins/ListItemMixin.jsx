@@ -3,6 +3,7 @@
 var React = require('react')
 var {Link} = require('react-router')
 
+var SettingsStore = require('../stores/SettingsStore')
 var cx = require('../utils/buildClassName')
 
 /**
@@ -20,7 +21,7 @@ var ListItemMixin = {
   renderListItem(item, threadState) {
     if (item.deleted) { return null }
     var newCommentCount = this.getNewCommentCount(item, threadState)
-    return <li className={cx('ListItem', {'ListItem--dead': item.dead})}>
+    return <li className={cx('ListItem', {'ListItem--dead': item.dead})} style={{marginBottom: SettingsStore.listSpacing}}>
       {this.renderItemTitle(item)}
       {this.renderItemMeta(item, (newCommentCount > 0 && <span className="ListItem__newcomments">{' '}
         (<Link to={item.type} params={{id: item.id}}>

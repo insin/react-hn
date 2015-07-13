@@ -10,6 +10,8 @@ var SettingsStore = {
   replyLinks: true,
   showDead: false,
   showDeleted: false,
+  titleFontSize: 18,
+  listSpacing: 16,
 
   load() {
     var json = storage.get(STORAGE_KEY)
@@ -20,10 +22,12 @@ var SettingsStore = {
 
   save() {
     storage.set(STORAGE_KEY, JSON.stringify({
-      autoCollapse: this.autoCollapse
-    , replyLinks: this.replyLinks
-    , showDead: this.showDead
-    , showDeleted: this.showDeleted
+      autoCollapse: this.autoCollapse,
+      replyLinks: this.replyLinks,
+      showDead: this.showDead,
+      showDeleted: this.showDeleted,
+      titleFontSize: this.titleFontSize,
+      listSpacing: this.listSpacing
     }))
   }
 }

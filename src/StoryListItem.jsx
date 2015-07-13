@@ -5,6 +5,7 @@ var ReactFireMixin = require('reactfire')
 
 var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 var HNService = require('./services/HNService')
+var SettingsStore = require('./stores/SettingsStore')
 var StoryStore = require('./stores/StoryStore')
 
 var ItemMixin = require('./mixins/ItemMixin')
@@ -113,7 +114,9 @@ var StoryListItem = React.createClass({
   render() {
     // Display the loading spinner if we have nothing to show initially
     if (!this.state.item || !this.state.item.id) {
-      return <li className="ListItem ListItem--loading"><Spinner/></li>
+      return <li className="ListItem ListItem--loading" style={{marginBottom: SettingsStore.listSpacing}}>
+        <Spinner/>
+      </li>
     }
 
     return this.renderListItem(this.state.item, this.threadState)

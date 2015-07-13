@@ -10,7 +10,13 @@ var Settings = React.createClass({
   },
 
   onChange(e) {
-    SettingsStore[e.target.name] = e.target.checked
+    var el = e.target
+    if (el.type === 'checkbox') {
+      SettingsStore[el.name] = el.checked
+    }
+    else if (el.type === 'number' && el.value) {
+      SettingsStore[el.name] = el.value
+    }
     this.forceUpdate()
     SettingsStore.save()
   },
@@ -45,6 +51,20 @@ var Settings = React.createClass({
             <input type="checkbox" name="showDeleted" id="showDeleted" checked={SettingsStore.showDeleted}/> show deleted
           </label>
           <p>Show comments flagged as deleted in threads.</p>
+        </div>
+        <div className="Settings__setting">
+          <table>
+            <tbody>
+              <tr>
+                <td><label htmlFor="titleFontSize">title font size:</label></td>
+                <td><input type="number" min="13.333" step="1" name="titleFontSize" id="titleFontSize" value={SettingsStore.titleFontSize}/></td>
+              </tr>
+              <tr>
+                <td><label htmlFor="listSpacing">list spacing:</label></td>
+                <td><input type="number" min="0" name="listSpacing" id="listSpacing" value={SettingsStore.listSpacing}/></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </form>
     </div>

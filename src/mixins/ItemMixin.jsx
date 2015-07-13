@@ -4,6 +4,7 @@ var React = require('react')
 var {Link} = require('react-router')
 var TimeAgo = require('react-timeago')
 
+var SettingsStore = require('../stores/SettingsStore')
 var pluralise = require('../utils/pluralise')
 
 var parseHost = (function() {
@@ -63,7 +64,7 @@ var ItemMixin = {
       title = (hasURL ? <a href={item.url}>{item.title}</a>
                       : <Link to={item.type} params={{id: item.id}}>{item.title}</Link>)
     }
-    return <div className="Item__title">
+    return <div className="Item__title" style={{fontSize: SettingsStore.titleFontSize}}>
       {title}
       {hasURL && ' '}
       {hasURL && <span className="Item__host">({parseHost(item.url)})</span>}

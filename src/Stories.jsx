@@ -8,6 +8,7 @@ var PageNumberMixin = require('./mixins/PageNumberMixin')
 var Paginator = require('./Paginator')
 var Spinner = require('./Spinner')
 var StoryListItem = require('./StoryListItem')
+var SettingsStore = require('./stores/SettingsStore')
 
 var {ITEMS_PER_PAGE} = require('./utils/constants')
 var pageCalc = require('./utils/pageCalc')
@@ -71,7 +72,11 @@ var Stories = React.createClass({
     if (this.state.stories.length === 0 && this.state.ids.length === 0) {
       var dummyItems = []
       for (var i = page.startIndex; i < page.endIndex; i++) {
-        dummyItems.push(<li key={i} className="ListItem ListItem--loading"><Spinner/></li>)
+        dummyItems.push(
+          <li key={i} className="ListItem ListItem--loading" style={{marginBottom: SettingsStore.listSpacing}}>
+            <Spinner/>
+          </li>
+        )
       }
       return <div className="Items Items--loading">
         <ol className="Items__list" start={page.startIndex + 1}>{dummyItems}</ol>
