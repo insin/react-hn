@@ -40,11 +40,11 @@ var ItemMixin = {
         {item.score} point{pluralise(item.score)}
       </span>{' '}
       <span className="Item__by">
-        by <Link to="user" params={{id: item.by}}>{item.by}</Link>
+        by <Link to={`/user/${item.by}`}>{item.by}</Link>
       </span>{' '}
       <TimeAgo date={itemDate} className="Item__time"/>
       {' | '}
-      <Link to={item.type} params={{id: item.id}}>
+      <Link to={`/${item.type}/${item.id}`}>
         {item.descendants > 0 ? item.descendants + ' comment' + pluralise(item.descendants) : 'discuss'}
       </Link>
       {extraContent}
@@ -62,7 +62,7 @@ var ItemMixin = {
     }
     else {
       title = (hasURL ? <a href={item.url}>{item.title}</a>
-                      : <Link to={item.type} params={{id: item.id}}>{item.title}</Link>)
+                      : <Link to={`/${item.type}/${item.id}`}>{item.title}</Link>)
     }
     return <div className="Item__title" style={{fontSize: SettingsStore.titleFontSize}}>
       {title}

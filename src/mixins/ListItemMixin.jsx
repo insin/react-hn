@@ -24,7 +24,7 @@ var ListItemMixin = {
     return <li className={cx('ListItem', {'ListItem--dead': item.dead})} style={{marginBottom: SettingsStore.listSpacing}}>
       {this.renderItemTitle(item)}
       {this.renderItemMeta(item, (newCommentCount > 0 && <span className="ListItem__newcomments">{' '}
-        (<Link to={item.type} params={{id: item.id}}>
+        (<Link to={`/${item.type}/${item.id}`}>
           {newCommentCount} new
         </Link>)
       </span>))}

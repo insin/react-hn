@@ -3,7 +3,7 @@
 require('setimmediate')
 
 var React = require('react')
-var Router = require('react-router')
+var {IndexRoute, Link, Route, Router} = require('react-router')
 
 var StoryStore = require('./stores/StoryStore')
 var UpdatesStore = require('./stores/UpdatesStore')
@@ -15,8 +15,6 @@ var Settings = require('./Settings')
 var Stories = require('./Stories')
 var Updates = require('./Updates')
 var UserProfile = require('./UserProfile')
-
-var {DefaultRoute, Link, NotFoundRoute, Route, RouteHandler} = Router
 
 var App = React.createClass({
   getInitialState() {
@@ -55,19 +53,19 @@ var App = React.createClass({
       <div className="App__wrap">
       <div className="App__header">
         <img src="logo.png" width="16" height="16" alt="" />{' '}
-        <Link to="news" className="App__homelink">React HN</Link>{' '}
-        <Link to="newest">new</Link>{' | '}
-        <Link to="newcomments">comments</Link> {' | '}
-        <Link to="show">show</Link>{' | '}
-        <Link to="ask">ask</Link>{' | '}
-        <Link to="jobs">jobs</Link>
+        <Link to="/news" activeClassName="active" className="App__homelink">React HN</Link>{' '}
+        <Link to="/newest" activeClassName="active">new</Link>{' | '}
+        <Link to="/newcomments" activeClassName="active">comments</Link> {' | '}
+        <Link to="/show" activeClassName="active">show</Link>{' | '}
+        <Link to="/ask" activeClassName="active">ask</Link>{' | '}
+        <Link to="/jobs" activeClassName="active">jobs</Link>
         <a className="App__settings" tabIndex="0" onClick={this.toggleSettings} onKeyPress={this.toggleSettings}>
           {this.state.showSettings ? 'hide settings' : 'settings'}
         </a>
         {this.state.showSettings && <Settings key="settings"/>}
       </div>
       <div className="App__content">
-        <RouteHandler {...this.props}/>
+        {this.props.children}
       </div>
       <div className="App__footer">
         react-hn v{process.env.VERSION} | <a href="https://github.com/insin/react-hn">insin/react-hn</a>
@@ -106,23 +104,21 @@ var New = storiesHandler('newest', 'newstories', 500, 'New Links')
 var Show = storiesHandler('show', 'showstories', 200, 'Show')
 var Top = storiesHandler('news', 'topstories', 500)
 
-var routes = <Route name="app" path="/" handler={App}>
-  <DefaultRoute handler={Top}/>
-  <NotFoundRoute handler={NotFound}/>
-  <Route name="news" path="news" handler={Top}/>
-  <Route name="newest" path="newest" handler={New}/>
-  <Route name="show" path="show" handler={Show}/>
-  <Route name="ask" path="ask" handler={Ask}/>
-  <Route name="jobs" path="jobs" handler={Jobs}/>
-  <Route name="item" path="item/:id" handler={Item}/>
-  <Route name="job" path="job/:id" handler={Item}/>
-  <Route name="poll" path="poll/:id" handler={Item}/>
-  <Route name="story" path="story/:id" handler={Item}/>
-  <Route name="comment" path="comment/:id" handler={PermalinkedComment}/>
-  <Route name="newcomments" path="newcomments" handler={Comments}/>
-  <Route name="user" path="user/:id" handler={UserProfile}/>
+var routes = <Route path="/" component={App}>
+  <IndexRoute component={Top}/>
+  <Route path="news" component={Top}/>
+  <Route path="newest" component={New}/>
+  <Route path="show" component={Show}/>
+  <Route path="ask" component={Ask}/>
+  <Route path="jobs" component={Jobs}/>
+  <Route path="item/:id" component={Item}/>
+  <Route path="job/:id" component={Item}/>
+  <Route path="poll/:id" component={Item}/>
+  <Route path="story/:id" component={Item}/>
+  <Route path="comment/:id" component={PermalinkedComment}/>
+  <Route path="newcomments" component={Comments}/>
+  <Route path="user/:id" component={UserProfile}/>
+  <Route path="*" component={NotFound}/>
 </Route>
 
-Router.run(routes, function(Handler, state) {
-  React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
-})
+React.render(<Router routes={routes}/>, document.getElementById('app'))

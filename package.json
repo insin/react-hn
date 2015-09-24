@@ -21,7 +21,7 @@
   "dependencies": {
     "firebase": "^2.2.7",
     "react": "^0.13.3",
-    "react-router": "^0.13.3",
+    "react-router": "^1.0.0-rc1",
     "react-timeago": "^2.2.1",
     "reactfire": "^0.4.0",
     "setimmediate": "^1.0.2"

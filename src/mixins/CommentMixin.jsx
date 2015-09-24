@@ -97,14 +97,14 @@ var CommentMixin = {
     return <div className="Comment__meta">
       {options.collapsible && this.renderCollapseControl(options.collapsed)}
       {options.collapsible && ' '}
-      <Link to="user" params={{id: comment.by}} className="Comment__user">{comment.by}</Link>{' '}
+      <Link to={`/user/${comment.by}`} className="Comment__user">{comment.by}</Link>{' '}
       <TimeAgo date={comment.time * 1000}/>
       {options.link && ' | '}
-      {options.link && <Link to="comment" params={{id: comment.id}}>link</Link>}
+      {options.link && <Link to={`/comment/${comment.id}`}>link</Link>}
       {options.parent && ' | '}
-      {options.parent && <Link to={this.state.parent.type} params={{id: comment.parent}}>parent</Link>}
+      {options.parent && <Link to={`/${this.state.parent.type}/${comment.parent}`}>parent</Link>}
       {options.op && ' | on: '}
-      {options.op && <Link to={this.state.op.type} params={{id: this.state.op.id}}>{this.state.op.title}</Link>}
+      {options.op && <Link to={`/${this.state.op.type}/${this.state.op.id}`}>{this.state.op.title}</Link>}
       {comment.dead &&  ' | [dead]'}
       {options.childCounts && ' | (' + options.childCounts.children + ' child' + pluralise(options.childCounts.children, ',ren')}
         {options.childCounts && options.childCounts.newComments > 0 && ', '}
