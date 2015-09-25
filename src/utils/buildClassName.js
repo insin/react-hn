@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Creates a className string including some class names conditionally.
  * @param {string=} staticClassName class name(s) which should always be
@@ -19,7 +17,7 @@ function buildClassName(staticClassName, conditionalClassNames) {
   }
   var classNameKeys = Object.keys(conditionalClassNames)
   for (var i = 0, l = classNameKeys.length; i < l; i++) {
-    if (!!conditionalClassNames[classNameKeys[i]]) {
+    if (conditionalClassNames[classNameKeys[i]]) {
       classNames.push(classNameKeys[i])
     }
   }

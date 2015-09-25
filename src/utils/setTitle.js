@@ -1,5 +1,3 @@
-'use strict';
-
 var {SITE_TITLE} = require('./constants')
 
 function setTitle(title) {

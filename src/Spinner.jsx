@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react')
 
 // TODO Implement GIF-based fallback for IE9 and another non-animating browsers

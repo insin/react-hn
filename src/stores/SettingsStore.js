@@ -1,5 +1,3 @@
-'use strict';
-
 var extend = require('../utils/extend')
 var storage = require('../utils/storage')
 

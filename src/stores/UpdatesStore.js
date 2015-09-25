@@ -1,5 +1,3 @@
-'use strict';
-
 var EventEmitter = require('events').EventEmitter
 
 var HNService = require('../services/HNService')
@@ -63,10 +61,10 @@ function processCacheObj(cacheObj) {
  * be displayed by the Updates component.
  */
 var updateItemTypes = {
-  comment: true
-, job: true
-, poll: true
-, story: true
+  comment: true,
+  job: true,
+  poll: true,
+  story: true
 }
 
 /**
@@ -79,7 +77,7 @@ function handleUpdateItems(items) {
     if (item.deleted) { continue }
 
     if (typeof updateItemTypes[item.type] == 'undefined') {
-      if ("production" !== process.env.NODE_ENV) {
+      if (process.env.NODE_ENV !== 'production') {
         console.warn(
           "An item which can't be displayed by the Updates component was " +
           'received in the updates stream: ' + JSON.stringify(item)
@@ -88,7 +86,7 @@ function handleUpdateItems(items) {
       continue
     }
 
-    if (item.type == 'comment') {
+    if (item.type === 'comment') {
       updatesCache.comments[item.id] = item
     }
     else {
@@ -102,13 +100,13 @@ function handleUpdateItems(items) {
 
 var UpdatesStore = extend(new EventEmitter(), {
   loadSession() {
-    var json = sessionStorage.updates
+    var json = window.sessionStorage.updates
     updatesCache = (json ? JSON.parse(json) : {comments: {}, stories: {}})
     populateUpdates()
   },
 
   saveSession() {
-    sessionStorage.updates = JSON.stringify(updatesCache)
+    window.sessionStorage.updates = JSON.stringify(updatesCache)
   },
 
   start() {

@@ -1,5 +1,3 @@
-'use strict';
-
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 var TimeAgo = require('react-timeago')

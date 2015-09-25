@@ -1,5 +1,3 @@
-'use strict';
-
 var HNService = require('../services/HNService')
 
 var StoryStore = require('./StoryStore')
@@ -19,7 +17,7 @@ function fetchCommentParent(comment, cb, result) {
 
     // The parent is a known non-comment
     if (titleCache[parentId]) {
-      if (result.itemCount == 1) { result.parent = titleCache[parentId] }
+      if (result.itemCount === 1) { result.parent = titleCache[parentId] }
       result.op = titleCache[parentId]
       cb(result)
       return
@@ -27,7 +25,7 @@ function fetchCommentParent(comment, cb, result) {
 
     // The parent is a known comment
     if (commentParentLookup[parentId]) {
-      if (result.itemCount == 1) { result.parent = {id: parentId, type: 'comment'} }
+      if (result.itemCount === 1) { result.parent = {id: parentId, type: 'comment'} }
       // Set the parent comment's ids up for the next iteration
       commentId = parentId
       parentId = commentParentLookup[parentId]
@@ -39,7 +37,7 @@ function fetchCommentParent(comment, cb, result) {
     result.itemCount++
     // Add the current comment's parent to the lookup for next time
     commentParentLookup[commentId] = parentId
-    if (parent.type == 'comment') {
+    if (parent.type === 'comment') {
       commentParentLookup[parent.id] = parent.parent
     }
     processCommentParent(parent, cb, result)
@@ -47,15 +45,15 @@ function fetchCommentParent(comment, cb, result) {
 }
 
 function processCommentParent(item, cb, result) {
-  if (result.itemCount == 1) {
+  if (result.itemCount === 1) {
     result.parent = item
   }
-  if (item.type != 'comment') {
+  if (item.type !== 'comment') {
     result.op = item
     titleCache[item.id] = {
-      id: item.id
-    , type: item.type
-    , title: item.title
+      id: item.id,
+      type: item.type,
+      title: item.title
     }
     cb(result)
   }

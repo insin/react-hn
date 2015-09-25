@@ -1,5 +1,3 @@
-'use strict';
-
 var {EventEmitter} = require('events')
 
 var HNService = require('../services/HNService')
@@ -50,6 +48,7 @@ function parseJSON(json, defaultValue) {
 
 class StoryStore extends EventEmitter {
   constructor(type) {
+    super()
     this.type = type
 
     // Ensure cache objects for this type are initialised
@@ -125,16 +124,16 @@ extend(StoryStore, {
    * Deserialise caches from sessionStorage.
    */
   loadSession() {
-    idCache = parseJSON(sessionStorage.idCache, {})
-    itemCache = parseJSON(sessionStorage.itemCache, {})
+    idCache = parseJSON(window.sessionStorage.idCache, {})
+    itemCache = parseJSON(window.sessionStorage.itemCache, {})
   },
 
   /**
    * Serialise caches to sessionStorage as JSON.
    */
   saveSession() {
-    sessionStorage.idCache = JSON.stringify(idCache)
-    sessionStorage.itemCache = JSON.stringify(itemCache)
+    window.sessionStorage.idCache = JSON.stringify(idCache)
+    window.sessionStorage.itemCache = JSON.stringify(itemCache)
   }
 })
 

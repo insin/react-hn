@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Based on the implementation of _.debounce() from Underscore.js 1.7.0
  * http://underscorejs.org

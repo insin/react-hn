@@ -1,5 +1,3 @@
-'use strict';
-
 require('setimmediate')
 
 var React = require('react')
@@ -68,7 +66,8 @@ var App = React.createClass({
         {this.props.children}
       </div>
       <div className="App__footer">
-        react-hn v{process.env.VERSION} | <a href="https://github.com/insin/react-hn">insin/react-hn</a>
+        {`react-hn v${__VERSION__} | `}
+        <a href="https://github.com/insin/react-hn">insin/react-hn</a>
       </div>
       </div>
     </div>

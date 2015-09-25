@@ -1,5 +1,3 @@
-'use strict';
-
 var PageNumberMixin = {
   getPageNumber(page) {
     if (typeof page == 'undefined') {

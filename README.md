@@ -51,8 +51,8 @@ npm install
 
 ### npm scripts
 
-* `npm run dist` - builds from scratch into the `/dist` directory.
-* `npm run watch` - watches JavaScript in `/src`, linting, transpiling,
-  browserifying and copying to `/dist` on every change.
+* `npm run build` - build into the `public/` directory.
+* `npm run dev` - run development server with hot reloading.
+* `npm run lint` - lint `src/`
 
 ## MIT Licensed

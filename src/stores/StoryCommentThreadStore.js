@@ -1,5 +1,3 @@
-'use strict';
-
 var CommentThreadStore = require('./CommentThreadStore')
 var SettingsStore = require('./SettingsStore')
 
@@ -20,9 +18,9 @@ function loadState(itemId) {
     return JSON.parse(json)
   }
   return {
-    lastVisit: null
-  , commentCount: 0
-  , maxCommentId: 0
+    lastVisit: null,
+    commentCount: 0,
+    maxCommentId: 0
   }
 }
 
@@ -100,7 +98,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    */
   checkLoadCompletion() {
     if (this.loading && this.commentCount >= this.expectedComments) {
-      if ("production" !== process.env.NODE_ENV) {
+      if (process.env.NODE_ENV !== 'production') {
         console.info(
           'Initial load of ' +
            this.commentCount + ' comment' + pluralise(this.commentCount) +
@@ -124,9 +122,9 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
    */
   _storeState() {
     storage.set(this.itemId, JSON.stringify({
-      lastVisit: Date.now()
-    , commentCount: this.itemDescendantCount
-    , maxCommentId: this.maxCommentId
+      lastVisit: Date.now(),
+      commentCount: this.itemDescendantCount,
+      maxCommentId: this.maxCommentId
     }))
   },
 
@@ -177,7 +175,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
       this.maxCommentId = comment.id
     }
     // We don't want the story to be part of the comment parent hierarchy
-    if (comment.parent != this.itemId) {
+    if (comment.parent !== this.itemId) {
       this.parents[comment.id] = comment.parent
     }
 
@@ -202,7 +200,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     CommentThreadStore.prototype.commentDeleted.call(this, comment)
     this.commentCount--
     if (this.isNew[comment.id]) {
-      this.newCommentCount--;
+      this.newCommentCount--
       delete this.isNew[comment.id]
     }
     delete this.parents[comment.id]
@@ -217,7 +215,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     if (!SettingsStore.showDead) {
       this.commentCount--
       if (this.isNew[comment.id]) {
-        this.newCommentCount--;
+        this.newCommentCount--
         delete this.isNew[comment.id]
       }
     }
@@ -237,7 +235,7 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     // descendants. New comments themselves are not added to the lookup.
     var newCommentIds = Object.keys(this.isNew)
     var hasNewComments = {}
-    for (var i = 0, l = newCommentIds.length; i <l; i++) {
+    for (var i = 0, l = newCommentIds.length; i < l; i++) {
       var parent = this.parents[newCommentIds[i]]
       while (parent) {
         // Stop when we hit one we've seen before

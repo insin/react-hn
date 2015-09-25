@@ -1,5 +1,3 @@
-'use strict';
-
 var extend = require('../utils/extend')
 
 function CommentThreadStore(item, onCommentsChanged) {
@@ -55,8 +53,8 @@ extend(CommentThreadStore.prototype, {
     }
 
     return {
-      children: childCount
-    , newComments: newCommentCount
+      children: childCount,
+      newComments: newCommentCount
     }
   },
 

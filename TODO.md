@@ -8,14 +8,11 @@ Filter stories you've read/aren't interested in
 
 (In lieu of API for saved stories) Manual saving of stories
 
-(In lieu of API feeds for these) Add more categories based on updates feed (show
-/ ask / jobs) with their own persistant caches.
-
 Settings
 * username
 * themes (alt CSS, user CSS)
 * max number of cached updates (stories / comments)
-* always poll tostories/updates options?
+* always poll topstories/updates options?
 
 User submissions
 * API: One big list of ids for stories, polls and comments
