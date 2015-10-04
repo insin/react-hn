@@ -39,6 +39,6 @@
     "redbox-react": "1.1.1",
     "webpack": "1.12.2",
     "webpack-dev-middleware": "1.2.0",
-    "webpack-hot-middleware": "2.3.0"
+    "webpack-hot-middleware": "2.4.1"
   }
 }
