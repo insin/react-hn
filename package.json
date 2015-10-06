@@ -17,7 +17,7 @@
     "events": "1.1.0",
     "firebase": "2.3.1",
     "react": "0.13.3",
-    "react-router": "1.0.0-rc1",
+    "react-router": "0.13.4",
     "react-timeago": "2.2.1",
     "reactfire": "0.5.1",
     "setimmediate": "1.0.2"
