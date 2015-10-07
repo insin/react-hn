@@ -4,7 +4,7 @@ var SettingsStore = require('./stores/SettingsStore')
 
 var Settings = React.createClass({
   componentDidMount() {
-    this.refs.container.getDOMNode().focus()
+    this.refs.container.focus()
   },
 
   onChange(e) {

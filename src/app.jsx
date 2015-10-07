@@ -1,6 +1,7 @@
 require('setimmediate')
 
 var React = require('react')
+var ReactDOM = require('react-dom')
 var {IndexRoute, Link, Route, Router} = require('react-router')
 
 var StoryStore = require('./stores/StoryStore')
@@ -120,4 +121,4 @@ var routes = <Route path="/" component={App}>
   <Route path="*" component={NotFound}/>
 </Route>
 
-React.render(<Router routes={routes}/>, document.getElementById('app'))
+ReactDOM.render(<Router routes={routes}/>, document.getElementById('app'))

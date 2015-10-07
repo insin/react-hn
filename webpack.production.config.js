@@ -24,6 +24,7 @@ module.exports = {
       'setimmediate',
       'events',
       'react',
+      'react-dom',
       'react-router',
       'react-timeago',
       'firebase',
