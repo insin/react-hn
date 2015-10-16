@@ -29,7 +29,7 @@
     "babel-loader": "5.3.2",
     "babel-plugin-react-display-name": "2.0.0",
     "babel-plugin-react-transform": "1.1.1",
-    "eslint": "1.6.0",
+    "eslint": "1.7.0",
     "eslint-config-standard": "4.4.0",
     "eslint-config-standard-react": "1.1.0",
     "eslint-plugin-react": "3.5.1",
