@@ -21,7 +21,7 @@
     "react-router": "1.0.0-rc1",
     "react-timeago": "2.2.1",
     "reactfire": "0.5.1",
-    "setimmediate": "1.0.2"
+    "setimmediate": "1.0.3"
   },
   "devDependencies": {
     "babel-core": "5.8.25",
