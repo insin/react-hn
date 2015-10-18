@@ -51,7 +51,7 @@ var Stories = React.createClass({
 
   handleUpdate(update) {
     if (!this.isMounted()) {
-      if ("production" !== process.env.NODE_ENV) {
+      if (process.env.NODE_ENV !== 'production') {
         console.warn(
           `Skipping update as the ${this.props.type} Stories component is no longer mounted.`
         )

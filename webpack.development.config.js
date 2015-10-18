@@ -8,11 +8,8 @@ module.exports = {
   devtool: 'eval',
   entry: [
     'webpack-hot-middleware/client',
-    './src/app.jsx'
+    './src/index.js'
   ],
-  resolve: {
-    extensions: ['', '.jsx', '.js']
-  },
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'app.js',
@@ -28,7 +25,7 @@ module.exports = {
   ],
   module: {
     loaders: [
-      {test: /\.jsx?$/, loader: 'babel', exclude: /node_modules/}
+      {test: /\.js$/, loader: 'babel', exclude: /node_modules/}
     ]
   }
 }

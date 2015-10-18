@@ -18,8 +18,8 @@ var DisplayComment = React.createClass({
 
   getInitialState() {
     return {
-      op: {}
-    , parent: {type: 'comment'}
+      op: {},
+      parent: {type: 'comment'}
     }
   },
 
@@ -39,9 +39,9 @@ var DisplayComment = React.createClass({
     return <div className={className}>
       <div className="Comment__content">
         {this.renderCommentMeta(comment, {
-          link: true
-        , parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
-        , op: !!this.state.op.id
+          link: true,
+          parent: !!this.state.parent.id && !!this.state.op.id && comment.parent !== this.state.op.id,
+          op: !!this.state.op.id
         })}
         {this.renderCommentText(comment, {replyLink: false})}
       </div>

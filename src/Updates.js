@@ -1,7 +1,7 @@
 var React = require('react')
 
 var SettingsStore = require('./stores/SettingsStore')
-var UpdatesStore =  require('./stores/UpdatesStore')
+var UpdatesStore = require('./stores/UpdatesStore')
 
 var DisplayListItem = require('./DisplayListItem')
 var DisplayComment = require('./DisplayComment')
@@ -21,8 +21,8 @@ function filterDead(item) {
 function filterUpdates(updates) {
   if (!SettingsStore.showDead) {
     return {
-      comments: updates.comments.filter(filterDead)
-    , stories: updates.stories.filter(filterDead)
+      comments: updates.comments.filter(filterDead),
+      stories: updates.stories.filter(filterDead)
     }
   }
   return updates
@@ -47,18 +47,18 @@ var Updates = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.type != nextProps.type) {
+    if (this.props.type !== nextProps.type) {
       this.setTitle(nextProps.type)
     }
   },
 
   setTitle(type) {
-    setTitle('New ' + (type == 'comments' ? 'Comments' : 'Links'))
+    setTitle('New ' + (type === 'comments' ? 'Comments' : 'Links'))
   },
 
   handleUpdates(updates) {
     if (!this.isMounted()) {
-      if ("production" !== process.env.NODE_ENV) {
+      if (process.env.NODE_ENV !== 'production') {
         console.warn('Skipping update of ' + this.props.type + ' as the Updates component is not mounted')
       }
       return
@@ -67,14 +67,14 @@ var Updates = React.createClass({
   },
 
   render() {
-    var items= (this.props.type == 'comments' ? this.state.comments: this.state.stories)
+    var items = (this.props.type === 'comments' ? this.state.comments : this.state.stories)
     if (items.length === 0) {
       return <div className="Updates Updates--loading"><Spinner size="20"/></div>
     }
 
     var page = pageCalc(this.getPageNumber(), ITEMS_PER_PAGE, items.length)
 
-    if (this.props.type == 'comments') {
+    if (this.props.type === 'comments') {
       return <div className="Updates Comments">
         {items.slice(page.startIndex, page.endIndex).map(function(comment) {
           return <DisplayComment key={comment.id} id={comment.id} comment={comment}/>

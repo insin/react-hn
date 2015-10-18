@@ -12,25 +12,25 @@ var pluralise = require('../utils/pluralise')
 var CommentMixin = {
   fetchAncestors(comment) {
     ItemStore.fetchCommentAncestors(comment, result => {
-      if ("production" !== process.env.NODE_ENV) {
+      if (process.env.NODE_ENV !== 'production') {
         console.info(
           'fetchAncestors(' + comment.id + ') took ' +
           result.timeTaken + ' ms for ' +
           result.itemCount + ' item' + pluralise(result.itemCount) + ' with ' +
-          result.cacheHits + ' cache hit' + pluralise(result.cacheHits) + ' ('  +
+          result.cacheHits + ' cache hit' + pluralise(result.cacheHits) + ' (' +
           (result.cacheHits / result.itemCount * 100).toFixed(1) + '%)'
         )
       }
       if (!this.isMounted()) {
-        if ("production" !== process.env.NODE_ENV) {
+        if (process.env.NODE_ENV !== 'production') {
           console.info("...but the comment isn't mounted")
         }
         // Too late - the comment or the user has moved elsewhere
         return
       }
       this.setState({
-        parent: result.parent
-      , op: result.op
+        parent: result.parent,
+        op: result.op
       })
     })
   },
@@ -103,7 +103,7 @@ var CommentMixin = {
       {options.parent && <Link to={`/${this.state.parent.type}/${comment.parent}`}>parent</Link>}
       {options.op && ' | on: '}
       {options.op && <Link to={`/${this.state.op.type}/${this.state.op.id}`}>{this.state.op.title}</Link>}
-      {comment.dead &&  ' | [dead]'}
+      {comment.dead && ' | [dead]'}
       {options.childCounts && ' | (' + options.childCounts.children + ' child' + pluralise(options.childCounts.children, ',ren')}
         {options.childCounts && options.childCounts.newComments > 0 && ', '}
         {options.childCounts && options.childCounts.newComments > 0 && <em>{options.childCounts.newComments} new</em>}
@@ -121,4 +121,4 @@ var CommentMixin = {
   }
 }
 
-module.exports =  CommentMixin
+module.exports = CommentMixin

@@ -82,7 +82,7 @@ var StoryListItem = React.createClass({
         this.props.store.itemUpdated(nextState.item, this.props.index)
       }
       else {
-        if ("production" !== process.env.NODE_ENV) {
+        if (process.env.NODE_ENV !== 'production') {
           console.warn(`Item ${this.props.id} went from ${JSON.stringify(this.state.item)} to ${nextProps.item}`)
         }
       }

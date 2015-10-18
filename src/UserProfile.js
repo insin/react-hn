@@ -23,13 +23,13 @@ var UserProfile = React.createClass({
   },
 
   componentWillUpdate(nextProps, nextState) {
-    if (this.state.user.id != nextState.user.id) {
+    if (this.state.user.id !== nextState.user.id) {
       setTitle('Profile: ' + nextState.user.id)
     }
   },
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.id != nextProps.params.id) {
+    if (this.props.params.id !== nextProps.params.id) {
       this.unbind('user')
       this.bindAsObject(HNService.userRef(nextProps.params.id), 'user')
     }

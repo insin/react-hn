@@ -19,10 +19,11 @@ function failBuildOnCompilationErrors() {
 module.exports = {
   devtool: 'source-map',
   entry: {
-    app: path.resolve(__dirname, 'src', 'app.jsx'),
+    app: './src/index.js',
     vendor: [
       'setimmediate',
       'events',
+      'history',
       'react',
       'react-dom',
       'react-router',
@@ -30,9 +31,6 @@ module.exports = {
       'firebase',
       'reactfire'
     ]
-  },
-  resolve: {
-    extensions: ['', '.jsx', '.js']
   },
   output: {
     path: path.resolve(__dirname, 'public'),
@@ -57,7 +55,7 @@ module.exports = {
   ],
   module: {
     loaders: [
-      {test: /\.jsx?$/, loader: 'babel', exclude: /node_modules/}
+      {test: /\.js$/, loader: 'babel', exclude: /node_modules/}
     ]
   }
 }

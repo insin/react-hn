@@ -27,7 +27,7 @@ var ItemMixin = {
   renderItemMeta(item, extraContent) {
     var itemDate = new Date(item.time * 1000)
 
-    if (item.type == 'job') {
+    if (item.type === 'job') {
       return <div className="Item__meta">
         <TimeAgo date={itemDate} className="Item__time"/>
       </div>

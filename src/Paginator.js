@@ -7,7 +7,7 @@ var Paginator = React.createClass({
   },
 
   render() {
-    if (this.props.page == 1 && !this.props.hasNext) { return null }
+    if (this.props.page === 1 && !this.props.hasNext) { return null }
     return <div className="Paginator">
       {this.props.page > 1 && <span className="Paginator__prev">
         <Link to={`/${this.props.route}`} query={{page: this.props.page - 1}} onClick={this._onClick}>Prev</Link>

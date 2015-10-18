@@ -16,10 +16,10 @@ var Comment = React.createClass({
   mixins: [CommentMixin, ReactFireMixin],
 
   propTypes: {
-    id: React.PropTypes.number.isRequired
-  , level: React.PropTypes.number.isRequired
-  , loadingSpinner: React.PropTypes.bool
-  , threadStore: React.PropTypes.instanceOf(CommentThreadStore).isRequired
+    id: React.PropTypes.number.isRequired,
+    level: React.PropTypes.number.isRequired,
+    loadingSpinner: React.PropTypes.bool,
+    threadStore: React.PropTypes.instanceOf(CommentThreadStore).isRequired
   },
 
   getDefaultProps() {
@@ -98,7 +98,7 @@ var Comment = React.createClass({
    * measured in minutes - try again in 30 seconds.
    */
   handleFirebaseRefCancelled(e) {
-    if ("production" !== process.env.NODE_ENV) {
+    if (process.env.NODE_ENV !== 'production') {
       console.error('Firebase ref for comment ' + this.props.id + ' was cancelled: ' + e.message)
     }
     this.unbind('comment')
@@ -147,18 +147,18 @@ var Comment = React.createClass({
     var childCounts = (collapsed && props.threadStore.getChildCounts(comment))
     if (collapsed && isNew) { childCounts.newComments = 0 }
     var className = cx('Comment Comment--level' + props.level, {
-      'Comment--collapsed': collapsed
-    , 'Comment--dead': comment.dead
-    , 'Comment--new': isNew
+      'Comment--collapsed': collapsed,
+      'Comment--dead': comment.dead,
+      'Comment--new': isNew
     })
 
     return <div className={className}>
       <div className="Comment__content">
         {this.renderCommentMeta(comment, {
-          collapsible: true
-        , collapsed: collapsed
-        , link: true
-        , childCounts: childCounts
+          collapsible: true,
+          collapsed: collapsed,
+          link: true,
+          childCounts: childCounts
         })}
         {this.renderCommentText(comment, {replyLink: true})}
       </div>

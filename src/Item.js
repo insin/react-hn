@@ -15,7 +15,7 @@ var cx = require('./utils/buildClassName')
 var setTitle = require('./utils/setTitle')
 
 function timeUnitsAgo(value, unit, suffix) {
-  if (value == 1) {
+  if (value === 1) {
     return unit
   }
   return `${value} ${unit}s`
@@ -47,7 +47,7 @@ var Item = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.params.id != nextProps.params.id) {
+    if (this.props.params.id !== nextProps.params.id) {
       // Tear it down...
       this.threadStore.dispose()
       this.threadStore = null
@@ -72,8 +72,8 @@ var Item = React.createClass({
 
   componentDidUpdate(prevProps, prevState) {
     // If the state item id changed, an initial or new item must have loaded
-    if (prevState.item.id != this.state.item.id) {
-      if (!this.threadStore || this.threadStore.itemId != this.state.item.id) {
+    if (prevState.item.id !== this.state.item.id) {
+      if (!this.threadStore || this.threadStore.itemId !== this.state.item.id) {
         this.threadStore = new StoryCommentThreadStore(this.state.item, this.handleCommentsChanged, {cached: false})
         setTitle(this.state.item.title)
         this.forceUpdate()
@@ -143,7 +143,7 @@ var Item = React.createClass({
         {item.text && <div className="Item__text">
           <div dangerouslySetInnerHTML={{__html: item.text}}/>
         </div>}
-        {item.type == 'poll' && <div className="Item__poll">
+        {item.type === 'poll' && <div className="Item__poll">
           {item.parts.map(function(id) {
             return <PollOption key={id} id={id}/>
           })}

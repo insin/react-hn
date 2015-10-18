@@ -24,9 +24,9 @@ var PermalinkedComment = React.createClass({
 
   getInitialState() {
     return {
-      comment: UpdatesStore.getComment(this.props.params.id) || {}
-    , parent: {type: 'comment'}
-    , op: {}
+      comment: UpdatesStore.getComment(this.props.params.id) || {},
+      parent: {type: 'comment'},
+      op: {}
     }
   },
 
@@ -38,7 +38,7 @@ var PermalinkedComment = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id != this.props.params.id) {
+    if (nextProps.params.id !== this.props.params.id) {
       var comment = UpdatesStore.getComment(nextProps.params.id)
       if (comment) {
         this.commentLoaded(comment)
@@ -54,16 +54,16 @@ var PermalinkedComment = React.createClass({
       return
     }
 
-    if (this.state.comment.id != nextState.comment.id) {
+    if (this.state.comment.id !== nextState.comment.id) {
       if (!nextState.comment.deleted) {
         // Redirect to the appropriate route if a Comment "parent" link had a
         // non-comment item id.
-        if (nextState.comment.type != 'comment') {
+        if (nextState.comment.type !== 'comment') {
           this.context.router.replaceWith(nextState.comment.type, {id: nextState.comment.id})
           return
         }
       }
-      if (!this.threadStore || this.threadStore.itemId != nextState.comment.id) {
+      if (!this.threadStore || this.threadStore.itemId !== nextState.comment.id) {
         this.commentLoaded(nextState.comment)
       }
     }
@@ -90,7 +90,7 @@ var PermalinkedComment = React.createClass({
 
   handleCommentsChanged(payload) {
     // We're only interested in re-rendering to update collapsed display
-    if (payload.type == 'collapse') {
+    if (payload.type === 'collapse') {
       this.forceUpdate()
     }
   },
@@ -112,7 +112,7 @@ var PermalinkedComment = React.createClass({
       })
     }
     // XXX Don't render anything if we're replacing the route after loading a non-comment
-    if (comment.type != 'comment') { return null }
+    if (comment.type !== 'comment') { return null }
 
     var className = cx('PermalinkedComment Comment Comment--level0', {'Comment--dead': comment.dead})
     var threadStore = this.threadStore
@@ -120,8 +120,8 @@ var PermalinkedComment = React.createClass({
     return <div className={className}>
       <div className="Comment__content">
         {this.renderCommentMeta(comment, {
-          parent: !!this.state.parent.id && !!this.state.op.id && comment.parent != this.state.op.id
-        , op: !!this.state.op.id
+          parent: !!this.state.parent.id && !!this.state.op.id && comment.parent !== this.state.op.id,
+          op: !!this.state.op.id
         })}
         {(!comment.dead || SettingsStore.showDead) && this.renderCommentText(comment, {replyLink: true})}
       </div>

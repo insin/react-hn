@@ -1,19 +1,11 @@
-require('setimmediate')
-
 var React = require('react')
-var ReactDOM = require('react-dom')
-var {IndexRoute, Link, Route, Router} = require('react-router')
+var {Link} = require('react-router')
+
+var Settings = require('./Settings')
 
 var StoryStore = require('./stores/StoryStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 var SettingsStore = require('./stores/SettingsStore')
-
-var PermalinkedComment = require('./PermalinkedComment')
-var Item = require('./Item')
-var Settings = require('./Settings')
-var Stories = require('./Stories')
-var Updates = require('./Updates')
-var UserProfile = require('./UserProfile')
 
 var App = React.createClass({
   getInitialState() {
@@ -75,50 +67,4 @@ var App = React.createClass({
   }
 })
 
-var NotFound = React.createClass({
-  render() {
-    return <h2>Not found</h2>
-  }
-})
-
-function storiesHandler(route, type, limit, title) {
-  return React.createClass({
-    render() {
-      return <Stories {...this.props} key={route} route={route} type={type} limit={limit} title={title}/>
-    }
-  })
-}
-
-function updatesHandler(type) {
-  return React.createClass({
-    render() {
-      return <Updates {...this.props} key={type} type={type}/>
-    }
-  })
-}
-
-var Ask = storiesHandler('ask', 'askstories', 200, 'Ask')
-var Comments = updatesHandler('comments')
-var Jobs = storiesHandler('jobs', 'jobstories', 200, 'Jobs')
-var New = storiesHandler('newest', 'newstories', 500, 'New Links')
-var Show = storiesHandler('show', 'showstories', 200, 'Show')
-var Top = storiesHandler('news', 'topstories', 500)
-
-var routes = <Route path="/" component={App}>
-  <IndexRoute component={Top}/>
-  <Route path="news" component={Top}/>
-  <Route path="newest" component={New}/>
-  <Route path="show" component={Show}/>
-  <Route path="ask" component={Ask}/>
-  <Route path="jobs" component={Jobs}/>
-  <Route path="item/:id" component={Item}/>
-  <Route path="job/:id" component={Item}/>
-  <Route path="poll/:id" component={Item}/>
-  <Route path="story/:id" component={Item}/>
-  <Route path="comment/:id" component={PermalinkedComment}/>
-  <Route path="newcomments" component={Comments}/>
-  <Route path="user/:id" component={UserProfile}/>
-  <Route path="*" component={NotFound}/>
-</Route>
-
-ReactDOM.render(<Router routes={routes}/>, document.getElementById('app'))
+module.exports = App

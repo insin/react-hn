@@ -51,8 +51,9 @@ npm install
 
 ### npm scripts
 
-* `npm run build` - build into the `public/` directory.
-* `npm run dev` - run development server with hot reloading.
+* `npm start` - start development server
+* `npm run build` - build into the `public/` directory
 * `npm run lint` - lint `src/`
+* `npm run lint:fix` - lint `src/` and auto-fix issues where possible
 
 ## MIT Licensed
