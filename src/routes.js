@@ -1,5 +1,6 @@
+var IndexRoute = require('react-router/lib/IndexRoute')
 var React = require('react')
-var {IndexRoute, Route} = require('react-router')
+var Route = require('react-router/lib/Route')
 
 var App = require('./App')
 var Item = require('./Item')

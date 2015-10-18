@@ -2,8 +2,8 @@ require('setimmediate')
 
 var createHashHistory = require('history/lib/createHashHistory')
 var React = require('react')
+var Router = require('react-router/lib/Router')
 var {render} = require('react-dom')
-var {Router} = require('react-router')
 
 var routes = require('./routes')
 

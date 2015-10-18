@@ -21,15 +21,18 @@ module.exports = {
   entry: {
     app: './src/index.js',
     vendor: [
-      'setimmediate',
       'events',
-      'history',
+      'firebase',
+      'history/lib/createHashHistory',
       'react',
       'react-dom',
-      'react-router',
+      'react-router/lib/IndexRoute',
+      'react-router/lib/Link',
+      'react-router/lib/Route',
+      'react-router/lib/Router',
       'react-timeago',
-      'firebase',
-      'reactfire'
+      'reactfire',
+      'setimmediate'
     ]
   },
   output: {

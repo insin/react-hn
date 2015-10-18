@@ -1,5 +1,5 @@
 var React = require('react')
-var {Link} = require('react-router')
+var Link = require('react-router/lib/Link')
 
 var Settings = require('./Settings')
 
