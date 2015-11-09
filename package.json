@@ -23,6 +23,7 @@
     "react-router": "1.0.0",
     "react-timeago": "2.2.1",
     "reactfire": "0.5.1",
+    "scroll-behavior": "0.2.0",
     "setimmediate": "1.0.4"
   },
   "devDependencies": {
