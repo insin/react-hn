@@ -18,23 +18,7 @@ function failBuildOnCompilationErrors() {
 
 module.exports = {
   devtool: 'source-map',
-  entry: {
-    app: './src/index.js',
-    vendor: [
-      'events',
-      'firebase',
-      'history/lib/createHashHistory',
-      'react',
-      'react-dom',
-      'react-router/lib/IndexRoute',
-      'react-router/lib/Link',
-      'react-router/lib/Route',
-      'react-router/lib/Router',
-      'react-timeago',
-      'reactfire',
-      'setimmediate'
-    ]
-  },
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'app.js',
@@ -48,7 +32,18 @@ module.exports = {
     }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+    // Move anything imported from node_modules into a vendor bundle
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.js',
+      minChunks: function(module, count) {
+        return (
+          module.resource &&
+          module.resource.indexOf(path.resolve(__dirname, 'node_modules')) === 0 &&
+          /\.js$/.test(module.resource)
+        )
+      }
+    }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         screw_ie8: true,
