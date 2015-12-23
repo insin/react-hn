@@ -9,7 +9,7 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "nwb build",
+    "build": "npm run lint && nwb build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "start": "nwb serve"
@@ -20,7 +20,7 @@
     "history": "1.13.1",
     "react": "0.14.3",
     "react-dom": "0.14.3",
-    "react-router": "1.0.0",
+    "react-router": "1.0.2",
     "react-timeago": "2.2.1",
     "reactfire": "0.5.1",
     "scroll-behavior": "0.3.0",
@@ -28,6 +28,6 @@
   },
   "devDependencies": {
     "eslint-config-jonnybuchanan": "2.0.x",
-    "nwb": ">0.1.0-beta <0.2"
+    "nwb": "0.6.x"
   }
 }
