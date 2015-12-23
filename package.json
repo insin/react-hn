@@ -17,10 +17,10 @@
   "dependencies": {
     "events": "1.1.0",
     "firebase": "2.3.2",
-    "history": "1.13.1",
+    "history": "1.17.0",
     "react": "0.14.3",
     "react-dom": "0.14.3",
-    "react-router": "1.0.2",
+    "react-router": "1.0.3",
     "react-timeago": "2.2.1",
     "reactfire": "0.5.1",
     "scroll-behavior": "0.3.0",
