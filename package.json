@@ -1,6 +1,6 @@
 {
   "name": "react-hn",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "React-powered frontend for Hacker News using its Firebase API",
   "author": "Jonny Buchanan",
   "license": "MIT",
