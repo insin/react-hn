@@ -20,7 +20,7 @@
     "history": "1.17.0",
     "react": "0.14.5",
     "react-dom": "0.14.5",
-    "react-router": "2.0.0-rc2",
+    "react-router": "2.0.0-rc3",
     "react-timeago": "2.2.1",
     "reactfire": "0.5.1",
     "scroll-behavior": "0.3.0",
