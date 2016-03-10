@@ -1,3 +1,4 @@
+/* global __VERSION__ */
 var React = require('react')
 var Link = require('react-router/lib/Link')
 
