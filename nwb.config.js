@@ -3,7 +3,11 @@ module.exports = {
   babel: {
     loose: 'all'
   },
-  define: {
-    __VERSION__: JSON.stringify(require('./package.json').version)
+  webpack: {
+    plugins: {
+      define: {
+        __VERSION__: JSON.stringify(require('./package.json').version)
+      }
+    }
   }
 }
