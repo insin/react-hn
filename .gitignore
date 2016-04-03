@@ -1,2 +1,4 @@
 /public/build
 /node_modules
+/public/sw-toolbox.js
+/public/service-worker.js
