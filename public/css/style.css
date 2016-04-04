@@ -306,3 +306,10 @@ span.control:hover {
 .UserProfile h4 {
   margin: 0 0 1em 0;
 }
+
+@media only screen and (max-width: 750px) and (min-width: 300px) {
+  .App__wrap {
+    width: 100%;
+    margin: 0px auto;
+  }  
+}
