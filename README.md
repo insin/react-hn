@@ -55,5 +55,6 @@ npm install
 * `npm run build` - build into the `public/` directory
 * `npm run lint` - lint `src/`
 * `npm run lint:fix` - lint `src/` and auto-fix issues where possible
+* `npm run precache` - generates Service Worker in `public/` directory
 
 ## MIT Licensed
