@@ -9,10 +9,11 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "npm run lint && nwb build",
-    "lint": "eslint .",
+    "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && nwb build && npm run precache",
+    "lint": "eslint src",
     "lint:fix": "eslint --fix .",
-    "start": "nwb serve"
+    "start": "nwb serve",
+    "precache": "sw-precache --root=public --config=sw-precache-config.json"
   },
   "dependencies": {
     "events": "1.1.0",
@@ -28,6 +29,8 @@
   },
   "devDependencies": {
     "eslint-config-jonnybuchanan": "2.0.3",
-    "nwb": "0.8.1"
+    "nwb": "0.8.1",
+    "sw-precache": "^3.1.1",
+    "sw-toolbox": "^3.1.1"
   }
 }
