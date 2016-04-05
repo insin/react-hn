@@ -18,10 +18,6 @@
         scope: './'
       })
       .then(function(registration) {
-        if (typeof registration.update === 'function') {
-          registration.update();
-        }
-
         registration.onupdatefound = function() {
           if (navigator.serviceWorker.controller) {
             var installingWorker = registration.installing;
