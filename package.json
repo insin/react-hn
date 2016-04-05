@@ -17,14 +17,14 @@
   },
   "dependencies": {
     "events": "1.1.0",
-    "firebase": "2.4.1",
+    "firebase": "2.4.2",
     "history": "2.0.1",
     "react": "15.0.0-rc.2",
     "react-dom": "15.0.0-rc.2",
     "react-router": "2.0.1",
     "react-timeago": "2.2.1",
     "reactfire": "0.6.0",
-    "scroll-behavior": "0.3.3",
+    "scroll-behavior": "0.3.4",
     "setimmediate": "1.0.4"
   },
   "devDependencies": {
