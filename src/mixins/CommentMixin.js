@@ -1,6 +1,6 @@
 var React = require('react')
 var Link = require('react-router/lib/Link')
-var TimeAgo = require('react-timeago')
+var TimeAgo = require('react-timeago').default
 
 var ItemStore = require('../stores/ItemStore')
 var SettingsStore = require('../stores/SettingsStore')

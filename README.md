@@ -1,11 +1,11 @@
-# [react-hn](http://insin.github.io/react-hn)
+# [react-hn](https://insin.github.io/react-hn)
 
 A [React](http://facebook.github.io/react) &
 [react-router](https://github.com/rackt/react-router)-powered implementation of
 [Hacker News](https://news.ycombinator.com) using its
 [Firebase API](https://github.com/HackerNews/API).
 
-[![react-hn screenshot](https://github.com/insin/react-hn/raw/master/screenshot.png "New comment highlighting in react-hn")](http://insin.github.io/react-hn)
+[![react-hn screenshot](https://github.com/insin/react-hn/raw/master/screenshot.png "New comment highlighting in react-hn")](https://insin.github.io/react-hn)
 
 Live version: http://insin.github.io/react-hn
 

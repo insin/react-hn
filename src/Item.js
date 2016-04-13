@@ -1,6 +1,6 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
-var TimeAgo = require('react-timeago')
+var TimeAgo = require('react-timeago').default
 
 var HNService = require('./services/HNService')
 var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
