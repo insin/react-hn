@@ -18,6 +18,7 @@
   "dependencies": {
     "events": "1.1.0",
     "firebase": "2.4.2",
+    "firetruck.js": "^0.1.1",
     "history": "2.0.1",
     "react": "15.0.1",
     "react-dom": "15.0.1",
