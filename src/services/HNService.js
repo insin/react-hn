@@ -1,6 +1,7 @@
-var Firebase = require('firebase')
+var Firetruck = require('firetruck.js')
 
-var api = new Firebase('https://hacker-news.firebaseio.com/v0')
+var api = new Firetruck('https://hacker-news.firebaseio.com/v0')
+api.restore()
 
 function fetchItem(id, cb) {
   itemRef(id).once('value', function(snapshot) {
