@@ -1,5 +1,6 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
+var withRouter = require('react-router/lib/withRouter')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
@@ -59,7 +60,7 @@ var PermalinkedComment = React.createClass({
         // Redirect to the appropriate route if a Comment "parent" link had a
         // non-comment item id.
         if (nextState.comment.type !== 'comment') {
-          this.context.router.replaceWith(nextState.comment.type, {id: nextState.comment.id})
+          this.props.router.replace(`/${nextState.comment.type}/${nextState.comment.id}`)
           return
         }
       }
@@ -138,4 +139,4 @@ var PermalinkedComment = React.createClass({
   }
 })
 
-module.exports = PermalinkedComment
+module.exports = withRouter(PermalinkedComment)
