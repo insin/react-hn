@@ -99,6 +99,7 @@ class StoryStore extends EventEmitter {
   start() {
     firebaseRef = HNService.storiesRef(this.type)
     firebaseRef.on('value', this.onStoriesUpdated)
+    if (typeof window === 'undefined') return
     window.addEventListener('storage', this.onStorage)
   }
 
@@ -107,6 +108,7 @@ class StoryStore extends EventEmitter {
       firebaseRef.off()
       firebaseRef = null
     }
+    if (typeof window === 'undefined') return
     window.removeEventListener('storage', this.onStorage)
   }
 }
@@ -124,6 +126,7 @@ extend(StoryStore, {
    * Deserialise caches from sessionStorage.
    */
   loadSession() {
+    if (typeof window === 'undefined') return
     idCache = parseJSON(window.sessionStorage.idCache, {})
     itemCache = parseJSON(window.sessionStorage.itemCache, {})
   },
@@ -132,6 +135,7 @@ extend(StoryStore, {
    * Serialise caches to sessionStorage as JSON.
    */
   saveSession() {
+    if (typeof window === 'undefined') return
     window.sessionStorage.idCache = JSON.stringify(idCache)
     window.sessionStorage.itemCache = JSON.stringify(itemCache)
   }
