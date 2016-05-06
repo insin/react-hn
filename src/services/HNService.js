@@ -1,4 +1,4 @@
-var Firetruck = require('firetruck.js')
+var Firetruck = require('./Firetruck.js')
 
 var api = new Firetruck('https://hacker-news.firebaseio.com/v0')
 api.restore()

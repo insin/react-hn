@@ -1,4 +1,4 @@
-/* global __VERSION__ */
+/* global __VERSION__, Worker*/
 var React = require('react')
 var Link = require('react-router/lib/Link')
 
@@ -7,6 +7,11 @@ var Settings = require('./Settings')
 var StoryStore = require('./stores/StoryStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 var SettingsStore = require('./stores/SettingsStore')
+
+if (window.Worker) {
+  console.log('Initializing Worker...')
+  window.HNWorker = new Worker('./Worker.js')
+}
 
 var App = React.createClass({
   getInitialState() {
