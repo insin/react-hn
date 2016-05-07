@@ -9,7 +9,7 @@ var routes = require('./routes')
 var app = express()
 app.set('view engine', 'ejs')
 app.set('views', process.cwd() + '/src/views')
-
+app.set('port', (process.env.PORT || 5000))
 app.use(express.static('public'))
 
 app.get('*', function(req, res) {
@@ -35,11 +35,10 @@ app.get('*', function(req, res) {
   })
 })
 
-var port = process.env.PORT || 3003
-app.listen(port, function(err) {
+app.listen(app.get('port'), function(err) {
   if (err) {
     console.log(err)
     return
   }
-  console.log('Listening on port ' + port)
+  console.log('Running app at localhost:' + app.get('port'))
 })
