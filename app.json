@@ -1,0 +1,7 @@
+{
+  "name": "React HN",
+  "description": "React-powered Hacker News client",
+  "repository": "https://github.com/insin/react-hn",
+  "keywords": ["react", "hacker news", "hn"],
+  "image": "heroku/nodejs"
+}

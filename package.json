@@ -12,9 +12,14 @@
     "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && nwb build && npm run precache",
     "lint": "eslint src",
     "lint:fix": "eslint --fix .",
-    "start": "nwb serve",
+    "start": "node src/server.js",
+    "serve": "nwb serve",
     "precache": "sw-precache --root=public --config=sw-precache-config.json"
   },
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "src/server.js",
   "dependencies": {
     "ejs": "^2.4.1",
     "events": "1.1.0",
