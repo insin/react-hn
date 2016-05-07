@@ -311,5 +311,17 @@ span.control:hover {
   .App__wrap {
     width: 100%;
     margin: 0px auto;
-  }  
+  }
+
+  /* Hide the App title homelink on narrow viewports */
+  .App__homelink {
+    display: none;
+  }
+}
+
+/* Hide the Settings link on iPhone 5 */
+@media (device-height: 568px) and (device-width: 320px) and (-webkit-min-device-pixel-ratio: 2) {
+  .App__settings {
+    display: none;
+  } 
 }
