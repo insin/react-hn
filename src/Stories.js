@@ -35,7 +35,7 @@ var Stories = React.createClass({
     }
   },
 
-  componentWillMount() {
+  componentDidMount() {
     setTitle(this.props.title)
     this.store = new StoryStore(this.props.type)
     this.store.addListener('update', this.handleUpdate)
