@@ -10,6 +10,7 @@ var SettingsStore = {
   showDeleted: false,
   titleFontSize: 18,
   listSpacing: 16,
+  offlineMode: false,
 
   load() {
     var json = storage.get(STORAGE_KEY)
@@ -25,7 +26,8 @@ var SettingsStore = {
       showDead: this.showDead,
       showDeleted: this.showDeleted,
       titleFontSize: this.titleFontSize,
-      listSpacing: this.listSpacing
+      listSpacing: this.listSpacing,
+      offlineMode: this.offlineMode
     }))
   }
 }
