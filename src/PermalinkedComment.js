@@ -4,6 +4,7 @@ var withRouter = require('react-router/lib/withRouter')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
+var HNServiceRest = require('./services/HNServiceRest')
 var SettingsStore = require('./stores/SettingsStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 
@@ -32,7 +33,16 @@ var PermalinkedComment = React.createClass({
   },
 
   componentWillMount() {
-    this.bindAsObject(HNService.itemRef(this.props.params.id), 'comment')
+    if (SettingsStore.offlineMode) {
+      HNServiceRest.itemRef(this.props.params.id).then(function(res) {
+        return res.json()
+      }).then(function(snapshot) {
+        this.replaceState({ comment: snapshot })
+      }.bind(this))
+    }
+    else {
+      this.bindAsObject(HNService.itemRef(this.props.params.id), 'comment')
+    }
     if (this.state.comment.id) {
       this.commentLoaded(this.state.comment)
     }
