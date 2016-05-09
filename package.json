@@ -20,6 +20,7 @@
     "firebase": "2.4.2",
     "firetruck.js": "0.1.1",
     "history": "2.1.1",
+    "isomorphic-fetch": "^2.2.1",
     "react": "15.0.2",
     "react-dom": "15.0.2",
     "react-router": "2.4.0",
