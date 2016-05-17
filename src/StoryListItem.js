@@ -3,6 +3,7 @@ var ReactFireMixin = require('reactfire')
 
 var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 var HNService = require('./services/HNService')
+var HNServiceRest = require('./services/HNServiceRest')
 var SettingsStore = require('./stores/SettingsStore')
 var StoryStore = require('./stores/StoryStore')
 
@@ -94,8 +95,18 @@ var StoryListItem = React.createClass({
    * initialise its comment thread state.
    */
   initLiveItem(props) {
-    // If we were given a cached item to display initially, it will be replaced
-    this.bindAsObject(HNService.itemRef(props.id), 'item')
+    if (SettingsStore.offlineMode) {
+      HNServiceRest.itemRef(props.id).then(function(res) {
+        return res.json()
+      }).then(function(snapshot) {
+        this.replaceState({ item: snapshot })
+      }.bind(this))
+    }
+    else {
+      // If we were given a cached item to display initially, it will be replaced
+      this.bindAsObject(HNService.itemRef(props.id), 'item')
+    }
+
     this.threadState = StoryCommentThreadStore.loadState(props.id)
     this.props.store.addListener(props.id, this.updateThreadState)
   },

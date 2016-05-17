@@ -3,6 +3,7 @@ var ReactFireMixin = require('reactfire')
 var TimeAgo = require('react-timeago').default
 
 var HNService = require('./services/HNService')
+var HNServiceRest = require('./services/HNServiceRest')
 var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
 var ItemStore = require('./stores/ItemStore')
 
@@ -13,6 +14,8 @@ var ItemMixin = require('./mixins/ItemMixin')
 
 var cx = require('./utils/buildClassName')
 var setTitle = require('./utils/setTitle')
+
+var SettingsStore = require('./stores/SettingsStore')
 
 function timeUnitsAgo(value, unit, suffix) {
   if (value === 1) {
@@ -31,7 +34,17 @@ var Item = React.createClass({
   },
 
   componentWillMount() {
-    this.bindAsObject(HNService.itemRef(this.props.params.id), 'item')
+    if (SettingsStore.offlineMode) {
+      HNServiceRest.itemRef(this.props.params.id).then(function(res) {
+        return res.json()
+      }).then(function(snapshot) {
+        this.replaceState({ item: snapshot })
+      }.bind(this))
+    }
+    else {
+      this.bindAsObject(HNService.itemRef(this.props.params.id), 'item')
+    }
+
     if (this.state.item.id) {
       this.threadStore = new StoryCommentThreadStore(this.state.item, this.handleCommentsChanged, {cached: true})
       setTitle(this.state.item.title)
@@ -58,8 +71,18 @@ var Item = React.createClass({
         this.threadStore = new StoryCommentThreadStore(item, this.handleCommentsChanged, {cached: true})
         setTitle(item.title)
       }
-      this.bindAsObject(HNService.itemRef(nextProps.params.id), 'item')
-      this.setState({item: item || {}})
+
+      if (SettingsStore.offlineMode) {
+        HNServiceRest.itemRef(nextProps.params.id).then(function(res) {
+          return res.json()
+        }).then(function(snapshot) {
+          this.replaceState({ item: snapshot })
+        }.bind(this))
+      }
+      else {
+        this.bindAsObject(HNService.itemRef(nextProps.params.id), 'item')
+        this.setState({item: item || {}})
+      }
     }
   },
 

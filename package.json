@@ -10,8 +10,8 @@
   },
   "scripts": {
     "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && nwb build && npm run precache",
-    "lint": "eslint src",
-    "lint:fix": "eslint --fix .",
+    "lint": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
+    "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
     "start": "nwb serve",
     "precache": "sw-precache --root=public --config=sw-precache-config.json"
   },
@@ -20,6 +20,7 @@
     "firebase": "2.4.2",
     "firetruck.js": "0.1.1",
     "history": "2.1.1",
+    "isomorphic-fetch": "^2.2.1",
     "react": "15.0.2",
     "react-dom": "15.0.2",
     "react-router": "2.4.0",
