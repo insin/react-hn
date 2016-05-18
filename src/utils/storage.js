@@ -2,7 +2,8 @@ module.exports = {
   get(key, defaultValue) {
     if (typeof window === 'undefined') {
       return defaultValue
-    } else {
+    }
+    else {
       var value = window.localStorage[key]
       return (typeof value != 'undefined' ? value : defaultValue)
     }
