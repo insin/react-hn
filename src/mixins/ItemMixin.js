@@ -4,18 +4,16 @@ var TimeAgo = require('react-timeago').default
 
 var SettingsStore = require('../stores/SettingsStore')
 var pluralise = require('../utils/pluralise')
+var urlParse = require('url-parse')
 
-var parseHost = (function() {
-  var a = document.createElement('a')
-  return function(url) {
-    a.href = url
-    var parts = a.hostname.split('.').slice(-3)
-    if (parts[0] === 'www') {
-      parts.shift()
-    }
-    return parts.join('.')
+var parseHost = function(url) {
+  var hostname = (urlParse(url, true)).hostname
+  var parts = hostname.split('.').slice(-3)
+  if (parts[0] === 'www') {
+    parts.shift()
   }
-})()
+  return parts.join('.')
+}
 
 /**
  * Reusable logic for displaying an item.

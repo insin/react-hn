@@ -1,9 +1,17 @@
 module.exports = {
   get(key, defaultValue) {
-    var value = window.localStorage[key]
-    return (typeof value != 'undefined' ? value : defaultValue)
+    if (typeof window === 'undefined') {
+      return defaultValue
+    }
+    else {
+      var value = window.localStorage[key]
+      return (typeof value != 'undefined' ? value : defaultValue)
+    }
   },
   set(key, value) {
-    window.localStorage[key] = value
+    if (typeof window !== 'undefined') {
+      window.localStorage[key] = value
+    }
   }
 }
+

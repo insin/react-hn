@@ -9,16 +9,24 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && nwb build && npm run precache",
+    "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && ./node_modules/.bin/nwb build && npm run precache",
+    "deploy": "gcloud preview app deploy",
     "lint": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
     "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
-    "start": "nwb serve",
-    "precache": "sw-precache --root=public --config=sw-precache-config.json"
+    "start": "node server.js",
+    "postinstall": "npm run build",
+    "serve": "./node_modules/.bin/nwb serve",
+    "precache": "./node_modules/sw-precache/cli.js --root=public --config=sw-precache-config.json"
   },
+  "engines": {
+    "node": "6.1.0"
+  },
+  "main": "server.js",
   "dependencies": {
+    "ejs": "^2.4.1",
     "events": "1.1.0",
+    "express": "^4.13.4",
     "firebase": "2.4.2",
-    "firetruck.js": "0.1.1",
     "history": "2.1.1",
     "isomorphic-fetch": "^2.2.1",
     "react": "15.0.2",
@@ -27,9 +35,8 @@
     "react-timeago": "3.0.0",
     "reactfire": "0.7.0",
     "scroll-behavior": "0.5.0",
-    "setimmediate": "1.0.4"
-  },
-  "devDependencies": {
+    "setimmediate": "1.0.4",
+    "url-parse": "^1.1.1",
     "eslint-config-jonnybuchanan": "2.0.3",
     "nwb": "0.8.1",
     "sw-precache": "^3.1.1",

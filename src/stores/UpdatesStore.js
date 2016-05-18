@@ -101,12 +101,14 @@ function handleUpdateItems(items) {
 
 var UpdatesStore = extend(new EventEmitter(), {
   loadSession() {
+    if (typeof window === 'undefined') return
     var json = window.sessionStorage.updates
     updatesCache = (json ? JSON.parse(json) : {comments: {}, stories: {}})
     populateUpdates()
   },
 
   saveSession() {
+    if (typeof window === 'undefined') return
     window.sessionStorage.updates = JSON.stringify(updatesCache)
   },
 
