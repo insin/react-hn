@@ -1,6 +1,8 @@
 var {EventEmitter} = require('events')
 
 var HNService = require('../services/HNService')
+var HNServiceRest = require('../services/HNServiceRest')
+var SettingsStore = require('./SettingsStore')
 
 var extend = require('../utils/extend')
 
@@ -91,21 +93,37 @@ class StoryStore extends EventEmitter {
    * Handle story id snapshots from Firebase.
    */
   onStoriesUpdated(snapshot) {
-    idCache[this.type] = snapshot.val()
+    if (SettingsStore.offlineMode) {
+      idCache[this.type] = snapshot
+    }
+    else {
+      idCache[this.type] = snapshot.val()
+    }
     populateStoryList(this.type)
     this.emit('update', this.getState())
   }
 
   start() {
-    firebaseRef = HNService.storiesRef(this.type)
-    firebaseRef.on('value', this.onStoriesUpdated)
     if (typeof window === 'undefined') return
+    if (SettingsStore.offlineMode) {
+      HNServiceRest.storiesRef(this.type).then(function(res) {
+        return res.json()
+      }).then(function(snapshot) {
+        this.onStoriesUpdated(snapshot)
+      }.bind(this))
+    }
+    else {
+      firebaseRef = HNService.storiesRef(this.type)
+      firebaseRef.on('value', this.onStoriesUpdated)
+    }
     window.addEventListener('storage', this.onStorage)
   }
 
   stop() {
     if (firebaseRef !== null) {
-      firebaseRef.off()
+      if (!SettingsStore.offlineMode) {
+        firebaseRef.off()
+      }
       firebaseRef = null
     }
     if (typeof window === 'undefined') return
@@ -127,8 +145,14 @@ extend(StoryStore, {
    */
   loadSession() {
     if (typeof window === 'undefined') return
-    idCache = parseJSON(window.sessionStorage.idCache, {})
-    itemCache = parseJSON(window.sessionStorage.itemCache, {})
+    if (SettingsStore.offlineMode) {
+      idCache = parseJSON(window.localStorage.idCache, {})
+      itemCache = parseJSON(window.localStorage.itemCache, {})
+    }
+    else {
+      idCache = parseJSON(window.sessionStorage.idCache, {})
+      itemCache = parseJSON(window.sessionStorage.itemCache, {})
+    }
   },
 
   /**
@@ -136,8 +160,14 @@ extend(StoryStore, {
    */
   saveSession() {
     if (typeof window === 'undefined') return
-    window.sessionStorage.idCache = JSON.stringify(idCache)
-    window.sessionStorage.itemCache = JSON.stringify(itemCache)
+    if (SettingsStore.offlineMode) {
+      window.localStorage.setItem('idCache', JSON.stringify(idCache))
+      window.localStorage.setItem('itemCache', JSON.stringify(itemCache))
+    }
+    else {
+      window.sessionStorage.idCache = JSON.stringify(idCache)
+      window.sessionStorage.itemCache = JSON.stringify(itemCache)
+    }
   }
 })
 

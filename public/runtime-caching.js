@@ -12,10 +12,10 @@
     origin: /\.(?:googleapis|gstatic|firebaseio)\.com$/
   })
   global.toolbox.router.get('/(.+)', global.toolbox.fastest, {
-  	  origin: 'https://hacker-news.firebaseio.com'
+  	    origin: 'https://hacker-news.firebaseio.com'
   })
   global.toolbox.router.get('/(.+)', global.toolbox.fastest, {
-  	  origin: 'https://s-usc1c-nss-136.firebaseio.com'
+  	    origin: 'https://s-usc1c-nss-136.firebaseio.com'
   })
 })(self)
 

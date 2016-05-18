@@ -39,6 +39,12 @@ var Settings = React.createClass({
           <p>Show "reply" links to Hacker News</p>
         </div>
         <div className="Settings__setting Settings__setting--checkbox">
+          <label htmlFor="offlineMode">
+            <input type="checkbox" name="offlineMode" id="offlineMode" checked={SettingsStore.offlineMode}/> Offline Mode
+          </label>
+          <p>Cache comments and content offline.</p>
+        </div>
+        <div className="Settings__setting Settings__setting--checkbox">
           <label htmlFor="showDead">
             <input type="checkbox" name="showDead" id="showDead" checked={SettingsStore.showDead}/> show dead
           </label>

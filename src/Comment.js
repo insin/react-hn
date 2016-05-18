@@ -3,6 +3,7 @@ var ReactFireMixin = require('reactfire')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
 var HNService = require('./services/HNService')
+var HNServiceRest = require('./services/HNServiceRest')
 var SettingsStore = require('./stores/SettingsStore')
 
 var CommentMixin = require('./mixins/CommentMixin')
@@ -86,7 +87,17 @@ var Comment = React.createClass({
   },
 
   bindFirebaseRef() {
-    this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
+    if (SettingsStore.offlineMode) {
+      HNServiceRest.itemRef(this.props.id).then(function(res) {
+        return res.json()
+      }).then(function(snapshot) {
+        this.replaceState({ comment: snapshot })
+      }.bind(this))
+    }
+    else {
+      this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
+    }
+
     if (this.timeout) {
       this.timeout = null
     }

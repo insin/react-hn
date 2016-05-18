@@ -9,13 +9,13 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && ./node_modules/nwb/lib/bin/nwb.js build && npm run precache",
+    "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js public/sw-toolbox.js && ./node_modules/.bin/nwb build && npm run precache",
     "deploy": "gcloud preview app deploy",
     "lint": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
     "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
     "start": "node server.js",
     "postinstall": "npm run build",
-    "serve": "./node_modules/lib/bin/nwb.js serve",
+    "serve": "./node_modules/.bin/nwb serve",
     "precache": "./node_modules/sw-precache/cli.js --root=public --config=sw-precache-config.json"
   },
   "engines": {
@@ -28,6 +28,7 @@
     "express": "^4.13.4",
     "firebase": "2.4.2",
     "history": "2.1.1",
+    "isomorphic-fetch": "^2.2.1",
     "react": "15.0.2",
     "react-dom": "15.0.2",
     "react-router": "2.4.0",

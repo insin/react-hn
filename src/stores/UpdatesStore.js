@@ -1,6 +1,8 @@
 var EventEmitter = require('events').EventEmitter
 
 var HNService = require('../services/HNService')
+var HNServiceRest = require('../services/HNServiceRest')
+var SettingsStore = require('./SettingsStore')
 
 var {UPDATES_CACHE_SIZE} = require('../utils/constants')
 var extend = require('../utils/extend')
@@ -93,7 +95,6 @@ function handleUpdateItems(items) {
       updatesCache.stories[item.id] = item
     }
   }
-
   populateUpdates()
   UpdatesStore.emit('updates', updates)
 }
@@ -113,16 +114,27 @@ var UpdatesStore = extend(new EventEmitter(), {
 
   start() {
     if (updatesRef === null) {
-      updatesRef = HNService.updatesRef()
-      updatesRef.on('value', function(snapshot) {
-        HNService.fetchItems(snapshot.val(), handleUpdateItems)
-      })
+      if (SettingsStore.offlineMode) {
+        HNServiceRest.updatesRef().then(function(res) {
+          return res.json()
+        }).then(function(snapshot) {
+          HNServiceRest.fetchItems(snapshot, handleUpdateItems)
+        })
+      }
+      else {
+        updatesRef = HNService.updatesRef()
+        updatesRef.on('value', function(snapshot) {
+          HNService.fetchItems(snapshot.val(), handleUpdateItems)
+        })
+      }
     }
   },
 
   stop() {
-    updatesRef.off()
-    updatesRef = null
+    if (!SettingsStore.offlineMode) {
+      updatesRef.off()
+      updatesRef = null
+    }
   },
 
   getUpdates() {
