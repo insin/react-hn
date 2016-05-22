@@ -1,4 +1,5 @@
 var express = require('express')
+var compression = require('compression')
 var React = require('react')
 var renderToString = require('react-dom/server').renderToString
 var ReactRouter = require('react-router')
@@ -10,6 +11,7 @@ var app = express()
 app.set('view engine', 'ejs')
 app.set('views', process.cwd() + '/src/views')
 app.set('port', (process.env.PORT || 5000))
+app.use(compression())
 app.use(express.static('public'))
 
 app.get('*', function(req, res) {
