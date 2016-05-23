@@ -61,6 +61,7 @@ span.control:hover {
   background-color: #f5f5f5;
   font-size: 13.3333px;
   font-family: Verdana, Geneva, sans-serif;
+  word-break: break-word;
 }
 .App__header {
   color: #00d8ff;
@@ -323,5 +324,5 @@ span.control:hover {
 @media (device-height: 568px) and (device-width: 320px) and (-webkit-min-device-pixel-ratio: 2) {
   .App__settings {
     display: none;
-  } 
+  }
 }
