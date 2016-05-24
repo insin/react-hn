@@ -61,6 +61,8 @@ span.control:hover {
   background-color: #f5f5f5;
   font-size: 13.3333px;
   font-family: Verdana, Geneva, sans-serif;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 .App__header {
   color: #00d8ff;
