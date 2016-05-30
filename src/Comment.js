@@ -2,13 +2,14 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 
 var CommentThreadStore = require('./stores/CommentThreadStore')
-var HNService = require('./services/HNService')
+// var HNService = require('./services/HNService')
 var HNServiceRest = require('./services/HNServiceRest')
 var SettingsStore = require('./stores/SettingsStore')
 
 var CommentMixin = require('./mixins/CommentMixin')
 
 var cx = require('./utils/buildClassName')
+var resolve = require('react-resolver').resolve
 
 /**
  * A comment in a thread.
@@ -86,21 +87,22 @@ var Comment = React.createClass({
     }
   },
 
-  bindFirebaseRef() {
-    if (SettingsStore.offlineMode) {
-      HNServiceRest.itemRef(this.props.id).then(function(res) {
-        return res.json()
-      }).then(function(snapshot) {
-        this.replaceState({ comment: snapshot })
-      }.bind(this))
-    }
-    else {
-      this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
-    }
+  bindFirebaseRef(props) {
+    console.log('bindFirebaseRef', props)
+    // if (SettingsStore.offlineMode) {
+    //   HNServiceRest.itemRef(props.id).then(function(res) {
+    //     return res.json()
+    //   }).then(function(snapshot) {
+    //     this.replaceState({ comment: snapshot })
+    //   }.bind(this))
+    // }
+    // else {
+    //   this.bindAsObject(HNService.itemRef(props.id), 'comment', this.handleFirebaseRefCancelled)
+    // }
 
-    if (this.timeout) {
-      this.timeout = null
-    }
+    // if (this.timeout) {
+    //   this.timeout = null
+    // }
   },
 
   /**
@@ -186,4 +188,18 @@ var Comment = React.createClass({
   }
 })
 
-module.exports = Comment
+/*
+What I'm attempting to do here is resolve comment so that we 
+go through react-resolver anytime we need that data instead of
+directly through bindFirebaseRef per the resolver examples I have
+seen. Data seems to get returned client-side, but nothing correctly
+when doing the server-side render.
+ */
+module.exports = resolve('comment', function(props) {
+  return HNServiceRest.itemRef(props.id).then(function(res) {
+    return res.json()
+  }).then(function(snapshot) {
+    console.log('Comment snapshot:', snapshot)
+    return snapshot
+  })
+})(Comment)

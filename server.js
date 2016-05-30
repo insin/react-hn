@@ -2,6 +2,8 @@ var express = require('express')
 var React = require('react')
 var renderToString = require('react-dom/server').renderToString
 var ReactRouter = require('react-router')
+var Resolver = require('react-resolver').Resolver
+var RouterContext = React.createFactory(ReactRouter.RouterContext)
 
 require('babel/register')
 var routes = require('./src/routes')
@@ -16,18 +18,27 @@ app.get('*', function(req, res) {
   ReactRouter.match({
     routes: routes,
     location: req.url
-  }, function(err, redirectLocation, props) {
+  }, function(err, redirectLocation, renderProps) {
     if (err) {
       res.status(500).send(err.message)
     }
     else if (redirectLocation) {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search)
     }
-    else if (props) {
-      var markup = renderToString(
-        React.createElement(ReactRouter.RouterContext, props, null)
-      )
-      res.render('index', { markup: markup })
+    else if (renderProps) {
+      // https://github.com/allenkim67/isomorphic-demo/blob/2be59306196e84f66041dc7a03bbd0c805d371aa/server.js
+      Resolver
+        .resolve(function() {return RouterContext(renderProps)})
+        .then(function(resolverRes) {
+          console.log(resolverRes.data)
+          var markup = renderToString(
+            React.createElement(resolverRes.Resolved, renderProps, null)
+          )
+          res.render('index', { 
+            markup: markup,
+            scriptTag: '<script>window.__REACT_RESOLVER_PAYLOAD__ = ' + JSON.stringify(resolverRes.data) + '</script>'
+          })
+      })
     }
     else {
       res.sendStatus(404)

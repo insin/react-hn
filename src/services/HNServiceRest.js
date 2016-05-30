@@ -1,4 +1,5 @@
 /*global fetch*/
+require('es6-promise').polyfill()
 require('isomorphic-fetch')
 /*
 A version of HNService which concumes the Firebase REST

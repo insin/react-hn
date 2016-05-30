@@ -10,7 +10,7 @@ var SettingsStore = {
   showDeleted: false,
   titleFontSize: 18,
   listSpacing: 16,
-  offlineMode: false,
+  offlineMode: true, // Temporarily enabled by default for testing
 
   load() {
     var json = storage.get(STORAGE_KEY)

@@ -24,22 +24,24 @@
   "main": "server.js",
   "dependencies": {
     "ejs": "^2.4.1",
+    "es6-promise": "^3.2.1",
+    "eslint-config-jonnybuchanan": "2.0.3",
     "events": "1.1.0",
     "express": "^4.13.4",
     "firebase": "2.4.2",
     "history": "2.1.1",
     "isomorphic-fetch": "^2.2.1",
+    "nwb": "0.8.1",
     "react": "15.0.2",
     "react-dom": "15.0.2",
+    "react-resolver": "^3.0.1",
     "react-router": "2.4.0",
     "react-timeago": "3.0.0",
     "reactfire": "0.7.0",
     "scroll-behavior": "0.5.0",
     "setimmediate": "1.0.4",
-    "url-parse": "^1.1.1",
-    "eslint-config-jonnybuchanan": "2.0.3",
-    "nwb": "0.8.1",
     "sw-precache": "^3.1.1",
-    "sw-toolbox": "^3.1.1"
+    "sw-toolbox": "^3.1.1",
+    "url-parse": "^1.1.1"
   }
 }
