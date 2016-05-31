@@ -2,6 +2,9 @@ runtime: nodejs
 vm: true
 env_variables:
   NODE_ENV: production
-
+handlers:
+- url: /.*
+  script: IGNORED
+  secure: always
 skip_files:
   - ^(.*/)?.*/node_modules/.*$
