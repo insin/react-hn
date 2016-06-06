@@ -42,9 +42,37 @@ exports.fetchNews = function(page) {
 	})		
 }
 
+function renderNestedComment(data) {
+	return '<div class="Comment__kids">' +
+		        '<div class="Comment Comment--level1">' +
+		            '<div class="Comment__content">' +
+		                '<div class="Comment__meta"><span class="Comment__collapse" tabindex="0">[–]</span> ' +
+		                    '<a class="Comment__user" href="#/user/' + data.user + '">' + data.user + '</a> ' +
+		                    '<time>' + data.time_ago + '</time> ' +
+		                    '<a href="#/comment/' + data.id + '">link</a></div> ' +
+		                '<div class="Comment__text">' +
+		                    '<div>' + data.content +'</div> ' +
+		                    '<p><a href="https://news.ycombinator.com/reply?id=' + data.id + '">reply</a></p>' +
+		                '</div>' +
+		            '</div>' +
+		        '</div>' +
+		    '</div>'
+}
+
+function generateNestedCommentString(data) {
+	var output = ''
+	data.comments.forEach(function(comment) {
+		output+= renderNestedComment(comment)
+		if (comment.comments) {
+			output+= generateNestedCommentString(comment)
+		} 
+	})
+	return output
+}
+
 /**
  * Fetch details of the story/post/item with (nested) comments
- * TODO: Nested comments.
+ * TODO: Add article summary at top of nested comment thread
  */
 exports.fetchItem = function(itemId) {
 	return fetch('https://node-hnapi.herokuapp.com/item/' + itemId).then(function(response) {
@@ -52,19 +80,20 @@ exports.fetchItem = function(itemId) {
 	}).then(function(json) {
 		var comments = ''
 		json.comments.forEach(function(data, index) {
-			var comment = '<div class="Comment Comment--level0">' +
+			var comment = '<div class="Item__kids">' + 
+			'<div class="Comment Comment--level0">' +
 		    '<div class="Comment__content">' +
-		        '<div class="Comment__meta"><span class="Comment__collapse" tabindex="0"></span>' +
-		            '<a class="Comment__user" href="#/user/' + data.user + '">' + data.user + '</a>' +
-		            '<time>' + data.time_ago + '</time>' +
-		            '<a href="#/comment/' + data.id + '">link</a></div>' +
+		        '<div class="Comment__meta"><span class="Comment__collapse" tabindex="0">[–]</span> ' +
+		            '<a class="Comment__user" href="#/user/' + data.user + '">' + data.user + '</a> ' +
+		            '<time>' + data.time_ago + '</time> ' +
+		            '<a href="#/comment/' + data.id + '">link</a></div> ' +
 		        '<div class="Comment__text">' +
-		            '<div>' + data.content +'</div>' + 
+		            '<div>' + data.content +'</div> ' + 
 		            '<p><a href="https://news.ycombinator.com/reply?id=' + data.id + '">reply</a></p>' +
 		        '</div>' +
 		    '</div>' +
-			'</div>'
-			comments += comment
+		   '</div>'
+			comments += generateNestedCommentString(data) + '</div>' + comment
 		})
 		return comments
 	})
