@@ -4,10 +4,9 @@ module.exports = {
     loose: 'all'
   },
   webpack: {
-    plugins: {
-      define: {
-        __VERSION__: JSON.stringify(require('./package.json').version)
-      }
-    }
+    define: {
+      __VERSION__: JSON.stringify(require('./package.json').version)
+    },
+    vendorBundle: false
   }
 }
