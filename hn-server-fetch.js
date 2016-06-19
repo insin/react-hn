@@ -32,7 +32,7 @@ exports.fetchNews = function(page) {
 	          '<span class="Item__host">(' + data.domain + ')</span></div>' +
 	          '<div class="Item__meta"><span class="Item__score">' + data.points + ' points</span> ' +
 	          '<span class="Item__by">by <a href="https://news.ycombinator.com/user?id=' + data.user + '">' + data.user + '</a></span> ' +
-	          '<time class="Item__time">' + data.time_ago + ' hours ago</time> ' +
+	          '<time class="Item__time">' + data.time_ago + ' </time> | ' +
 	          '<a href="/news/story/' + data.id + '">' + data.comments_count + ' comments</a></div>'
 	      '</li>'
 	      stories += story
