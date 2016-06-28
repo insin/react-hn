@@ -8,3 +8,6 @@ handlers:
   secure: always
 skip_files:
   - ^(.*/)?.*/node_modules/.*$
+automatic_scaling:
+  min_num_instances: 15
+  max_num_instances: 100
