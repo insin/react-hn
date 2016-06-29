@@ -25,6 +25,12 @@ function itemRef(id) {
   return fetch(endPoint + '/item/' + id + '.json', options)
 }
 
+function itemRefJSON(id) {
+  return itemRef(id).then(function(response) {
+    return response.json()
+  })
+}
+
 function userRef(id) {
   return fetch(endPoint + '/user/' + id + '.json', options)
 }
@@ -34,22 +40,23 @@ function updatesRef() {
 }
 
 function fetchItem(id, cb) {
-  itemRef(id).once('value', function(snapshot) {
-    cb(snapshot.val())
+  itemRef(id).then(function(snapshot) {
+    cb(snapshot)
   })
 }
 
 function fetchItems(ids, cb) {
   var items = []
+  var promises = []
   ids.forEach(function(id) {
-    fetchItem(id, addItem)
+    promises.push(itemRefJSON(id))
   })
-  function addItem(item) {
-    items.push(item)
+  Promise.all(promises).then(function(values) {
+    items = values
     if (items.length >= ids.length) {
       cb(items)
     }
-  }
+  })
 }
 
 module.exports = {
