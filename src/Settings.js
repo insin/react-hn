@@ -56,6 +56,12 @@ var Settings = React.createClass({
           </label>
           <p>Show comments flagged as deleted in threads.</p>
         </div>
+        <div className="Settings__setting Settings__setting--checkbox">
+          <label htmlFor="darkMode">
+            <input type="checkbox" name="darkMode" id="darkMode" checked={SettingsStore.darkMode} onChange={this.props.toggleDarkMode}/> Use dark mode
+          </label>
+          <p>Use dark mode for better readability in low light</p>
+        </div>
         <div className="Settings__setting">
           <table>
             <tbody>
