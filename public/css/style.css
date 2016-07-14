@@ -1,5 +1,7 @@
+html {
+  background-color: #00d8ff;
+}
 body {
-  background-color: #fff;
   margin: 0;
 }
 form {
@@ -53,6 +55,14 @@ span.control:hover {
   }
 }
 
+.App {
+  background: #fff;
+  overflow: auto;
+  min-height: 100vh;
+}
+.App--dark {
+  background: #000;
+}
 .App__wrap {
   width: 90%;
   max-width: 1280px;
@@ -62,6 +72,10 @@ span.control:hover {
   font-size: 13.3333px;
   font-family: Verdana, Geneva, sans-serif;
 }
+.App--dark .App__wrap{
+  background-color: #222;
+  color: #aaa;
+}
 .App__header {
   color: #00d8ff;
   background-color: #222;
@@ -69,6 +83,10 @@ span.control:hover {
   line-height: 18px;
   vertical-align: middle;
   position: relative;
+}
+.App--dark .App__header{
+  color: #eee;
+  background-color: #333;
 }
 .App__settings {
   position: absolute;
@@ -106,6 +124,9 @@ span.control:hover {
 .App__header a.active {
   color: #fff;
 }
+.App--dark .App__header a.active{
+  color: #00d8ff;
+}
 .App__homelink {
   text-decoration: none;
   font-weight: bold;
@@ -125,6 +146,10 @@ span.control:hover {
   text-align: center;
   color: #333;
   padding: 6px 0;
+}
+.App--dark .App__footer{
+  color: #eee;
+  border-top: 1px solid #000;
 }
 .App__footer a {
   color: inherit;
@@ -164,6 +189,9 @@ span.control:hover {
   color: #000;
   text-decoration: none;
 }
+.App--dark .Paginator a{
+  color: #eee;
+}
 .Paginator a:hover {
   text-decoration: underline;
 }
@@ -177,15 +205,24 @@ span.control:hover {
   color: #666;
   font-size:18px;
 }
+.App--dark .Item__title {
+  color: #aaa;
+}
 .Item__title a {
   text-decoration: none;
   color: #000;
+}
+.App--dark .Item__title a{
+  color: #eee;
 }
 .Item__title a:hover {
   text-decoration: underline;
 }
 .Item__title a:visited {
   color: #666;
+}
+.App--dark .Item__title a:visited{
+  color: #aaa;
 }
 .Item__meta {
   color: #666;
@@ -230,6 +267,9 @@ span.control:hover {
 }
 .Comment--new > .Comment__content {
   background-color: #ffffde;
+}
+.App--dark .Comment--new > .Comment__content {
+  background-color: #333;
 }
 /* Highlights a comment and its descendants on hover -- too distracting?
 .Comment:hover > .Comment__content {
@@ -288,8 +328,14 @@ span.control:hover {
 .Comment__text a {
   color: #000;
 }
+.App--dark .Comment__text a{
+  color: #ccc;
+}
 .Comment__text a:visited {
   color: #666;
+}
+.App--dark .Comment__text a:visited{
+  color: #ddd;
 }
 .Comment__text p:last-child, .Comment__text pre:last-child {
   margin-bottom: 0;
