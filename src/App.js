@@ -6,7 +6,6 @@ var Settings = require('./Settings')
 var StoryStore = require('./stores/StoryStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 var SettingsStore = require('./stores/SettingsStore')
-var CurrentColor = require('./Darkmode')
 
 var App = React.createClass({
   getInitialState() {
@@ -58,7 +57,7 @@ var App = React.createClass({
   },
 
   render() {
-    return <div className="App" onClick={this.state.showSettings && this.toggleSettings}>
+    return <div className={this.state.darkMode ? 'App App--dark' : 'App'} onClick={this.state.showSettings && this.toggleSettings}>
       <div className="App__wrap">
       <div className="App__header">
         <Link to="/news" className="App__homelinkicon"><img src="img/logo.png" width="16" height="16" alt="" /></Link>{' '}
@@ -80,7 +79,6 @@ var App = React.createClass({
       <div className="App__footer">
         <a href="https://github.com/insin/react-hn">insin/react-hn</a>
       </div>
-      <CurrentColor darkMode={this.state.darkMode} />
       </div>
     </div>
   }
