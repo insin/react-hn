@@ -6,6 +6,7 @@ var Settings = require('./Settings')
 var StoryStore = require('./stores/StoryStore')
 var UpdatesStore = require('./stores/UpdatesStore')
 var SettingsStore = require('./stores/SettingsStore')
+var CurrentColor = require('./Darkmode')
 
 var App = React.createClass({
   getInitialState() {
@@ -26,7 +27,11 @@ var App = React.createClass({
 
   componentDidMount() {
     // Empty the prebooted HTML and hydrate using live results from Firebase
-    this.setState({ prebootHTML: '', showChildren: true })
+    this.setState({
+      prebootHTML: '',
+      showChildren: true,
+      darkMode: SettingsStore.darkMode
+    })
   },
 
   componentWillUnmount() {
@@ -48,6 +53,10 @@ var App = React.createClass({
     this.setState({showSettings: !this.state.showSettings})
   },
 
+  toggleDarkMode() {
+    this.setState({darkMode: !this.state.darkMode})
+  },
+
   render() {
     return <div className="App" onClick={this.state.showSettings && this.toggleSettings}>
       <div className="App__wrap">
@@ -62,7 +71,7 @@ var App = React.createClass({
         <a className="App__settings" tabIndex="0" onClick={this.toggleSettings} onKeyPress={this.toggleSettings}>
           {this.state.showSettings ? 'hide settings' : 'settings'}
         </a>
-        {this.state.showSettings && <Settings key="settings"/>}
+        {this.state.showSettings && <Settings key="settings" toggleDarkMode={this.toggleDarkMode}/>}
       </div>
       <div className="App__content">
         <div dangerouslySetInnerHTML={{ __html: this.state.prebootHTML }}/>
@@ -71,6 +80,7 @@ var App = React.createClass({
       <div className="App__footer">
         <a href="https://github.com/insin/react-hn">insin/react-hn</a>
       </div>
+      <CurrentColor darkMode={this.state.darkMode} />
       </div>
     </div>
   }
