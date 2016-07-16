@@ -29,7 +29,7 @@
     <meta name="msapplication-TileColor" content="#222222">
     <meta name="msapplication-TileImage" content="img/mstile-144x144.png">
     <meta name="msapplication-config" content="img/browserconfig.xml">
-    
+    <base href="/">
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
@@ -65,5 +65,13 @@
       console.log('service worker is not supported');
     }
   </script>
+  <!-- Google Analytics -->
+  <script>
+  window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+  ga('create', 'UA-79730498-1', 'auto');
+  ga('send', 'pageview');
+  </script>
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+  <!-- End Google Analytics -->  
   </body>
 </html>

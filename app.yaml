@@ -8,3 +8,5 @@ handlers:
   secure: always
 skip_files:
   - ^(.*/)?.*/node_modules/.*$
+manual_scaling:
+  instances: 20

@@ -22,7 +22,7 @@
         "sizes": "384x384",
         "type": "image/png"
       }],
-  "start_url": "index.html",
+  "start_url": "./?utm_source=web_app_manifest",
   "background_color": "#4CC1FC",
   "display": "standalone",
   "theme_color": "#222222"

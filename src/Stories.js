@@ -67,7 +67,7 @@ var Stories = React.createClass({
 
     // Display a list of placeholder items while we're waiting for the initial
     // list of story ids to load from Firebase.
-    if (this.state.stories.length === 0 && this.state.ids.length === 0) {
+    if (this.state.stories.length === 0 && this.state.ids.length === 0 && this.getPageNumber() > 0) {
       var dummyItems = []
       for (var i = page.startIndex; i < page.endIndex; i++) {
         dummyItems.push(

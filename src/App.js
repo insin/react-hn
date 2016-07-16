@@ -10,7 +10,9 @@ var SettingsStore = require('./stores/SettingsStore')
 var App = React.createClass({
   getInitialState() {
     return {
-      showSettings: false
+      showSettings: false,
+      showChildren: false,
+      prebootHTML: this.props.params.prebootHTML
     }
   },
 
@@ -20,6 +22,11 @@ var App = React.createClass({
     UpdatesStore.loadSession()
     if (typeof window === 'undefined') return
     window.addEventListener('beforeunload', this.handleBeforeUnload)
+  },
+
+  componentDidMount() {
+    // Empty the prebooted HTML and hydrate using live results from Firebase
+    this.setState({ prebootHTML: '', showChildren: true })
   },
 
   componentWillUnmount() {
@@ -58,7 +65,8 @@ var App = React.createClass({
         {this.state.showSettings && <Settings key="settings"/>}
       </div>
       <div className="App__content">
-        {this.props.children}
+        <div dangerouslySetInnerHTML={{ __html: this.state.prebootHTML }}/>
+        {this.state.showChildren ? this.props.children : ''}
       </div>
       <div className="App__footer">
         <a href="https://github.com/insin/react-hn">insin/react-hn</a>
