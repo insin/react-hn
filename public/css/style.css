@@ -319,11 +319,16 @@ span.control:hover {
   .App__homelink {
     display: none;
   }
+
+  /* Safari only fix to ensure Settings menu is full width */
+  _::-webkit-:not(:root:root), .Settings {
+    width: 100%;
+  }
 }
 
 /* Hide the Settings link on iPhone 5 */
 @media (device-height: 568px) and (device-width: 320px) and (-webkit-min-device-pixel-ratio: 2) {
   .App__settings {
     display: none;
-  } 
+  }
 }
