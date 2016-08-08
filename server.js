@@ -14,7 +14,6 @@ app.set('views', process.cwd() + '/src/views')
 app.set('port', (process.env.PORT || 5000))
 app.use(express.static('public'))
 
-
 app.get(['/', '/news'], function(req, res) {
   ReactRouter.match({
     routes: routes,
@@ -45,15 +44,18 @@ app.get('/news/story/:id', function (req, res, next) {
     routes: routes,
     location: req.url
   }, function(err, redirectLocation, props) {
-    if (storyId) {
+    if (err) {
+      res.status(500).send(err.message)
+    }
+    else if (storyId) {
       HNServerFetch.fetchItem(storyId).then(function(comments) {
-          objectAssign(props.params, { prebootHTML: comments })
-          var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
-          res.render('index', { markup: markup })
+        objectAssign(props.params, { prebootHTML: comments })
+        var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
+        res.render('index', { markup: markup })
       })
     }
-  })  
-});
+  })
+})
 
 app.get('*', function(req, res) {
   ReactRouter.match({
@@ -68,7 +70,7 @@ app.get('*', function(req, res) {
     }
     else if (props) {
       var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
-      res.render('index', { markup: markup })        
+      res.render('index', { markup: markup })
     }
     else {
       res.sendStatus(404)
