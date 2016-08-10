@@ -11,6 +11,7 @@ var SettingsStore = {
   titleFontSize: 18,
   listSpacing: 16,
   offlineMode: false,
+  darkMode: false,
 
   load() {
     var json = storage.get(STORAGE_KEY)
@@ -27,7 +28,8 @@ var SettingsStore = {
       showDeleted: this.showDeleted,
       titleFontSize: this.titleFontSize,
       listSpacing: this.listSpacing,
-      offlineMode: this.offlineMode
+      offlineMode: this.offlineMode,
+      darkMode: this.darkMode
     }))
   }
 }

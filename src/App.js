@@ -26,7 +26,11 @@ var App = React.createClass({
 
   componentDidMount() {
     // Empty the prebooted HTML and hydrate using live results from Firebase
-    this.setState({ prebootHTML: '', showChildren: true })
+    this.setState({
+      prebootHTML: '',
+      showChildren: true,
+      darkMode: SettingsStore.darkMode
+    })
   },
 
   componentWillUnmount() {
@@ -48,8 +52,12 @@ var App = React.createClass({
     this.setState({showSettings: !this.state.showSettings})
   },
 
+  toggleDarkMode() {
+    this.setState({darkMode: !this.state.darkMode})
+  },
+
   render() {
-    return <div className="App" onClick={this.state.showSettings && this.toggleSettings}>
+    return <div className={this.state.darkMode ? 'App App--dark' : 'App'} onClick={this.state.showSettings && this.toggleSettings}>
       <div className="App__wrap">
       <div className="App__header">
         <Link to="/news" className="App__homelinkicon"><img src="img/logo.png" width="16" height="16" alt="" /></Link>{' '}
@@ -62,7 +70,7 @@ var App = React.createClass({
         <a className="App__settings" tabIndex="0" onClick={this.toggleSettings} onKeyPress={this.toggleSettings}>
           {this.state.showSettings ? 'hide settings' : 'settings'}
         </a>
-        {this.state.showSettings && <Settings key="settings"/>}
+        {this.state.showSettings && <Settings key="settings" toggleDarkMode={this.toggleDarkMode}/>}
       </div>
       <div className="App__content">
         <div dangerouslySetInnerHTML={{ __html: this.state.prebootHTML }}/>
