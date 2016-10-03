@@ -1,6 +1,6 @@
-var Firebase = require('firebase')
+var firebase = require('firebase')
 
-var api = new Firebase('https://hacker-news.firebaseio.com/v0')
+var api = firebase.initializeApp('https://hacker-news.firebaseio.com/v0')
 
 function fetchItem(id, cb) {
   itemRef(id).once('value', function(snapshot) {

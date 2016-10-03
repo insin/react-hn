@@ -5,7 +5,7 @@ var ReactRouter = require('react-router')
 var objectAssign = require('object-assign')
 var HNServerFetch = require('./hn-server-fetch')
 
-require('babel/register')
+require('babel-register')
 var routes = require('./src/routes')
 
 var app = express()
