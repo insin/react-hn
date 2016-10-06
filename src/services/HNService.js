@@ -1,4 +1,6 @@
-var firebase = require('firebase')
+var firebase = require('firebase/app')
+require('firebase/database')
+
 var config = {
   databaseURL: 'https://hacker-news.firebaseio.com'
 }
