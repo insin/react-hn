@@ -1,6 +1,12 @@
 var firebase = require('firebase')
+var config = {
+  databaseURL: 'https://hacker-news.firebaseio.com'
+}
+firebase.initializeApp(config)
+var version = '/v0'
+var api = firebase.database().ref(version)
 
-var api = firebase.initializeApp('https://hacker-news.firebaseio.com/v0')
+// https://firebase.google.com/support/guides/firebase-web
 
 function fetchItem(id, cb) {
   itemRef(id).once('value', function(snapshot) {
