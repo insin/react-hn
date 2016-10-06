@@ -17,7 +17,7 @@
     "postinstall": "npm run build",
     "serve": "./node_modules/.bin/nwb serve",
     "copy-manifest": "cp public/manifest.json dist/manifest.json",
-    "clean": "rm -rf *.json.gzip",
+    "clean": "rm -rf *.json.gzip dist/index.html",
     "precache": "./node_modules/sw-precache/cli.js --root=public --config=sw-precache-config.json && npm run clean"
   },
   "engines": {
