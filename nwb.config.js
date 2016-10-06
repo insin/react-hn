@@ -25,11 +25,6 @@ module.exports = {
           filename: 'views/index.ejs',
           template: 'src/views/index.ejs',
           markup: '<%- markup %>'
-        }),
-        new HtmlWebpackPlugin({
-          filename: 'index.html',
-          template: 'public/index-static.html',
-          markup: '<%- markup %>'
         })
       ]
     }    
