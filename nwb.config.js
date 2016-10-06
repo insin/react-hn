@@ -24,7 +24,7 @@ module.exports = {
         new HtmlWebpackPlugin({
           filename: 'views/index.ejs',
           template: 'src/views/index.ejs',
-          markup: '<%- markup %>'
+          markup: '<div id="app"><%- markup %></div>'
         })
       ]
     }    
