@@ -1,10 +1,9 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-// var ChunkManifestPlugin = require('chunk-manifest-webpack-plugin')
 
 module.exports = {
   type: 'react-app',
   babel: {
-    loose: 'all',
+    loose: true,
     stage: false,
     presets: ['es2015', 'stage-0', 'react']
   },
