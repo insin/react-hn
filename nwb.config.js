@@ -1,4 +1,5 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin')
+var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin')
 
 module.exports = {
   type: 'react-app',
@@ -21,6 +22,11 @@ module.exports = {
     },
     extra: {
       plugins: [
+        new CommonsChunkPlugin({
+            names: ['core'],
+            filename: '[name].js',
+            minChunks: Infinity
+        }), 
         new HtmlWebpackPlugin({
           filename: 'views/index.ejs',
           template: 'src/views/index.ejs',
