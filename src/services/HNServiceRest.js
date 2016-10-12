@@ -1,4 +1,4 @@
-/*global fetch*/
+/* global fetch */
 require('isomorphic-fetch')
 /*
 A version of HNService which concumes the Firebase REST
