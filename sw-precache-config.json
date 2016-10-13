@@ -3,6 +3,6 @@
     "sw-toolbox.js",
     "runtime-caching.js"
   ],
-  "stripPrefix": "public/",
+  "stripPrefix": "dist/",
   "verbose": true
 }

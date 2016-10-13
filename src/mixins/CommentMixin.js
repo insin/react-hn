@@ -86,8 +86,8 @@ var CommentMixin = {
         {options.collapsible && ' '}
         [dead]
         {options.childCounts && ' | (' + options.childCounts.children + ' child' + pluralise(options.childCounts.children, ',ren')}
-          {options.childCounts && options.childCounts.newComments > 0 && ', '}
-          {options.childCounts && options.childCounts.newComments > 0 && <em>{options.childCounts.newComments} new</em>}
+        {options.childCounts && options.childCounts.newComments > 0 && ', '}
+        {options.childCounts && options.childCounts.newComments > 0 && <em>{options.childCounts.newComments} new</em>}
         {options.childCounts && ')'}
       </div>
     }
@@ -105,8 +105,8 @@ var CommentMixin = {
       {options.op && <Link to={`/${this.state.op.type}/${this.state.op.id}`}>{this.state.op.title}</Link>}
       {comment.dead && ' | [dead]'}
       {options.childCounts && ' | (' + options.childCounts.children + ' child' + pluralise(options.childCounts.children, ',ren')}
-        {options.childCounts && options.childCounts.newComments > 0 && ', '}
-        {options.childCounts && options.childCounts.newComments > 0 && <em>{options.childCounts.newComments} new</em>}
+      {options.childCounts && options.childCounts.newComments > 0 && ', '}
+      {options.childCounts && options.childCounts.newComments > 0 && <em>{options.childCounts.newComments} new</em>}
       {options.childCounts && ')'}
     </div>
   },

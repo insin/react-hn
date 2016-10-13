@@ -1,14 +1,13 @@
 var IndexRoute = require('react-router/lib/IndexRoute')
 var React = require('react')
 var Route = require('react-router/lib/Route')
+var Item = require('./Item')
+// Polyfill require.ensure
+if (typeof require.ensure !== 'function') require.ensure = function(d, c) { c(require) }
 
 var App = require('./App')
-var Item = require('./Item')
-var NotFound = require('./NotFound')
-var PermalinkedComment = require('./PermalinkedComment')
 var Stories = require('./Stories')
 var Updates = require('./Updates')
-var UserProfile = require('./UserProfile')
 
 function stories(route, type, limit, title) {
   return React.createClass({
@@ -44,8 +43,29 @@ module.exports = <Route path="/" component={App}>
   <Route path="job/:id" component={Item}/>
   <Route path="poll/:id" component={Item}/>
   <Route path="story/:id" component={Item}/>
-  <Route path="comment/:id" component={PermalinkedComment}/>
+  <Route
+    path="comment/:id"
+    getComponent={(location, callback) => {
+      require.ensure([], require => {
+        callback(null, require('./PermalinkedComment'))
+      }, 'PermalinkedComment')
+    }}
+  />
   <Route path="newcomments" component={Comments}/>
-  <Route path="user/:id" component={UserProfile}/>
-  <Route path="*" component={NotFound}/>
+  <Route
+    path="user/:id"
+    getComponent={(location, callback) => {
+      require.ensure([], require => {
+        callback(null, require('./UserProfile'))
+      }, 'UserProfile')
+    }}
+  />
+  <Route
+    path="*"
+    getComponent={(location, callback) => {
+      require.ensure([], require => {
+        callback(null, require('./NotFound'))
+      }, 'NotFound')
+    }}
+  />
 </Route>

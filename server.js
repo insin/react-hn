@@ -5,14 +5,14 @@ var ReactRouter = require('react-router')
 var objectAssign = require('object-assign')
 var HNServerFetch = require('./hn-server-fetch')
 
-require('babel/register')
+require('babel-register')
 var routes = require('./src/routes')
 
 var app = express()
 app.set('view engine', 'ejs')
-app.set('views', process.cwd() + '/src/views')
+app.set('views', process.cwd() + '/dist/views')
 app.set('port', (process.env.PORT || 5000))
-app.use(express.static('public'))
+app.use(express.static('dist'))
 
 
 app.get(['/', '/news'], function(req, res) {

@@ -1,14 +1,13 @@
 require('setimmediate')
 
-var createHashHistory = require('history/lib/createHashHistory')
 var React = require('react')
 var {render} = require('react-dom')
 var Router = require('react-router/lib/Router')
-var useRouterHistory = require('react-router/lib/useRouterHistory')
-var withScroll = require('scroll-behavior/lib/withStandardScroll')
+var createHashHistory = require('history/lib/createHashHistory')
+var useScroll = require('react-router-scroll/lib/useScroll')
+var applyRouterMiddleware = require('react-router/lib/applyRouterMiddleware')
+var history = createHashHistory()
 
 var routes = require('./routes')
 
-var history = withScroll(useRouterHistory(createHashHistory)())
-
-render(<Router history={history} routes={routes}/>, document.getElementById('app'))
+render(<Router history={history} render={applyRouterMiddleware(useScroll())} routes={routes}/>, document.getElementById('app'))

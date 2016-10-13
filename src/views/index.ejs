@@ -33,9 +33,7 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <div id="app"><%- markup %></div>
-    <script src="build/vendor.js"></script>
-    <script src="build/app.js"></script>
+    <%= htmlWebpackPlugin.options.markup %>
     <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./service-worker.js', {
