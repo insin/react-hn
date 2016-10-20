@@ -18,7 +18,9 @@
     "serve": "./node_modules/.bin/nwb serve",
     "copy-manifest": "cp public/manifest.json dist/manifest.json",
     "clean": "rm -rf *.json.gzip dist/index.html",
-    "precache": "./node_modules/sw-precache/cli.js --root=public --config=sw-precache-config.json && npm run clean"
+    "precache": "./node_modules/sw-precache/cli.js --root=public --config=sw-precache-config.json && npm run clean",
+    "lighthouse-run-build": "./node_modules/lighthouse/lighthouse-cli/index.js http://localhost:5000",
+    "lighthouse": "npm run build && ./node_modules/concurrently/src/main.js --kill-others 'npm run start' 'npm run lighthouse-run-build'"
   },
   "engines": {
     "node": "6.1.0"
@@ -51,7 +53,9 @@
     "url-parse": "^1.1.1"
   },
   "devDependencies": {
+    "concurrently": "^3.1.0",
     "html-webpack-plugin": "^2.22.0",
+    "lighthouse": "^1.1.6",
     "webpack": "^1.13.2"
   }
 }
