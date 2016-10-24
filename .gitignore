@@ -1,4 +1,5 @@
 /public/build
 /node_modules
 /public/sw-toolbox.js
-dist
+dist/*
+!dist/.gitignore
