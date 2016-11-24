@@ -9,7 +9,7 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js dist/sw-toolbox.js && ./node_modules/.bin/nwb build && npm run copy-manifest && npm run precache",
+    "build": "mkdir -p dist && npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js dist/sw-toolbox.js && ./node_modules/.bin/nwb build && npm run copy-manifest && npm run precache",
     "deploy": "gcloud preview app deploy",
     "lint": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
     "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
