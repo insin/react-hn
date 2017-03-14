@@ -9,7 +9,7 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "mkdir -p dist && cp public/sw-lib.v0.0.16.min.js dist/sw-lib.v0.0.16.min.js && ./node_modules/.bin/nwb build && npm run copy-manifest && rm -rf dist/index.html",
+    "build": "mkdir -p dist && cp public/sw-lib.v0.0.16.min.js dist/sw-lib.v0.0.16.min.js && ./node_modules/.bin/nwb build && npm run copy-manifest && npm run clean && npm run swbuild",
     "deploy": "gcloud preview app deploy",
     "lint-old": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
     "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
@@ -17,6 +17,7 @@
     "postinstall": "npm run build",
     "serve": "./node_modules/.bin/nwb serve",
     "copy-manifest": "cp public/manifest.json dist/manifest.json",
+    "swbuild": "node sw-build.js",
     "clean": "rm -rf *.json.gzip dist/index.html"
   },
   "engines": {
@@ -49,7 +50,8 @@
   },
   "devDependencies": {
     "html-webpack-plugin": "2.22.0",
-    "sw-cli": "0.0.16",
+    "sw-build": "0.0.16",
+    "sw-lib": "0.0.16",
     "webpack": "1.13.2"
   }
 }
