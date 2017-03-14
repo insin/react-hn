@@ -1,8 +1,0 @@
-{
-  "importScripts": [
-    "sw-toolbox.js",
-    "runtime-caching.js"
-  ],
-  "stripPrefix": "dist/",
-  "verbose": true
-}
