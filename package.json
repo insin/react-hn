@@ -9,16 +9,16 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "mkdir -p dist && npm run lint && cp node_modules/sw-toolbox/sw-toolbox.js dist/sw-toolbox.js && ./node_modules/.bin/nwb build && npm run copy-manifest && npm run precache",
+    "build": "mkdir -p dist && nwb build && npm run copy-manifest && npm run clean && npm run generate-sw",
     "deploy": "gcloud preview app deploy",
-    "lint": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
+    "lint-old": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
     "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
     "start": "node server.js",
     "postinstall": "npm run build",
-    "serve": "./node_modules/.bin/nwb serve",
+    "serve": "nwb serve",
     "copy-manifest": "cp public/manifest.json dist/manifest.json",
-    "clean": "rm -rf *.json.gzip dist/index.html",
-    "precache": "./node_modules/sw-precache/cli.js --root=public --config=sw-precache-config.json && npm run clean"
+    "generate-sw": "node generate-sw.js",
+    "clean": "rm -rf *.json.gzip dist/index.html"
   },
   "engines": {
     "node": "6.1.0"
@@ -46,12 +46,11 @@
     "reactfire": "1.0.0",
     "scroll-behavior": "0.8.1",
     "setimmediate": "1.0.5",
-    "sw-precache": "^4.1.0",
-    "sw-toolbox": "^3.1.1",
     "url-parse": "^1.1.1"
   },
   "devDependencies": {
-    "html-webpack-plugin": "^2.22.0",
-    "webpack": "^1.13.2"
+    "html-webpack-plugin": "2.22.0",
+    "webpack": "1.13.2",
+    "workbox-build": "0.0.2"
   }
 }
