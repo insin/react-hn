@@ -28,7 +28,7 @@ module.exports = {
             minChunks: Infinity
         }), 
         new HtmlWebpackPlugin({
-          filename: 'views/index.ejs',
+          filename: 'index.html',
           template: 'src/views/index.ejs',
           markup: '<div id="app"><%- markup %></div>'
         })
