@@ -47,13 +47,13 @@ app.get('/news/story/:id', function (req, res, next) {
   }, function(err, redirectLocation, props) {
     if (storyId) {
       HNServerFetch.fetchItem(storyId).then(function(comments) {
-          objectAssign(props.params, { prebootHTML: comments })
-          var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
-          res.render('index', { markup: markup })
+        objectAssign(props.params, { prebootHTML: comments })
+        var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
+        res.render('index', { markup: markup })
       })
     }
-  })  
-});
+  })
+})
 
 app.get('*', function(req, res) {
   ReactRouter.match({
@@ -68,7 +68,7 @@ app.get('*', function(req, res) {
     }
     else if (props) {
       var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
-      res.render('index', { markup: markup })        
+      res.render('index', { markup: markup })
     }
     else {
       res.sendStatus(404)
