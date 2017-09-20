@@ -1,0 +1,5 @@
+{
+  "extends": [
+    "./node_modules/eslint-config-jonnybuchanan/.eslintrc"
+  ]
+}
