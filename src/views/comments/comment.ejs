@@ -1,0 +1,17 @@
+<div class="Item__kids"> 
+  <div class="Comment Comment--level<%= level %>">
+    <div class="Comment__content">
+      <div class="Comment__meta">
+        <span class="Comment__collapse" tabindex="0">[–]</span>
+        <a class="Comment__user" href="#/user/<%= comment.user %>"><%= comment.user %></a>
+        <time><%= comment.time_ago %></time>
+        <a href="#/comment/<=% comment.id %>">link</a>
+      </div>
+      <div class="Comment__text">
+        <div><%- comment.content %></div>
+        <p>
+          <a href="https://news.ycombinator.com/reply?id=<%= comment.id %>">reply</a>
+        </p>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<li class="ListItem" style="margin-bottom: 16px;">
+  <div class="Item__title" style="font-size: 18px;">
+    <a href="<%= story.url %>"><%= story.title %></a>
+    <span class="Item__host">(<%= story.domain %>)</span>
+  </div>
+  <div class="Item__meta">
+    <span class="Item__score"><%= story.points %> points</span>
+    <span class="Item__by">by <a href="https://news.ycombinator.com/user?id=<%= story.user %>"><%= story.user %></a></span>
+    <time class="Item__time"><%= story.time_ago %></time> | <a href="/news/story/<%= story.id %>"><% story.comments_count %> comments</a>
+  </div>
+</li>

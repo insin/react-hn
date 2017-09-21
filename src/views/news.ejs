@@ -1,0 +1,5 @@
+<ol class="Items__list" start="1">
+  <% stories.forEach(function(story) { %>
+    <%- include("news/story", {story: story}) %>
+  <% }) %>
+</ol>

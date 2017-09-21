@@ -1,0 +1,4 @@
+<% comments.forEach(function(comment) { %>
+  <%- include("comments/comment", {comment, level: level + 1}) %>
+  <%- include("comments", {comments: comment.comments, level: level + 1}) %>
+<% }) %>
