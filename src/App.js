@@ -50,7 +50,7 @@ var App = React.createClass({
 
   render() {
     return <div className="App" onClick={this.state.showSettings && this.toggleSettings}>
-      <div className="App__wrap">
+      <div className={SettingsStore.switchDarkTheme ? 'Dark__app__wrap App__wrap' : 'App__wrap'}>
         <div className="App__header">
           <Link to="/news" className="App__homelinkicon"><img src="img/logo.png" width="16" height="16" alt="" /></Link>{' '}
           <Link to="/news" activeClassName="active" className="App__homelink">React HN</Link>{' '}
