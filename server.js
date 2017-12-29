@@ -52,7 +52,7 @@ app.get('/news/story/:id', function (req, res, next) {
           res.render('index', { markup: markup })
       })
     }
-  })  
+  })
 });
 
 app.get('*', function(req, res) {
@@ -68,7 +68,7 @@ app.get('*', function(req, res) {
     }
     else if (props) {
       var markup = renderToString(React.createElement(ReactRouter.RouterContext, props, null))
-      res.render('index', { markup: markup })        
+      res.render('index', { markup: markup })
     }
     else {
       res.sendStatus(404)
