@@ -29,6 +29,15 @@
     <meta name="msapplication-TileColor" content="#222222">
     <meta name="msapplication-TileImage" content="img/mstile-144x144.png">
     <meta name="msapplication-config" content="img/browserconfig.xml">
+    <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        regs.forEach(function(reg) {
+          reg.unregister()
+        })
+      })
+    }
+    </script>
   </head>
   <body>
     <div id="app"></div>
