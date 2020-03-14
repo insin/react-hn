@@ -31,6 +31,7 @@ var Jobs = stories('jobs', 'jobstories', 200, 'Jobs')
 var New = stories('newest', 'newstories', 500, 'New Links')
 var Show = stories('show', 'showstories', 200, 'Show')
 var Top = stories('news', 'topstories', 500)
+var Read = stories('read', 'read', 500, 'Read Stories')
 
 export default <Route path="/" component={App}>
   <IndexRoute component={Top}/>
@@ -39,6 +40,7 @@ export default <Route path="/" component={App}>
   <Route path="show" component={Show}/>
   <Route path="ask" component={Ask}/>
   <Route path="jobs" component={Jobs}/>
+  <Route path="read" component={Read}/>
   <Route path="item/:id" component={Item}/>
   <Route path="job/:id" component={Item}/>
   <Route path="poll/:id" component={Item}/>

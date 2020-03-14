@@ -4,6 +4,8 @@ var HNService = require('../services/HNService').default
 
 var extend = require('../utils/extend').default
 
+var ID_REGEXP = /^\d+$/
+
 /**
  * Firebase reference used to stream updates - only one StoryStore instance can
  * be active at a time.
@@ -97,8 +99,17 @@ class StoryStore extends EventEmitter {
   }
 
   start() {
-    firebaseRef = HNService.storiesRef(this.type)
-    firebaseRef.on('value', this.onStoriesUpdated)
+    if (this.type === 'read') {
+      var readStoryIds = Object.keys(window.localStorage)
+        .filter(key => ID_REGEXP.test(key))
+        .map(id => Number(id))
+        .sort((a, b) => b - a)
+      setImmediate(() => this.onStoriesUpdated({val: () => readStoryIds}))
+    }
+    else {
+      firebaseRef = HNService.storiesRef(this.type)
+      firebaseRef.on('value', this.onStoriesUpdated)
+    }
     window.addEventListener('storage', this.onStorage)
   }
 
