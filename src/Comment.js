@@ -1,14 +1,13 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var CommentThreadStore = require('./stores/CommentThreadStore')
-var HNService = require('./services/HNService')
-var HNServiceRest = require('./services/HNServiceRest')
-var SettingsStore = require('./stores/SettingsStore')
+var CommentThreadStore = require('./stores/CommentThreadStore').default
+var HNService = require('./services/HNService').default
+var SettingsStore = require('./stores/SettingsStore').default
 
-var CommentMixin = require('./mixins/CommentMixin')
+var CommentMixin = require('./mixins/CommentMixin').default
 
-var cx = require('./utils/buildClassName')
+var cx = require('./utils/buildClassName').default
 
 /**
  * A comment in a thread.
@@ -87,17 +86,7 @@ var Comment = React.createClass({
   },
 
   bindFirebaseRef() {
-    if (SettingsStore.offlineMode) {
-      HNServiceRest.itemRef(this.props.id).then(function(res) {
-        return res.json()
-      }).then(function(snapshot) {
-        this.replaceState({ comment: snapshot })
-      }.bind(this))
-    }
-    else {
-      this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
-    }
-
+    this.bindAsObject(HNService.itemRef(this.props.id), 'comment', this.handleFirebaseRefCancelled)
     if (this.timeout) {
       this.timeout = null
     }
@@ -186,4 +175,4 @@ var Comment = React.createClass({
   }
 })
 
-module.exports = Comment
+export default Comment

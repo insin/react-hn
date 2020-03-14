@@ -2,11 +2,11 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 var TimeAgo = require('react-timeago').default
 
-var HNService = require('./services/HNService')
+var HNService = require('./services/HNService').default
 
-var Spinner = require('./Spinner')
+var Spinner = require('./Spinner').default
 
-var setTitle = require('./utils/setTitle')
+var setTitle = require('./utils/setTitle').default
 
 // TODO User submissions
 
@@ -60,4 +60,4 @@ var UserProfile = React.createClass({
   }
 })
 
-module.exports = UserProfile
+export default UserProfile

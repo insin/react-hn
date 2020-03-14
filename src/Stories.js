@@ -1,16 +1,16 @@
 var React = require('react')
 
-var StoryStore = require('./stores/StoryStore')
+var StoryStore = require('./stores/StoryStore').default
 
-var PageNumberMixin = require('./mixins/PageNumberMixin')
-var Paginator = require('./Paginator')
-var Spinner = require('./Spinner')
-var StoryListItem = require('./StoryListItem')
-var SettingsStore = require('./stores/SettingsStore')
+var PageNumberMixin = require('./mixins/PageNumberMixin').default
+var Paginator = require('./Paginator').default
+var Spinner = require('./Spinner').default
+var StoryListItem = require('./StoryListItem').default
+var SettingsStore = require('./stores/SettingsStore').default
 
-var {ITEMS_PER_PAGE} = require('./utils/constants')
-var pageCalc = require('./utils/pageCalc')
-var setTitle = require('./utils/setTitle')
+var {ITEMS_PER_PAGE} = require('./utils/constants').default
+var pageCalc = require('./utils/pageCalc').default
+var setTitle = require('./utils/setTitle').default
 
 var Stories = React.createClass({
   mixins: [PageNumberMixin],
@@ -106,4 +106,4 @@ var Stories = React.createClass({
   }
 })
 
-module.exports = Stories
+export default Stories

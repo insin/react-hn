@@ -1,5 +1,5 @@
-var extend = require('../utils/extend')
-var storage = require('../utils/storage')
+var extend = require('../utils/extend').default
+var storage = require('../utils/storage').default
 
 var STORAGE_KEY = 'settings'
 
@@ -10,7 +10,6 @@ var SettingsStore = {
   showDeleted: false,
   titleFontSize: 18,
   listSpacing: 16,
-  offlineMode: false,
 
   load() {
     var json = storage.get(STORAGE_KEY)
@@ -26,10 +25,9 @@ var SettingsStore = {
       showDead: this.showDead,
       showDeleted: this.showDeleted,
       titleFontSize: this.titleFontSize,
-      listSpacing: this.listSpacing,
-      offlineMode: this.offlineMode
+      listSpacing: this.listSpacing
     }))
   }
 }
 
-module.exports = SettingsStore
+export default SettingsStore

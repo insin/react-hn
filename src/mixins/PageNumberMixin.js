@@ -7,4 +7,4 @@ var PageNumberMixin = {
   }
 }
 
-module.exports = PageNumberMixin
+export default PageNumberMixin

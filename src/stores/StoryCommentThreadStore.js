@@ -1,10 +1,10 @@
-var CommentThreadStore = require('./CommentThreadStore')
-var SettingsStore = require('./SettingsStore')
+var CommentThreadStore = require('./CommentThreadStore').default
+var SettingsStore = require('./SettingsStore').default
 
-var debounce = require('../utils/cancellableDebounce')
-var extend = require('../utils/extend')
-var pluralise = require('../utils/pluralise')
-var storage = require('../utils/storage')
+var debounce = require('../utils/cancellableDebounce').default
+var extend = require('../utils/extend').default
+var pluralise = require('../utils/pluralise').default
+var storage = require('../utils/storage').default
 
 /**
  * Load persisted comment thread state.
@@ -298,4 +298,4 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
   }
 })
 
-module.exports = StoryCommentThreadStore
+export default StoryCommentThreadStore

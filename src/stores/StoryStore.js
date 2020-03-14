@@ -1,10 +1,8 @@
 var {EventEmitter} = require('events')
 
-var HNService = require('../services/HNService')
-var HNServiceRest = require('../services/HNServiceRest')
-var SettingsStore = require('./SettingsStore')
+var HNService = require('../services/HNService').default
 
-var extend = require('../utils/extend')
+var extend = require('../utils/extend').default
 
 /**
  * Firebase reference used to stream updates - only one StoryStore instance can
@@ -93,40 +91,22 @@ class StoryStore extends EventEmitter {
    * Handle story id snapshots from Firebase.
    */
   onStoriesUpdated(snapshot) {
-    if (SettingsStore.offlineMode) {
-      idCache[this.type] = snapshot
-    }
-    else {
-      idCache[this.type] = snapshot.val()
-    }
+    idCache[this.type] = snapshot.val()
     populateStoryList(this.type)
     this.emit('update', this.getState())
   }
 
   start() {
-    if (typeof window === 'undefined') return
-    if (SettingsStore.offlineMode) {
-      HNServiceRest.storiesRef(this.type).then(function(res) {
-        return res.json()
-      }).then(function(snapshot) {
-        this.onStoriesUpdated(snapshot)
-      }.bind(this))
-    }
-    else {
-      firebaseRef = HNService.storiesRef(this.type)
-      firebaseRef.on('value', this.onStoriesUpdated)
-    }
+    firebaseRef = HNService.storiesRef(this.type)
+    firebaseRef.on('value', this.onStoriesUpdated)
     window.addEventListener('storage', this.onStorage)
   }
 
   stop() {
     if (firebaseRef !== null) {
-      if (!SettingsStore.offlineMode) {
-        firebaseRef.off()
-      }
+      firebaseRef.off()
       firebaseRef = null
     }
-    if (typeof window === 'undefined') return
     window.removeEventListener('storage', this.onStorage)
   }
 }
@@ -144,31 +124,17 @@ extend(StoryStore, {
    * Deserialise caches from sessionStorage.
    */
   loadSession() {
-    if (typeof window === 'undefined') return
-    if (SettingsStore.offlineMode) {
-      idCache = parseJSON(window.localStorage.idCache, {})
-      itemCache = parseJSON(window.localStorage.itemCache, {})
-    }
-    else {
-      idCache = parseJSON(window.sessionStorage.idCache, {})
-      itemCache = parseJSON(window.sessionStorage.itemCache, {})
-    }
+    idCache = parseJSON(window.sessionStorage.idCache, {})
+    itemCache = parseJSON(window.sessionStorage.itemCache, {})
   },
 
   /**
    * Serialise caches to sessionStorage as JSON.
    */
   saveSession() {
-    if (typeof window === 'undefined') return
-    if (SettingsStore.offlineMode) {
-      window.localStorage.setItem('idCache', JSON.stringify(idCache))
-      window.localStorage.setItem('itemCache', JSON.stringify(itemCache))
-    }
-    else {
-      window.sessionStorage.idCache = JSON.stringify(idCache)
-      window.sessionStorage.itemCache = JSON.stringify(itemCache)
-    }
+    window.sessionStorage.idCache = JSON.stringify(idCache)
+    window.sessionStorage.itemCache = JSON.stringify(itemCache)
   }
 })
 
-module.exports = StoryStore
+export default StoryStore

@@ -1,3 +1,5 @@
+require('./style.css')
+
 require('setimmediate')
 
 var React = require('react')
@@ -8,6 +10,13 @@ var useScroll = require('react-router-scroll/lib/useScroll')
 var applyRouterMiddleware = require('react-router/lib/applyRouterMiddleware')
 var history = createHashHistory()
 
-var routes = require('./routes')
+var routes = require('./routes').default
 
-render(<Router history={history} render={applyRouterMiddleware(useScroll())} routes={routes}/>, document.getElementById('app'))
+render(
+  <Router
+    history={history}
+    render={applyRouterMiddleware(useScroll())}
+    routes={routes}
+  />,
+  document.getElementById('app')
+)

@@ -12,4 +12,4 @@ function extend(dest, src1, src2) {
   return dest
 }
 
-module.exports = extend
+export default extend

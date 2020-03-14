@@ -9,34 +9,17 @@
     "url": "http://github.com/insin/react-hn.git"
   },
   "scripts": {
-    "build": "mkdir -p dist && nwb build && npm run copy-manifest && npm run clean && npm run generate-sw",
-    "deploy": "gcloud preview app deploy",
-    "lint-old": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js src",
-    "lint:fix": "./node_modules/eslint-config-jonnybuchanan/bin/lint.js --fix .",
-    "start": "node server.js",
-    "postinstall": "npm run build",
-    "serve": "nwb serve",
-    "copy-manifest": "cp public/manifest.json dist/manifest.json",
-    "generate-sw": "node generate-sw.js",
-    "clean": "rm -rf *.json.gzip dist/index.html"
+    "build": "nwb build",
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix",
+    "start": "nwb serve"
   },
-  "engines": {
-    "node": "6.1.0"
-  },
-  "main": "server.js",
   "dependencies": {
-    "babel-preset-es2015": "^6.16.0",
-    "babel-preset-react": "^6.16.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "babel-register": "^6.16.0",
-    "ejs": "^2.4.1",
-    "eslint-config-jonnybuchanan": "4.6.0",
+    "eslint-config-jonnybuchanan": "6.0.0",
     "events": "1.1.1",
-    "express": "^4.13.4",
     "firebase": "3.4.1",
     "history": "^2.1.2",
-    "isomorphic-fetch": "^2.2.1",
-    "nwb": "0.12.2",
+    "nwb": "0.22.0",
     "object-assign": "^4.1.0",
     "react": "15.3.2",
     "react-dom": "15.3.2",
@@ -47,10 +30,5 @@
     "scroll-behavior": "0.8.1",
     "setimmediate": "1.0.5",
     "url-parse": "^1.1.1"
-  },
-  "devDependencies": {
-    "html-webpack-plugin": "2.22.0",
-    "webpack": "1.13.2",
-    "workbox-build": "0.0.2"
   }
 }

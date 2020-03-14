@@ -20,4 +20,4 @@ var Paginator = React.createClass({
   }
 })
 
-module.exports = Paginator
+export default Paginator

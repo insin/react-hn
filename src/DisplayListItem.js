@@ -1,9 +1,9 @@
 var React = require('react')
 
-var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
+var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore').default
 
-var ItemMixin = require('./mixins/ItemMixin')
-var ListItemMixin = require('./mixins/ListItemMixin')
+var ItemMixin = require('./mixins/ItemMixin').default
+var ListItemMixin = require('./mixins/ListItemMixin').default
 
 /**
  * Display story title and metadata as a list item.
@@ -25,4 +25,4 @@ var DisplayListItem = React.createClass({
   }
 })
 
-module.exports = DisplayListItem
+export default DisplayListItem

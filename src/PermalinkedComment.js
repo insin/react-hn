@@ -2,17 +2,16 @@ var React = require('react')
 var ReactFireMixin = require('reactfire')
 var withRouter = require('react-router/lib/withRouter')
 
-var CommentThreadStore = require('./stores/CommentThreadStore')
-var HNService = require('./services/HNService')
-var HNServiceRest = require('./services/HNServiceRest')
-var SettingsStore = require('./stores/SettingsStore')
-var UpdatesStore = require('./stores/UpdatesStore')
+var CommentThreadStore = require('./stores/CommentThreadStore').default
+var HNService = require('./services/HNService').default
+var SettingsStore = require('./stores/SettingsStore').default
+var UpdatesStore = require('./stores/UpdatesStore').default
 
-var Comment = require('./Comment')
-var CommentMixin = require('./mixins/CommentMixin')
+var Comment = require('./Comment').default
+var CommentMixin = require('./mixins/CommentMixin').default
 
-var cx = require('./utils/buildClassName')
-var setTitle = require('./utils/setTitle')
+var cx = require('./utils/buildClassName').default
+var setTitle = require('./utils/setTitle').default
 
 var PermalinkedComment = React.createClass({
   mixins: [CommentMixin, ReactFireMixin],
@@ -33,16 +32,7 @@ var PermalinkedComment = React.createClass({
   },
 
   componentWillMount() {
-    if (SettingsStore.offlineMode) {
-      HNServiceRest.itemRef(this.props.params.id).then(function(res) {
-        return res.json()
-      }).then(function(snapshot) {
-        this.replaceState({ comment: snapshot })
-      }.bind(this))
-    }
-    else {
-      this.bindAsObject(HNService.itemRef(this.props.params.id), 'comment')
-    }
+    this.bindAsObject(HNService.itemRef(this.props.params.id), 'comment')
     if (this.state.comment.id) {
       this.commentLoaded(this.state.comment)
     }
@@ -149,4 +139,4 @@ var PermalinkedComment = React.createClass({
   }
 })
 
-module.exports = withRouter(PermalinkedComment)
+export default withRouter(PermalinkedComment)

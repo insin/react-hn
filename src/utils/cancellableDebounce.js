@@ -55,4 +55,4 @@ function cancellableDebounce(func, wait, immediate) {
   return debounced
 }
 
-module.exports = cancellableDebounce
+export default cancellableDebounce

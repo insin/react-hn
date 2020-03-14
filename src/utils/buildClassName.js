@@ -24,4 +24,4 @@ function buildClassName(staticClassName, conditionalClassNames) {
   return classNames.join(' ')
 }
 
-module.exports = buildClassName
+export default buildClassName

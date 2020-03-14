@@ -1,15 +1,14 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore')
-var HNService = require('./services/HNService')
-var HNServiceRest = require('./services/HNServiceRest')
-var SettingsStore = require('./stores/SettingsStore')
-var StoryStore = require('./stores/StoryStore')
+var StoryCommentThreadStore = require('./stores/StoryCommentThreadStore').default
+var HNService = require('./services/HNService').default
+var SettingsStore = require('./stores/SettingsStore').default
+var StoryStore = require('./stores/StoryStore').default
 
-var ItemMixin = require('./mixins/ItemMixin')
-var ListItemMixin = require('./mixins/ListItemMixin')
-var Spinner = require('./Spinner')
+var ItemMixin = require('./mixins/ItemMixin').default
+var ListItemMixin = require('./mixins/ListItemMixin').default
+var Spinner = require('./Spinner').default
 
 /**
  * Display story title and metadata as as a list item.
@@ -95,17 +94,8 @@ var StoryListItem = React.createClass({
    * initialise its comment thread state.
    */
   initLiveItem(props) {
-    if (SettingsStore.offlineMode) {
-      HNServiceRest.itemRef(props.id).then(function(res) {
-        return res.json()
-      }).then(function(snapshot) {
-        this.replaceState({ item: snapshot })
-      }.bind(this))
-    }
-    else {
-      // If we were given a cached item to display initially, it will be replaced
-      this.bindAsObject(HNService.itemRef(props.id), 'item')
-    }
+    // If we were given a cached item to display initially, it will be replaced
+    this.bindAsObject(HNService.itemRef(props.id), 'item')
 
     this.threadState = StoryCommentThreadStore.loadState(props.id)
     this.props.store.addListener(props.id, this.updateThreadState)
@@ -132,4 +122,4 @@ var StoryListItem = React.createClass({
   }
 })
 
-module.exports = StoryListItem
+export default StoryListItem

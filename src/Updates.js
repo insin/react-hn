@@ -1,18 +1,18 @@
 var React = require('react')
 
-var SettingsStore = require('./stores/SettingsStore')
-var UpdatesStore = require('./stores/UpdatesStore')
+var SettingsStore = require('./stores/SettingsStore').default
+var UpdatesStore = require('./stores/UpdatesStore').default
 
-var DisplayListItem = require('./DisplayListItem')
-var DisplayComment = require('./DisplayComment')
-var Paginator = require('./Paginator')
-var Spinner = require('./Spinner')
+var DisplayListItem = require('./DisplayListItem').default
+var DisplayComment = require('./DisplayComment').default
+var Paginator = require('./Paginator').default
+var Spinner = require('./Spinner').default
 
-var PageNumberMixin = require('./mixins/PageNumberMixin')
+var PageNumberMixin = require('./mixins/PageNumberMixin').default
 
-var {ITEMS_PER_PAGE} = require('./utils/constants')
-var pageCalc = require('./utils/pageCalc')
-var setTitle = require('./utils/setTitle')
+var {ITEMS_PER_PAGE} = require('./utils/constants').default
+var pageCalc = require('./utils/pageCalc').default
+var setTitle = require('./utils/setTitle').default
 
 function filterDead(item) {
   return !item.dead
@@ -95,4 +95,4 @@ var Updates = React.createClass({
   }
 })
 
-module.exports = Updates
+export default Updates

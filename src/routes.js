@@ -1,13 +1,13 @@
 var IndexRoute = require('react-router/lib/IndexRoute')
 var React = require('react')
 var Route = require('react-router/lib/Route')
-var Item = require('./Item')
+var Item = require('./Item').default
 // Polyfill require.ensure
 if (typeof require.ensure !== 'function') require.ensure = function(d, c) { c(require) }
 
-var App = require('./App')
-var Stories = require('./Stories')
-var Updates = require('./Updates')
+var App = require('./App').default
+var Stories = require('./Stories').default
+var Updates = require('./Updates').default
 
 function stories(route, type, limit, title) {
   return React.createClass({
@@ -32,7 +32,7 @@ var New = stories('newest', 'newstories', 500, 'New Links')
 var Show = stories('show', 'showstories', 200, 'Show')
 var Top = stories('news', 'topstories', 500)
 
-module.exports = <Route path="/" component={App}>
+export default <Route path="/" component={App}>
   <IndexRoute component={Top}/>
   <Route path="news" component={Top}/>
   <Route path="newest" component={New}/>

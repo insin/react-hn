@@ -45,7 +45,7 @@ function updatesRef() {
   return api.child('updates/items')
 }
 
-module.exports = {
+export default {
   fetchItem,
   fetchItems,
   storiesRef,

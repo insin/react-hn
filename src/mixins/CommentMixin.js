@@ -2,12 +2,12 @@ var React = require('react')
 var Link = require('react-router/lib/Link')
 var TimeAgo = require('react-timeago').default
 
-var ItemStore = require('../stores/ItemStore')
-var SettingsStore = require('../stores/SettingsStore')
+var ItemStore = require('../stores/ItemStore').default
+var SettingsStore = require('../stores/SettingsStore').default
 
-var Spinner = require('../Spinner')
+var Spinner = require('../Spinner').default
 
-var pluralise = require('../utils/pluralise')
+var pluralise = require('../utils/pluralise').default
 
 var CommentMixin = {
   fetchAncestors(comment) {
@@ -121,4 +121,4 @@ var CommentMixin = {
   }
 }
 
-module.exports = CommentMixin
+export default CommentMixin

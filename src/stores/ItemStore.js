@@ -1,9 +1,7 @@
-var HNService = require('../services/HNService')
-var HNServiceRest = require('../services/HNServiceRest')
+var HNService = require('../services/HNService').default
 
-var StoryStore = require('./StoryStore')
-var UpdatesStore = require('./UpdatesStore')
-var SettingsStore = require('./SettingsStore')
+var StoryStore = require('./StoryStore').default
+var UpdatesStore = require('./UpdatesStore').default
 var commentParentLookup = {}
 var titleCache = {}
 
@@ -73,12 +71,7 @@ var ItemStore = {
       setImmediate(cb, cachedItem)
     }
     else {
-      if (SettingsStore.offlineMode) {
-        HNServiceRest.fetchItem(id, cb)
-      }
-      else {
-        HNService.fetchItem(id, cb)
-      }
+      HNService.fetchItem(id, cb)
     }
   },
 
@@ -100,4 +93,4 @@ var ItemStore = {
   }
 }
 
-module.exports = ItemStore
+export default ItemStore

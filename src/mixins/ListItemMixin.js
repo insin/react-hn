@@ -1,8 +1,8 @@
 var React = require('react')
 var Link = require('react-router/lib/Link')
 
-var SettingsStore = require('../stores/SettingsStore')
-var cx = require('../utils/buildClassName')
+var SettingsStore = require('../stores/SettingsStore').default
+var cx = require('../utils/buildClassName').default
 
 /**
  * Reusable logic for displaying an item in a list.
@@ -30,4 +30,4 @@ var ListItemMixin = {
   }
 }
 
-module.exports = ListItemMixin
+export default ListItemMixin

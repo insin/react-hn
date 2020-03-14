@@ -1,11 +1,9 @@
 var EventEmitter = require('events').EventEmitter
 
-var HNService = require('../services/HNService')
-var HNServiceRest = require('../services/HNServiceRest')
-var SettingsStore = require('./SettingsStore')
+var HNService = require('../services/HNService').default
 
-var {UPDATES_CACHE_SIZE} = require('../utils/constants')
-var extend = require('../utils/extend')
+var {UPDATES_CACHE_SIZE} = require('../utils/constants').default
+var extend = require('../utils/extend').default
 
 /**
  * Firebase reference used to stream updates.
@@ -101,40 +99,27 @@ function handleUpdateItems(items) {
 
 var UpdatesStore = extend(new EventEmitter(), {
   loadSession() {
-    if (typeof window === 'undefined') return
     var json = window.sessionStorage.updates
     updatesCache = (json ? JSON.parse(json) : {comments: {}, stories: {}})
     populateUpdates()
   },
 
   saveSession() {
-    if (typeof window === 'undefined') return
     window.sessionStorage.updates = JSON.stringify(updatesCache)
   },
 
   start() {
     if (updatesRef === null) {
-      if (SettingsStore.offlineMode) {
-        HNServiceRest.updatesRef().then(function(res) {
-          return res.json()
-        }).then(function(snapshot) {
-          HNServiceRest.fetchItems(snapshot, handleUpdateItems)
-        })
-      }
-      else {
-        updatesRef = HNService.updatesRef()
-        updatesRef.on('value', function(snapshot) {
-          HNService.fetchItems(snapshot.val(), handleUpdateItems)
-        })
-      }
+      updatesRef = HNService.updatesRef()
+      updatesRef.on('value', function(snapshot) {
+        HNService.fetchItems(snapshot.val(), handleUpdateItems)
+      })
     }
   },
 
   stop() {
-    if (!SettingsStore.offlineMode) {
-      updatesRef.off()
-      updatesRef = null
-    }
+    updatesRef.off()
+    updatesRef = null
   },
 
   getUpdates() {
@@ -155,4 +140,4 @@ var UpdatesStore = extend(new EventEmitter(), {
 })
 UpdatesStore.off = UpdatesStore.removeListener
 
-module.exports = UpdatesStore
+export default UpdatesStore

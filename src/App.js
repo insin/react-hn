@@ -1,18 +1,17 @@
+/* global __VERSION__ */
 var React = require('react')
 var Link = require('react-router/lib/Link')
 
-var Settings = require('./Settings')
+var Settings = require('./Settings').default
 
-var StoryStore = require('./stores/StoryStore')
-var UpdatesStore = require('./stores/UpdatesStore')
-var SettingsStore = require('./stores/SettingsStore')
+var StoryStore = require('./stores/StoryStore').default
+var UpdatesStore = require('./stores/UpdatesStore').default
+var SettingsStore = require('./stores/SettingsStore').default
 
 var App = React.createClass({
   getInitialState() {
     return {
-      showSettings: false,
-      showChildren: false,
-      prebootHTML: this.props.params.prebootHTML
+      showSettings: false
     }
   },
 
@@ -20,17 +19,10 @@ var App = React.createClass({
     SettingsStore.load()
     StoryStore.loadSession()
     UpdatesStore.loadSession()
-    if (typeof window === 'undefined') return
     window.addEventListener('beforeunload', this.handleBeforeUnload)
   },
 
-  componentDidMount() {
-    // Empty the prebooted HTML and hydrate using live results from Firebase
-    this.setState({ prebootHTML: '', showChildren: true })
-  },
-
   componentWillUnmount() {
-    if (typeof window === 'undefined') return
     window.removeEventListener('beforeunload', this.handleBeforeUnload)
   },
 
@@ -65,10 +57,10 @@ var App = React.createClass({
           {this.state.showSettings && <Settings key="settings"/>}
         </div>
         <div className="App__content">
-          <div dangerouslySetInnerHTML={{ __html: this.state.prebootHTML }}/>
-          {this.state.showChildren ? this.props.children : ''}
+          {this.props.children}
         </div>
         <div className="App__footer">
+          {`react-hn v${__VERSION__} | `}
           <a href="https://github.com/insin/react-hn">insin/react-hn</a>
         </div>
       </div>
@@ -76,4 +68,4 @@ var App = React.createClass({
   }
 })
 
-module.exports = App
+export default App

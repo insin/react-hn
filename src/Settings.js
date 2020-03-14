@@ -1,6 +1,6 @@
 var React = require('react')
 
-var SettingsStore = require('./stores/SettingsStore')
+var SettingsStore = require('./stores/SettingsStore').default
 
 var Settings = React.createClass({
   componentDidMount() {
@@ -39,12 +39,6 @@ var Settings = React.createClass({
           <p>Show "reply" links to Hacker News</p>
         </div>
         <div className="Settings__setting Settings__setting--checkbox">
-          <label htmlFor="offlineMode">
-            <input type="checkbox" name="offlineMode" id="offlineMode" checked={SettingsStore.offlineMode}/> Offline Mode
-          </label>
-          <p>Cache comments and content offline.</p>
-        </div>
-        <div className="Settings__setting Settings__setting--checkbox">
           <label htmlFor="showDead">
             <input type="checkbox" name="showDead" id="showDead" checked={SettingsStore.showDead}/> show dead
           </label>
@@ -61,7 +55,7 @@ var Settings = React.createClass({
             <tbody>
               <tr>
                 <td><label htmlFor="titleFontSize">title font size:</label></td>
-                <td><input type="number" min="13.333" step="1" name="titleFontSize" id="titleFontSize" value={SettingsStore.titleFontSize}/></td>
+                <td><input type="number" min="14" step="1" name="titleFontSize" id="titleFontSize" value={SettingsStore.titleFontSize}/></td>
               </tr>
               <tr>
                 <td><label htmlFor="listSpacing">list spacing:</label></td>
@@ -75,4 +69,4 @@ var Settings = React.createClass({
   }
 })
 
-module.exports = Settings
+export default Settings

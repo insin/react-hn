@@ -1,10 +1,10 @@
 var React = require('react')
 
-var SettingsStore = require('./stores/SettingsStore')
+var SettingsStore = require('./stores/SettingsStore').default
 
-var CommentMixin = require('./mixins/CommentMixin')
+var CommentMixin = require('./mixins/CommentMixin').default
 
-var cx = require('./utils/buildClassName')
+var cx = require('./utils/buildClassName').default
 
 /**
  * Displays a standalone comment passed as a prop.
@@ -49,4 +49,4 @@ var DisplayComment = React.createClass({
   }
 })
 
-module.exports = DisplayComment
+export default DisplayComment

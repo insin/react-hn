@@ -2,8 +2,8 @@ var React = require('react')
 var Link = require('react-router/lib/Link')
 var TimeAgo = require('react-timeago').default
 
-var SettingsStore = require('../stores/SettingsStore')
-var pluralise = require('../utils/pluralise')
+var SettingsStore = require('../stores/SettingsStore').default
+var pluralise = require('../utils/pluralise').default
 var urlParse = require('url-parse')
 
 var parseHost = function(url) {
@@ -58,7 +58,7 @@ var ItemMixin = {
     }
     else {
       title = (hasURL ? <a href={item.url}>{item.title}</a>
-                      : <Link to={`/${item.type}/${item.id}`}>{item.title}</Link>)
+        : <Link to={`/${item.type}/${item.id}`}>{item.title}</Link>)
     }
     return <div className="Item__title" style={{fontSize: SettingsStore.titleFontSize}}>
       {title}
@@ -68,4 +68,4 @@ var ItemMixin = {
   }
 }
 
-module.exports = ItemMixin
+export default ItemMixin

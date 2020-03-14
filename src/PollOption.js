@@ -1,11 +1,11 @@
 var React = require('react')
 var ReactFireMixin = require('reactfire')
 
-var HNService = require('./services/HNService')
+var HNService = require('./services/HNService').default
 
-var Spinner = require('./Spinner')
+var Spinner = require('./Spinner').default
 
-var pluralise = require('./utils/pluralise')
+var pluralise = require('./utils/pluralise').default
 
 var PollOption = React.createClass({
   mixins: [ReactFireMixin],
@@ -32,4 +32,4 @@ var PollOption = React.createClass({
   }
 })
 
-module.exports = PollOption
+export default PollOption

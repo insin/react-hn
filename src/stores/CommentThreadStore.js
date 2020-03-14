@@ -1,4 +1,4 @@
-var extend = require('../utils/extend')
+var extend = require('../utils/extend').default
 
 function CommentThreadStore(item, onCommentsChanged) {
   this.itemId = item.id
@@ -86,4 +86,4 @@ extend(CommentThreadStore.prototype, {
   }
 })
 
-module.exports = CommentThreadStore
+export default CommentThreadStore

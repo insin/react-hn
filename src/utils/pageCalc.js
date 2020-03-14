@@ -5,4 +5,4 @@ function pageCalc(pageNum, pageSize, numItems) {
   return {pageNum, startIndex, endIndex, hasNext}
 }
 
-module.exports = pageCalc
+export default pageCalc
