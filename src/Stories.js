@@ -29,7 +29,7 @@ var Stories = React.createClass({
 
   getInitialState() {
     return {
-      ids: [],
+      ids: null,
       limit: this.props.limit,
       stories: []
     }
@@ -65,9 +65,22 @@ var Stories = React.createClass({
   render() {
     var page = pageCalc(this.getPageNumber(), ITEMS_PER_PAGE, this.state.limit)
 
+    // Special case for the Read Stories page, as its ids are read from
+    // localStorage and there might not be any yet.
+    if (this.props.type === 'read') {
+      if (this.state.ids == null) {
+        return <div className="Items"></div>
+      }
+      if (this.state.ids.length === 0) {
+        return <div className="Items">
+          <p>There are no previously read stories to display.</p>
+        </div>
+      }
+    }
+
     // Display a list of placeholder items while we're waiting for the initial
     // list of story ids to load from Firebase.
-    if (this.state.stories.length === 0 && this.state.ids.length === 0 && this.getPageNumber() > 0) {
+    if (this.state.ids == null) {
       var dummyItems = []
       for (var i = page.startIndex; i < page.endIndex; i++) {
         dummyItems.push(

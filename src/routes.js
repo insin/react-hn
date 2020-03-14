@@ -31,7 +31,7 @@ var Jobs = stories('jobs', 'jobstories', 200, 'Jobs')
 var New = stories('newest', 'newstories', 500, 'New Links')
 var Show = stories('show', 'showstories', 200, 'Show')
 var Top = stories('news', 'topstories', 500)
-var Read = stories('read', 'read', 500, 'Read Stories')
+var Read = stories('read', 'read', 0, 'Read Stories')
 
 export default <Route path="/" component={App}>
   <IndexRoute component={Top}/>
