@@ -8,6 +8,9 @@ if (typeof require.ensure !== 'function') require.ensure = function(d, c) { c(re
 var App = require('./App').default
 var Stories = require('./Stories').default
 var Updates = require('./Updates').default
+var PermalinkedComment = require('./PermalinkedComment').default
+var UserProfile = require('./UserProfile').default
+var NotFound = require('./NotFound').default
 
 function stories(route, type, limit, title) {
   return React.createClass({
@@ -45,29 +48,8 @@ export default <Route path="/" component={App}>
   <Route path="job/:id" component={Item}/>
   <Route path="poll/:id" component={Item}/>
   <Route path="story/:id" component={Item}/>
-  <Route
-    path="comment/:id"
-    getComponent={(location, callback) => {
-      require.ensure([], require => {
-        callback(null, require('./PermalinkedComment'))
-      }, 'PermalinkedComment')
-    }}
-  />
+  <Route path="comment/:id" component={PermalinkedComment}/>
   <Route path="newcomments" component={Comments}/>
-  <Route
-    path="user/:id"
-    getComponent={(location, callback) => {
-      require.ensure([], require => {
-        callback(null, require('./UserProfile'))
-      }, 'UserProfile')
-    }}
-  />
-  <Route
-    path="*"
-    getComponent={(location, callback) => {
-      require.ensure([], require => {
-        callback(null, require('./NotFound'))
-      }, 'NotFound')
-    }}
-  />
+  <Route path="user/:id" component={UserProfile}/>
+  <Route path="*" component={NotFound}/>
 </Route>
