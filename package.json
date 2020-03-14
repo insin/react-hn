@@ -15,11 +15,9 @@
     "start": "nwb serve"
   },
   "dependencies": {
-    "eslint-config-jonnybuchanan": "6.0.0",
     "events": "1.1.1",
     "firebase": "3.4.1",
     "history": "^2.1.2",
-    "nwb": "0.22.0",
     "object-assign": "^4.1.0",
     "react": "15.3.2",
     "react-dom": "15.3.2",
@@ -30,5 +28,9 @@
     "scroll-behavior": "0.8.1",
     "setimmediate": "1.0.5",
     "url-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "eslint-config-jonnybuchanan": "6.0.0",
+    "nwb": "0.22.0"
   }
 }
