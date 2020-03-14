@@ -1,4 +1,4 @@
-# [react-hn](https://react-hn.appspot.com)
+# [react-hn](https://insin.github.io/react-hn/)
 
 A [React](http://facebook.github.io/react) &
 [react-router](https://github.com/rackt/react-router)-powered implementation of
