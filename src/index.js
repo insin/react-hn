@@ -1,3 +1,5 @@
+import {hashHistory} from 'react-router'
+
 require('./style.css')
 
 require('setimmediate')
@@ -5,16 +7,14 @@ require('setimmediate')
 var React = require('react')
 var {render} = require('react-dom')
 var Router = require('react-router/lib/Router')
-var createHashHistory = require('history/lib/createHashHistory')
 var useScroll = require('react-router-scroll/lib/useScroll')
 var applyRouterMiddleware = require('react-router/lib/applyRouterMiddleware')
-var history = createHashHistory()
 
 var routes = require('./routes').default
 
 render(
   <Router
-    history={history}
+    history={hashHistory}
     render={applyRouterMiddleware(useScroll())}
     routes={routes}
   />,
