@@ -62,6 +62,11 @@ span.control:hover {
   font-size: 13.3333px;
   font-family: Verdana, Geneva, sans-serif;
 }
+.Dark__app__wrap {
+  background-color: #222;
+  color: #e3e3e3;
+}
+
 .App__header {
   color: #00d8ff;
   background-color: #222;
@@ -70,6 +75,11 @@ span.control:hover {
   vertical-align: middle;
   position: relative;
 }
+.Dark__app__wrap .App__header {
+  background: #333;
+  color: #fff;
+}
+
 .App__settings {
   position: absolute;
   top: 6px;
@@ -106,6 +116,11 @@ span.control:hover {
 .App__header a.active {
   color: #fff;
 }
+
+.Dark__app__wrap .App__header a.active {
+  color: #00d8ff;
+}
+
 .App__homelink {
   text-decoration: none;
   font-weight: bold;
@@ -126,6 +141,9 @@ span.control:hover {
   color: #333;
   padding: 6px 0;
 }
+.Dark__app__wrap .App__footer {
+  color: #d3d3d3;
+}
 .App__footer a {
   color: inherit;
   text-decoration: underline;
@@ -136,6 +154,9 @@ span.control:hover {
   padding-right: 1.25em;
   margin-top: 1em;
   margin-bottom: .5em;
+}
+.Dark__app__wrap .Items__list {
+  color: #d3d3d3;
 }
 .ListItem {
   margin-bottom: 16px;
@@ -164,6 +185,9 @@ span.control:hover {
   color: #000;
   text-decoration: none;
 }
+.Dark__app__wrap .Paginator a {
+  color: #e3e3e3;
+}
 .Paginator a:hover {
   text-decoration: underline;
 }
@@ -181,6 +205,11 @@ span.control:hover {
   text-decoration: none;
   color: #000;
 }
+
+.Dark__app__wrap .Item__title a {
+  color: #e3e3e3;
+}
+
 .Item__title a:hover {
   text-decoration: underline;
 }
@@ -287,6 +316,9 @@ span.control:hover {
 }
 .Comment__text a {
   color: #000;
+}
+.Dark__app__wrap .Comment__text a {
+  color: #e3e3e3;
 }
 .Comment__text a:visited {
   color: #666;
