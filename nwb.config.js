@@ -26,13 +26,13 @@ module.exports = {
             names: ['core'],
             filename: '[name].js',
             minChunks: Infinity
-        }), 
+        }),
         new HtmlWebpackPlugin({
           filename: 'views/index.ejs',
           template: 'src/views/index.ejs',
           markup: '<div id="app"><%- markup %></div>'
         })
       ]
-    }    
+    }
   }
 }
