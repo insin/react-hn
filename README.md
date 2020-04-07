@@ -51,7 +51,7 @@ npm install
 
 ### npm scripts
 
-* `npm start` - start development server
+* `npm run serve` - start development server
 * `npm run build` - build into the `public/` directory
 * `npm run lint` - lint `src/`
 * `npm run lint:fix` - lint `src/` and auto-fix issues where possible
