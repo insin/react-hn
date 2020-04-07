@@ -30,7 +30,6 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.16.0",
     "ejs": "^2.4.1",
-    "eslint-config-jonnybuchanan": "4.6.0",
     "events": "1.1.1",
     "express": "^4.13.4",
     "firebase": "3.4.1",
@@ -49,6 +48,7 @@
     "url-parse": "^1.1.1"
   },
   "devDependencies": {
+    "eslint-config-jonnybuchanan": "4.6.0",
     "html-webpack-plugin": "2.22.0",
     "webpack": "1.13.2",
     "workbox-build": "0.0.2"
