@@ -5,6 +5,12 @@ function CommentThreadStore(item, onCommentsChanged) {
   this.onCommentsChanged = onCommentsChanged
 
   /**
+   * Lookup from a comment id to the comment.
+   * @type {Object.<id,Comment>}
+   */
+  this.comments = {}
+
+  /**
    * Lookup from a comment id to its child comment ids.
    * @type {Object.<id,Array.<Number>>}
    */
@@ -22,6 +28,12 @@ function CommentThreadStore(item, onCommentsChanged) {
    * @type {Object.<id,Boolean>}
    */
   this.isCollapsed = {}
+
+  /**
+   * Lookup for dead comment ids
+   * @type {Object.<id,Boolean>}
+   */
+  this.deadComments = {}
 }
 
 extend(CommentThreadStore.prototype, {
@@ -64,8 +76,12 @@ extend(CommentThreadStore.prototype, {
   commentAdded(comment) {
     if (comment.deleted) { return }
 
+    this.comments[comment.id] = comment
     this.children[comment.id] = []
     this.children[comment.parent].push(comment.id)
+    if (comment.dead) {
+      this.deadComments[comment.id] = true
+    }
   },
 
   /**
@@ -76,8 +92,12 @@ extend(CommentThreadStore.prototype, {
     // deleted by the time the API catches up.
     if (!comment) { return }
 
+    delete this.comments[comment.id]
     var siblings = this.children[comment.parent]
     siblings.splice(siblings.indexOf(comment.id), 1)
+    if (comment.dead) {
+      delete this.deadComments[comment.id]
+    }
   },
 
   toggleCollapse(commentId) {

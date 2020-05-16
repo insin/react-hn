@@ -13,6 +13,7 @@ var ItemMixin = require('./mixins/ItemMixin').default
 
 var cx = require('./utils/buildClassName').default
 var setTitle = require('./utils/setTitle').default
+var pluralise = require('./utils/pluralise').default
 
 function timeUnitsAgo(value, unit, suffix) {
   if (value === 1) {
@@ -125,6 +126,21 @@ var Item = React.createClass({
     this.forceUpdate()
   },
 
+  getButtonLabel() {
+    var showCommentsAfter = this.state.showNewCommentsAfter || this.threadStore.commentCount - 1
+    var howMany = this.threadStore.commentCount - showCommentsAfter
+    var timeComment = this.threadStore.getCommentByTimeIndex(showCommentsAfter + 1)
+    var text = `highlight ${howMany} comment${pluralise(howMany)} from `
+    return <span>
+      {text}<TimeAgo date={new Date(timeComment.time * 1000)}/>
+    </span>
+  },
+
+  highlightRecentComments() {
+    var showCommentsAfter = this.state.showNewCommentsAfter || this.threadStore.commentCount - 1
+    this.threadStore.highlightNewCommentsSince(showCommentsAfter)
+  },
+
   render() {
     var state = this.state
     var item = state.item
@@ -142,6 +158,22 @@ var Item = React.createClass({
             mark as read
           </span>
         </span>))}
+        {!threadStore.loading && threadStore.commentCount > 1 && <div style={{marginTop: '1em'}}>
+          <input
+            max={threadStore.commentCount - 1}
+            min={1}
+            style={{margin: 0, verticalAlign: 'middle'}}
+            type="range"
+            value={state.showNewCommentsAfter || threadStore.commentCount - 1}
+            onChange={(e) => {
+                var showNewCommentsAfter = Number(e.target.value)
+                this.setState({showNewCommentsAfter})
+            }}
+          />
+          <button type="button" onClick={this.highlightRecentComments}>
+            {this.getButtonLabel()}
+          </button>
+        </div>}
         {item.text && <div className="Item__text">
           <div dangerouslySetInnerHTML={{__html: item.text}}/>
         </div>}

@@ -277,6 +277,42 @@ StoryCommentThreadStore.prototype = extend(Object.create(CommentThreadStore.prot
     this.onCommentsChanged({type: 'collapse'})
   },
 
+  getCommentByTimeIndex(timeIndex) {
+    var sortedCommentIds = Object.keys(this.comments).map(id => Number(id))
+    if (!SettingsStore.showDead) {
+      sortedCommentIds = sortedCommentIds.filter(id => !this.deadComments[id])
+    }
+    sortedCommentIds.sort()
+    var commentId = sortedCommentIds[timeIndex - 1]
+    return this.comments[commentId]
+  },
+
+  highlightNewCommentsSince(showCommentsAfter) {
+    var referenceComment = this.getCommentByTimeIndex(showCommentsAfter)
+
+    // Walk the tree of comments and create a new isNew lookup for comments
+    // newer than the reference comment we're using for highlighting.
+    var isNew = {}
+    var commentIds = this.children[this.itemId]
+    while (commentIds.length) {
+      var nextCommentIds = []
+      for (var i = 0, l = commentIds.length; i < l; i++) {
+        var commentId = commentIds[i]
+        if (commentId > referenceComment.id) {
+          isNew[commentId] = true
+        }
+        var childCommentIds = this.children[commentId]
+        if (childCommentIds.length) {
+          nextCommentIds.push.apply(nextCommentIds, childCommentIds)
+        }
+      }
+      commentIds = nextCommentIds
+    }
+
+    this.isNew = isNew
+    this.collapseThreadsWithoutNewComments()
+  },
+
   /**
    * Merk the thread as read.
    */
