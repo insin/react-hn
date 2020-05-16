@@ -26,6 +26,7 @@ Live version: https://insin.github.io/react-hn
   * New comments in collapsed threads
 * Automatic or manual collapsing of comment threads which don't contain any new
   comments
+* Manual highlighting of the X most recent comments to catch up on threads you were reading elsewhere
 * Stories with new comments are marked on list pages
 * Stories can be marked as read to remove highighting from new comments
 * "comments" sections driven by the Changed Items API
