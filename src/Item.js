@@ -166,8 +166,8 @@ var Item = React.createClass({
             type="range"
             value={state.showNewCommentsAfter || threadStore.commentCount - 1}
             onChange={(e) => {
-                var showNewCommentsAfter = Number(e.target.value)
-                this.setState({showNewCommentsAfter})
+              var showNewCommentsAfter = Number(e.target.value)
+              this.setState({showNewCommentsAfter})
             }}
           />
           <button type="button" onClick={this.highlightRecentComments}>
