@@ -132,7 +132,8 @@ var Item = React.createClass({
     var timeComment = this.threadStore.getCommentByTimeIndex(showCommentsAfter + 1)
     var text = `highlight ${howMany} comment${pluralise(howMany)} from `
     return <span>
-      {text}<TimeAgo date={new Date(timeComment.time * 1000)}/>
+      {text}
+      {timeComment && <TimeAgo date={new Date(timeComment.time * 1000)}/>}
     </span>
   },
 
@@ -158,7 +159,11 @@ var Item = React.createClass({
             mark as read
           </span>
         </span>))}
-        {!threadStore.loading && threadStore.commentCount > 1 && <div style={{marginTop: '1em'}}>
+        <div style={{
+          marginTop: '1em', opacity:
+          !threadStore.loading && threadStore.commentCount > 1 ? 1.0 : 0.0,
+          transition: 'opacity .33s ease-out',
+        }}>
           <input
             max={threadStore.commentCount - 1}
             min={1}
@@ -173,7 +178,7 @@ var Item = React.createClass({
           <button type="button" onClick={this.highlightRecentComments}>
             {this.getButtonLabel()}
           </button>
-        </div>}
+        </div>
         {item.text && <div className="Item__text">
           <div dangerouslySetInnerHTML={{__html: item.text}}/>
         </div>}
