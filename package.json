@@ -1,7 +1,7 @@
 {
-  "name": "react-hn",
+  "name": "reactfire-seanmodd",
   "version": "1.6.1",
-  "description": "React-powered frontend for Hacker News using its Firebase API",
+  "description": "",
   "author": "Jonny Buchanan",
   "license": "MIT",
   "repository": {
@@ -52,5 +52,6 @@
     "html-webpack-plugin": "2.22.0",
     "webpack": "1.13.2",
     "workbox-build": "0.0.2"
-  }
+  },
+  "keywords": []
 }
