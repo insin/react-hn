@@ -46,6 +46,7 @@ var App = React.createClass({
         <div className="App__header">
           <Link to="/news" className="App__homelinkicon"><img src="img/logo.png" width="16" height="16" alt="" /></Link>{' '}
           <Link to="/news" activeClassName="active" className="App__homelink">React HN</Link>{' '}
+          <Link to="/best" activeClassName="active">best</Link>{' | '}
           <Link to="/newest" activeClassName="active">new</Link>{' | '}
           <Link to="/newcomments" activeClassName="active">comments</Link> {' | '}
           <Link to="/show" activeClassName="active">show</Link>{' | '}
